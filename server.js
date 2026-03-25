@@ -4,7 +4,7 @@ const express = require('express');
 const rateLimit = require('express-rate-limit');
 const compression = require('compression');
 const logger = require('./utils/logger.js');
-const { createDb, seedQuiz } = require('./db/index.js');
+const { createDb, seedQuiz, seedConfig } = require('./db/index.js');
 const { createGuestService } = require('./services/guests.js');
 const { createPollService } = require('./services/polls.js');
 const { createAdminService } = require('./services/admin.js');
@@ -22,6 +22,7 @@ if (!BOT_TOKEN) { console.error('BOT_TOKEN is required'); process.exit(1); }
 // Database & services
 const db = createDb();
 seedQuiz(db);
+seedConfig(db);
 const guestService = createGuestService(db);
 const pollService = createPollService(db);
 const adminService = createAdminService(db);

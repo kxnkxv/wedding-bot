@@ -1231,6 +1231,43 @@ body {
     });
   }
 
+  // ─── Site config ─────────────────────────────────────────────────────────
+  var siteConfig = {};
+
+  function loadConfig() {
+    return fetch('/api/config').then(function(r) { return r.json(); }).then(function(cfg) {
+      siteConfig = cfg;
+      applyConfig();
+    }).catch(function() {});
+  }
+
+  function cfg(key, fallback) {
+    return siteConfig[key] || fallback || '';
+  }
+
+  function applyConfig() {
+    // Hero
+    var saveDate = document.querySelector('.save-date');
+    if (saveDate) saveDate.textContent = cfg('hero.label', 'Приглашение на свадьбу');
+
+    var heroDate = document.querySelector('.hero-date');
+    if (heroDate) heroDate.textContent = cfg('hero.date', '01 · августа · 2026');
+
+    // Names
+    var names = document.querySelectorAll('.name');
+    if (names.length >= 2) {
+      names[0].textContent = cfg('couple.groom', 'Артём');
+      names[1].textContent = cfg('couple.bride', 'Полина');
+    }
+
+    // Footer
+    var footerText = document.querySelector('.footer-text');
+    if (footerText) footerText.textContent = cfg('couple.date', '1 августа 2026') + ' · ' + cfg('footer.text', 'Ждём тебя с любовью');
+
+    var footerNames = document.querySelector('.footer-names');
+    if (footerNames) footerNames.innerHTML = cfg('couple.groom', 'Артём') + ' <em>×</em> ' + cfg('couple.bride', 'Полина');
+  }
+
   // ─── UI helpers ──────────────────────────────────────────────────────────
   function hideLoading() {
     var overlay = document.getElementById('loadingOverlay');
@@ -1658,6 +1695,7 @@ body {
     setupComment();
     setupWishes();
     loadWishes();
+    loadConfig();
     tick();
     setInterval(tick, 1000);
 

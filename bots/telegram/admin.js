@@ -843,6 +843,42 @@ module.exports = function registerAdmin(bot) {
       `🔗 Ссылка: ${tgLink}\n🌐 Web: ${webAppUrl}`
     );
   });
+
+  // /settext key | value — update site config text
+  bot.command('settext', async (ctx) => {
+    if (!requireAdmin(ctx)) return;
+    const text = ctx.message.text.replace('/settext', '').trim();
+    if (!text || !text.includes('|')) return ctx.reply('Формат: /settext ключ | значение\n\nПример:\n/settext venue.name | Загородный клуб "Романтика"\n/settext wishes.text1 | Лучший подарок — ваше присутствие!');
+
+    const sepIdx = text.indexOf('|');
+    const key = text.substring(0, sepIdx).trim();
+    const value = text.substring(sepIdx + 1).trim();
+
+    const db = require('../../db/index.js').createDb();
+    db.prepare('INSERT OR REPLACE INTO site_config (key, value, updated_at) VALUES (?, ?, datetime("now"))').run(key, value);
+    db.close();
+
+    await ctx.reply(`✅ Обновлено:\n${key} = ${value}`);
+  });
+
+  // /texts — show all config keys
+  bot.command('texts', async (ctx) => {
+    if (!requireAdmin(ctx)) return;
+    const db = require('../../db/index.js').createDb();
+    const rows = db.prepare('SELECT key, value FROM site_config ORDER BY key').all();
+    db.close();
+
+    if (rows.length === 0) return ctx.reply('Конфигурация пуста.');
+
+    let msg = '📝 Тексты сайта:\n\n';
+    rows.forEach(r => {
+      const short = r.value.length > 50 ? r.value.slice(0, 50) + '...' : r.value;
+      msg += `\`${r.key}\`\n  ${short}\n\n`;
+    });
+
+    const chunks = msg.match(/[\s\S]{1,4000}/g) || [msg];
+    for (const c of chunks) await ctx.reply(c, { parse_mode: 'Markdown' });
+  });
 };
 
 function buildLinksText(ctx, guest) {

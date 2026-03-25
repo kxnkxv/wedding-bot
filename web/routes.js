@@ -276,6 +276,30 @@ function createRoutes({ guestService, pollService, adminService, checklistServic
     res.json({ ok: true });
   });
 
+  // Site config API
+  router.get('/api/config', (req, res) => {
+    const rows = db.prepare('SELECT key, value FROM site_config').all();
+    const config = {};
+    rows.forEach(r => { config[r.key] = r.value; });
+    res.json(config);
+  });
+
+  router.post('/api/config', express.json(), (req, res) => {
+    const { key, value } = req.body;
+    if (!key) return res.status(400).json({ error: 'key required' });
+    db.prepare('INSERT OR REPLACE INTO site_config (key, value, updated_at) VALUES (?, ?, datetime("now"))').run(key, value || '');
+    res.json({ ok: true });
+  });
+
+  router.post('/api/config/batch', express.json(), (req, res) => {
+    const { items } = req.body;
+    if (!items || !Array.isArray(items)) return res.status(400).json({ error: 'items[] required' });
+    const stmt = db.prepare('INSERT OR REPLACE INTO site_config (key, value, updated_at) VALUES (?, ?, datetime("now"))');
+    const tx = db.transaction(() => { items.forEach(i => stmt.run(i.key, i.value || '')); });
+    tx();
+    res.json({ ok: true });
+  });
+
   // QR code page
   router.get('/qr', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'qr.html'));
