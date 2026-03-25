@@ -526,6 +526,102 @@ tbody td { padding: 10px 14px; font-size: .85rem; vertical-align: middle; }
 }
 .hamburger svg { width: 20px; height: 20px; }
 
+/* ── Checklist (admin) ── */
+.admin-cl-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+.cl-progress-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px 16px; margin-bottom: 12px;
+}
+.cl-progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.cl-progress-header span:first-child { font-size: .85rem; color: var(--text); }
+.cl-progress-header span:last-child { font-size: .82rem; color: var(--text-muted); }
+.cl-prog-bar-wrap { background: var(--border); border-radius: 4px; height: 6px; overflow: hidden; }
+.cl-prog-bar-fill { height: 100%; background: var(--accent); border-radius: 4px; transition: width .4s; }
+.cl-group-title { font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; color: var(--text-muted); margin-bottom: 6px; margin-top: 14px; }
+.cl-items-list { display: flex; flex-direction: column; gap: 4px; }
+.cl-item {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 10px 14px;
+  cursor: pointer; transition: background .15s;
+}
+.cl-item:hover { background: var(--surface2); }
+.cl-item.done { opacity: .55; }
+.cl-check-circle {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 2px solid var(--border); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s;
+}
+.cl-item.done .cl-check-circle { background: var(--accent); border-color: var(--accent); }
+.cl-check-tick { display: none; color: #fff; font-size: .65rem; font-weight: bold; }
+.cl-item.done .cl-check-tick { display: block; }
+.cl-item-text { flex: 1; font-size: .875rem; color: var(--text); }
+.cl-item.done .cl-item-text { text-decoration: line-through; color: var(--text-muted); }
+
+/* ── Timeline (admin) ── */
+.admin-timeline { position: relative; padding-left: 24px; }
+.admin-timeline::before {
+  content: ''; position: absolute; left: 7px; top: 8px; bottom: 8px;
+  width: 2px; background: var(--border);
+}
+.atl-item {
+  position: relative; padding: 14px 14px 14px 20px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; margin-bottom: 8px; transition: border-color .2s;
+}
+.atl-item.active { border-color: var(--accent); background: rgba(196,30,58,.06); }
+.atl-item.past { opacity: .5; }
+.atl-dot {
+  position: absolute; left: -24px; top: 50%; transform: translateY(-50%);
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--border); border: 2px solid var(--bg);
+}
+.atl-item.active .atl-dot { background: var(--accent); box-shadow: 0 0 0 3px rgba(196,30,58,.3); }
+.atl-item.past .atl-dot { background: #444; }
+.atl-header { display: flex; align-items: center; gap: 10px; }
+.atl-time { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: var(--text-muted); }
+.atl-item.active .atl-time { color: var(--accent); font-weight: 600; }
+.atl-title { font-size: .95rem; font-weight: 400; margin-top: 2px; }
+.atl-desc { font-size: .8rem; color: var(--text-muted); margin-top: 3px; }
+.atl-now-badge {
+  display: inline-block; background: var(--accent); color: #fff;
+  font-size: .65rem; font-weight: 600; padding: 2px 8px; border-radius: 20px;
+  letter-spacing: .05em; text-transform: uppercase; margin-left: 8px;
+}
+.atl-edit-btn {
+  margin-left: auto; background: transparent; border: 1px solid var(--border);
+  color: var(--text-muted); padding: 4px 10px; border-radius: 6px;
+  font-size: .75rem; cursor: pointer; font-family: 'Nunito Sans', sans-serif;
+  transition: all .2s;
+}
+.atl-edit-btn:hover { border-color: var(--accent); color: var(--text); }
+.atl-edit-form { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+.atl-edit-form input, .atl-edit-form textarea {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 6px; padding: 7px 10px; color: var(--text);
+  font-size: .85rem; font-family: 'Nunito Sans', sans-serif; outline: none;
+  transition: border-color .2s;
+}
+.atl-edit-form input:focus, .atl-edit-form textarea:focus { border-color: var(--accent); }
+.atl-edit-actions { display: flex; gap: 6px; }
+
+/* ── Reactions (admin) ── */
+.reactions-grid {
+  display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 8px;
+}
+.reaction-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px 20px; text-align: center;
+  min-width: 80px; flex: 1;
+}
+.reaction-emoji { font-size: 1.8rem; }
+.reaction-count {
+  font-family: 'Cormorant Garamond', serif; font-size: 1.6rem;
+  font-weight: 300; color: var(--text); margin-top: 4px;
+}
+.reactions-empty { color: var(--text-muted); font-size: .88rem; padding: 20px 0; }
+
 /* ── Responsive ── */
 @media (max-width: 900px) {
   .stats-row { grid-template-columns: repeat(3, 1fr); }
@@ -552,11 +648,11 @@ tbody td { padding: 10px 14px; font-size: .85rem; vertical-align: middle; }
 <!-- Lock screen -->
 <div id="lock-overlay">
   <div class="lock-box">
-    <h2>Admin Panel</h2>
-    <p>Artem <span style="color:var(--accent)">&times;</span> Polina</p>
+    <h2>Панель администратора</h2>
+    <p>Артём <span style="color:var(--accent)">&times;</span> Полина</p>
     <input type="password" id="pin-input" placeholder="PIN" maxlength="16" autocomplete="off">
-    <button id="login-btn">Enter</button>
-    <div class="lock-error" id="lock-error">Wrong PIN</div>
+    <button id="login-btn">Войти</button>
+    <div class="lock-error" id="lock-error">Неверный PIN</div>
   </div>
 </div>
 
@@ -571,41 +667,53 @@ tbody td { padding: 10px 14px; font-size: .85rem; vertical-align: middle; }
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-header">
-        <h1>Artem <span>&times;</span> Polina</h1>
-        <div class="subtitle">Admin Panel</div>
+        <h1>Артём <span>&times;</span> Полина</h1>
+        <div class="subtitle">Панель администратора</div>
       </div>
       <nav class="sidebar-nav" id="sidebar-nav">
         <div class="nav-item active" data-section="dashboard">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-          Dashboard
+          Главная
         </div>
         <div class="nav-item" data-section="guests">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          Guest List
+          Гости
         </div>
         <div class="nav-item" data-section="polls">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
-          Polls
+          Опросы
         </div>
         <div class="nav-item" data-section="seating">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="3" x2="12" y2="9"/><line x1="12" y1="15" x2="12" y2="21"/><line x1="3" y1="12" x2="9" y2="12"/><line x1="15" y1="12" x2="21" y2="12"/></svg>
-          Seating
+          Рассадка
         </div>
         <div class="nav-item" data-section="budget">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-          Budget
+          Бюджет
         </div>
         <div class="nav-item" data-section="vendors">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 11h-6"/><path d="M19 8v6"/></svg>
-          Vendors
+          Подрядчики
         </div>
         <div class="nav-item" data-section="broadcast">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-          Broadcast
+          Рассылка
         </div>
         <div class="nav-item" data-section="analytics">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-          Analytics
+          Аналитика
+        </div>
+        <div class="nav-item" data-section="checklist">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          📋 Чеклист
+        </div>
+        <div class="nav-item" data-section="timeline">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          📅 Таймлайн дня
+        </div>
+        <div class="nav-item" data-section="reactions">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+          😊 Реакции
         </div>
         <div class="nav-item" data-section="texts">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
@@ -613,8 +721,8 @@ tbody td { padding: 10px 14px; font-size: .85rem; vertical-align: middle; }
         </div>
       </nav>
       <div class="sidebar-footer">
-        <button class="btn-outline btn-sm" id="refresh-btn" style="flex:1">Refresh</button>
-        <button class="btn-outline btn-sm btn-danger" id="logout-btn" style="flex:1">Log out</button>
+        <button class="btn-outline btn-sm" id="refresh-btn" style="flex:1">Обновить</button>
+        <button class="btn-outline btn-sm btn-danger" id="logout-btn" style="flex:1">Выйти</button>
       </div>
     </aside>
 
@@ -623,37 +731,37 @@ tbody td { padding: 10px 14px; font-size: .85rem; vertical-align: middle; }
 
       <!-- ══════════ DASHBOARD ══════════ -->
       <div class="section active" id="sec-dashboard">
-        <div class="page-title">Dashboard</div>
+        <div class="page-title">Главная</div>
         <div class="stats-row" id="dash-stats-primary"></div>
         <div class="stats-row-secondary" id="dash-stats-secondary"></div>
 
         <div class="progress-wrap" id="dash-progress-wrap">
-          <div class="progress-label" id="dash-progress-label">Response rate: 0%</div>
+          <div class="progress-label" id="dash-progress-label">Ответили: 0%</div>
           <div class="progress-bar"><div class="progress-fill" id="dash-progress-fill" style="width:0"></div></div>
         </div>
 
-        <div class="card-title" style="font-family:'Cormorant Garamond',serif;font-size:1.15rem;margin-bottom:14px;">Recent RSVP Activity</div>
+        <div class="card-title" style="font-family:'Cormorant Garamond',serif;font-size:1.15rem;margin-bottom:14px;">Последние RSVP</div>
         <div class="activity-list" id="dash-activity"></div>
       </div>
 
       <!-- ══════════ GUEST LIST ══════════ -->
       <div class="section" id="sec-guests">
-        <div class="page-title">Guest List</div>
+        <div class="page-title">Гости</div>
 
         <div class="filter-bar" id="guest-filter-bar">
-          <input type="text" class="form-input" id="guest-search" placeholder="Search by name..." style="width:220px">
-          <button class="filter-btn active" data-filter="">All</button>
-          <button class="filter-btn" data-filter="accepted">Accepted</button>
-          <button class="filter-btn" data-filter="declined">Declined</button>
-          <button class="filter-btn" data-filter="maybe">Maybe</button>
-          <button class="filter-btn" data-filter="pending">Pending</button>
+          <input type="text" class="form-input" id="guest-search" placeholder="Поиск по имени..." style="width:220px">
+          <button class="filter-btn active" data-filter="">Все</button>
+          <button class="filter-btn" data-filter="accepted">Придут</button>
+          <button class="filter-btn" data-filter="declined">Не придут</button>
+          <button class="filter-btn" data-filter="maybe">Думают</button>
+          <button class="filter-btn" data-filter="pending">Ожидают</button>
           <span class="count" id="guest-count"></span>
         </div>
 
         <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
-          <button class="btn" id="btn-add-guest">+ Add Guest</button>
-          <button class="btn-outline" id="btn-import-guests">Import</button>
-          <button class="btn-outline" id="btn-export-csv">Export CSV</button>
+          <button class="btn" id="btn-add-guest">+ Добавить гостя</button>
+          <button class="btn-outline" id="btn-import-guests">Импорт</button>
+          <button class="btn-outline" id="btn-export-csv">Экспорт CSV</button>
         </div>
 
         <div class="table-wrap">
@@ -663,84 +771,123 @@ tbody td { padding: 10px 14px; font-size: .85rem; vertical-align: middle; }
 
       <!-- ══════════ POLLS ══════════ -->
       <div class="section" id="sec-polls">
-        <div class="page-title">Polls</div>
-        <button class="btn" id="btn-create-poll" style="margin-bottom:20px">+ Create Poll</button>
+        <div class="page-title">Опросы</div>
+        <button class="btn" id="btn-create-poll" style="margin-bottom:20px">+ Создать опрос</button>
         <div id="polls-list"><div class="spinner"></div></div>
       </div>
 
       <!-- ══════════ SEATING ══════════ -->
       <div class="section" id="sec-seating">
-        <div class="page-title">Seating</div>
+        <div class="page-title">Рассадка</div>
         <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
-          <button class="btn" id="btn-assign-seat">Assign Guest to Table</button>
+          <button class="btn" id="btn-assign-seat">Посадить гостя за стол</button>
         </div>
-        <div class="card-title" style="font-family:'Cormorant Garamond',serif;font-size:1.05rem;margin-bottom:12px">Tables</div>
+        <div class="card-title" style="font-family:'Cormorant Garamond',serif;font-size:1.05rem;margin-bottom:12px">Столы</div>
         <div class="seating-grid" id="seating-tables"></div>
-        <div class="card-title" style="font-family:'Cormorant Garamond',serif;font-size:1.05rem;margin-bottom:12px">Unassigned Guests</div>
+        <div class="card-title" style="font-family:'Cormorant Garamond',serif;font-size:1.05rem;margin-bottom:12px">Гости без стола</div>
         <div id="seating-unassigned" class="card"></div>
       </div>
 
       <!-- ══════════ BUDGET ══════════ -->
       <div class="section" id="sec-budget">
-        <div class="page-title">Budget</div>
+        <div class="page-title">Бюджет</div>
         <div class="budget-summary" id="budget-summary"></div>
-        <button class="btn" id="btn-add-expense" style="margin-bottom:20px">+ Add Expense</button>
+        <button class="btn" id="btn-add-expense" style="margin-bottom:20px">+ Добавить расход</button>
         <div id="budget-list"></div>
       </div>
 
       <!-- ══════════ VENDORS ══════════ -->
       <div class="section" id="sec-vendors">
-        <div class="page-title">Vendors</div>
-        <button class="btn" id="btn-add-vendor" style="margin-bottom:20px">+ Add Vendor</button>
+        <div class="page-title">Подрядчики</div>
+        <button class="btn" id="btn-add-vendor" style="margin-bottom:20px">+ Добавить подрядчика</button>
         <div class="vendor-grid" id="vendor-list"></div>
       </div>
 
       <!-- ══════════ BROADCAST ══════════ -->
       <div class="section" id="sec-broadcast">
-        <div class="page-title">Broadcast</div>
+        <div class="page-title">Рассылка</div>
         <div class="card">
           <div class="form-group" style="margin-bottom:14px">
-            <label class="form-label">Message</label>
-            <textarea class="form-textarea" id="broadcast-text" rows="5" placeholder="Type your message..."></textarea>
+            <label class="form-label">Сообщение</label>
+            <textarea class="form-textarea" id="broadcast-text" rows="5" placeholder="Введите сообщение..."></textarea>
           </div>
           <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
-            <button class="btn-outline btn-sm" onclick="document.getElementById('broadcast-text').value='Reminder: the wedding is coming up soon! We look forward to seeing you on August 1st.'">Reminder</button>
-            <button class="btn-outline btn-sm" onclick="document.getElementById('broadcast-text').value='Thank you for your RSVP! Please remember to let us know about dietary restrictions.'">Dietary</button>
-            <button class="btn-outline btn-sm" onclick="document.getElementById('broadcast-text').value='Here is the updated schedule and venue details for our wedding day.'">Schedule</button>
+            <button class="btn-outline btn-sm" onclick="document.getElementById('broadcast-text').value='Напоминаем: свадьба уже скоро! Ждём вас 1 августа.'">Напоминание</button>
+            <button class="btn-outline btn-sm" onclick="document.getElementById('broadcast-text').value='Спасибо за подтверждение! Не забудьте сообщить нам о пищевых предпочтениях.'">Диета</button>
+            <button class="btn-outline btn-sm" onclick="document.getElementById('broadcast-text').value='Публикуем обновлённое расписание и детали площадки.'">Расписание</button>
           </div>
           <div class="form-group" style="margin-bottom:14px">
-            <label class="form-label">Platform</label>
+            <label class="form-label">Платформа</label>
             <select class="form-select" id="broadcast-platform">
-              <option value="all">All (Telegram + VK)</option>
-              <option value="telegram">Telegram only</option>
-              <option value="vk">VK only</option>
+              <option value="all">Все (Telegram + VK)</option>
+              <option value="telegram">Только Telegram</option>
+              <option value="vk">Только VK</option>
             </select>
           </div>
-          <div class="card-title" style="margin-bottom:8px;font-size:.9rem">Preview</div>
-          <div class="broadcast-preview" id="broadcast-preview">Type a message above...</div>
-          <button class="btn" id="btn-send-broadcast">Send Broadcast</button>
+          <div class="card-title" style="margin-bottom:8px;font-size:.9rem">Предпросмотр</div>
+          <div class="broadcast-preview" id="broadcast-preview">Введите сообщение выше...</div>
+          <button class="btn" id="btn-send-broadcast">Отправить рассылку</button>
           <div class="form-msg" id="broadcast-msg"></div>
         </div>
       </div>
 
       <!-- ══════════ ANALYTICS ══════════ -->
       <div class="section" id="sec-analytics">
-        <div class="page-title">Analytics</div>
+        <div class="page-title">Аналитика</div>
 
         <div class="card">
-          <div class="card-title">Response Timeline</div>
+          <div class="card-title">Динамика ответов</div>
           <div class="analytics-chart" id="analytics-timeline"></div>
         </div>
 
         <div class="card">
-          <div class="card-title">Platform Distribution</div>
+          <div class="card-title">Распределение по платформам</div>
           <div class="analytics-chart" id="analytics-platforms"></div>
         </div>
 
         <div class="card">
-          <div class="card-title">Dietary Breakdown</div>
+          <div class="card-title">Пищевые предпочтения</div>
           <div class="analytics-chart" id="analytics-dietary"></div>
         </div>
+      </div>
+
+      <!-- ══════════ CHECKLIST ══════════ -->
+      <div class="section" id="sec-checklist">
+        <div class="page-title">📋 Чеклист</div>
+        <div style="display:flex;gap:8px;margin-bottom:20px">
+          <button class="filter-btn active" id="cl-tab-registration" data-tab="registration">День росписи</button>
+          <button class="filter-btn" id="cl-tab-wedding" data-tab="wedding">День свадьбы</button>
+        </div>
+        <div id="cl-progress-reg" style="margin-bottom:12px"></div>
+        <div id="cl-progress-wed" style="margin-bottom:12px;display:none"></div>
+        <div id="cl-content-reg"></div>
+        <div id="cl-content-wed" style="display:none"></div>
+        <div style="margin-top:16px">
+          <button class="btn-outline btn-sm" id="btn-add-cl-item">+ Добавить пункт</button>
+        </div>
+      </div>
+
+      <!-- ══════════ TIMELINE ══════════ -->
+      <div class="section" id="sec-timeline">
+        <div class="page-title">📅 Таймлайн дня</div>
+        <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:20px">Нажмите на пункт, чтобы изменить время или описание. Изменения сохраняются через API.</p>
+        <div class="admin-timeline" id="admin-timeline-wrap"></div>
+        <div style="margin-top:20px">
+          <button class="btn-outline btn-sm" id="btn-add-tl-event">+ Добавить событие</button>
+        </div>
+      </div>
+
+      <!-- ══════════ REACTIONS ══════════ -->
+      <div class="section" id="sec-reactions">
+        <div class="page-title">😊 Реакции</div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+          <span style="font-size:.82rem;color:var(--text-muted)">Автообновление каждые 10 сек</span>
+          <button class="btn-outline btn-sm" id="btn-reset-reactions">Сбросить все</button>
+        </div>
+        <div class="reactions-grid" id="admin-reactions-grid">
+          <div class="spinner"></div>
+        </div>
+        <div style="font-size:.72rem;color:var(--text-muted);text-align:right;margin-top:8px" id="admin-reactions-label"></div>
       </div>
 
       <!-- ══════════ TEXTS ══════════ -->
@@ -759,20 +906,20 @@ tbody td { padding: 10px 14px; font-size: .85rem; vertical-align: middle; }
 <!-- Add Guest Modal -->
 <div class="modal-overlay" id="modal-add-guest">
   <div class="modal">
-    <h3>Add Guest</h3>
+    <h3>Добавить гостя</h3>
     <div class="form-row">
       <div class="form-group">
-        <label class="form-label">Name *</label>
-        <input type="text" class="form-input" id="ag-name" placeholder="Full Name">
+        <label class="form-label">Имя *</label>
+        <input type="text" class="form-input" id="ag-name" placeholder="Полное имя">
       </div>
       <div class="form-group">
-        <label class="form-label">Personal text</label>
-        <input type="text" class="form-input" id="ag-text" placeholder="Dear ...">
+        <label class="form-label">Персональный текст</label>
+        <input type="text" class="form-input" id="ag-text" placeholder="Дорогой ...">
       </div>
     </div>
     <div style="display:flex;gap:8px;margin-top:8px">
-      <button class="btn" id="ag-submit">Add</button>
-      <button class="btn-outline" onclick="closeModal('modal-add-guest')">Cancel</button>
+      <button class="btn" id="ag-submit">Добавить</button>
+      <button class="btn-outline" onclick="closeModal('modal-add-guest')">Отмена</button>
     </div>
     <div class="form-msg" id="ag-msg"></div>
   </div>
@@ -781,12 +928,12 @@ tbody td { padding: 10px 14px; font-size: .85rem; vertical-align: middle; }
 <!-- Import Modal -->
 <div class="modal-overlay" id="modal-import">
   <div class="modal">
-    <h3>Bulk Import</h3>
-    <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:12px">One guest per line. Format: Name | Personal text (optional)</p>
-    <textarea class="form-textarea" id="import-text" rows="8" placeholder="John Smith | Dear John...&#10;Jane Doe&#10;Family Smith | Dear family..."></textarea>
+    <h3>Массовый импорт</h3>
+    <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:12px">По одному гостю на строку. Формат: Имя | Персональный текст (необязательно)</p>
+    <textarea class="form-textarea" id="import-text" rows="8" placeholder="Иван Иванов | Дорогой Иван...&#10;Мария Петрова&#10;Семья Смирновых | Дорогие друзья..."></textarea>
     <div style="display:flex;gap:8px;margin-top:12px">
-      <button class="btn" id="import-submit">Import</button>
-      <button class="btn-outline" onclick="closeModal('modal-import')">Cancel</button>
+      <button class="btn" id="import-submit">Импортировать</button>
+      <button class="btn-outline" onclick="closeModal('modal-import')">Отмена</button>
     </div>
     <div class="form-msg" id="import-msg"></div>
   </div>
@@ -795,24 +942,24 @@ tbody td { padding: 10px 14px; font-size: .85rem; vertical-align: middle; }
 <!-- Create Poll Modal -->
 <div class="modal-overlay" id="modal-create-poll">
   <div class="modal">
-    <h3>Create Poll</h3>
+    <h3>Создать опрос</h3>
     <div class="form-group" style="margin-bottom:12px">
-      <label class="form-label">Question</label>
-      <input type="text" class="form-input" id="cp-question" placeholder="Your question...">
+      <label class="form-label">Вопрос</label>
+      <input type="text" class="form-input" id="cp-question" placeholder="Ваш вопрос...">
     </div>
     <div id="cp-options-wrap">
-      <label class="form-label" style="margin-bottom:6px">Options</label>
+      <label class="form-label" style="margin-bottom:6px">Варианты</label>
       <div id="cp-options-list"></div>
     </div>
-    <button class="btn-outline btn-sm" id="cp-add-option" style="margin-bottom:12px;margin-top:6px">+ Add option</button>
+    <button class="btn-outline btn-sm" id="cp-add-option" style="margin-bottom:12px;margin-top:6px">+ Добавить вариант</button>
     <div class="form-group" style="margin-bottom:14px">
       <label style="display:flex;align-items:center;gap:8px;font-size:.85rem;cursor:pointer">
-        <input type="checkbox" id="cp-multiple"> Allow multiple choices
+        <input type="checkbox" id="cp-multiple"> Множественный выбор
       </label>
     </div>
     <div style="display:flex;gap:8px">
-      <button class="btn" id="cp-submit">Create</button>
-      <button class="btn-outline" onclick="closeModal('modal-create-poll')">Cancel</button>
+      <button class="btn" id="cp-submit">Создать</button>
+      <button class="btn-outline" onclick="closeModal('modal-create-poll')">Отмена</button>
     </div>
     <div class="form-msg" id="cp-msg"></div>
   </div>
@@ -821,18 +968,18 @@ tbody td { padding: 10px 14px; font-size: .85rem; vertical-align: middle; }
 <!-- Assign Seat Modal -->
 <div class="modal-overlay" id="modal-assign-seat">
   <div class="modal">
-    <h3>Assign Guest to Table</h3>
+    <h3>Рассадить гостя</h3>
     <div class="form-group" style="margin-bottom:12px">
-      <label class="form-label">Guest</label>
+      <label class="form-label">Гость</label>
       <select class="form-select" id="as-guest"></select>
     </div>
     <div class="form-group" style="margin-bottom:14px">
-      <label class="form-label">Table name</label>
-      <input type="text" class="form-input" id="as-table" placeholder="e.g. Table 1">
+      <label class="form-label">Название стола</label>
+      <input type="text" class="form-input" id="as-table" placeholder="напр. Стол 1">
     </div>
     <div style="display:flex;gap:8px">
-      <button class="btn" id="as-submit">Assign</button>
-      <button class="btn-outline" onclick="closeModal('modal-assign-seat')">Cancel</button>
+      <button class="btn" id="as-submit">Рассадить</button>
+      <button class="btn-outline" onclick="closeModal('modal-assign-seat')">Отмена</button>
     </div>
     <div class="form-msg" id="as-msg"></div>
   </div>
@@ -841,30 +988,30 @@ tbody td { padding: 10px 14px; font-size: .85rem; vertical-align: middle; }
 <!-- Add Expense Modal -->
 <div class="modal-overlay" id="modal-add-expense">
   <div class="modal">
-    <h3>Add Expense</h3>
+    <h3>Добавить расход</h3>
     <div class="form-row">
       <div class="form-group">
-        <label class="form-label">Category *</label>
-        <input type="text" class="form-input" id="ae-category" placeholder="e.g. Venue, Catering">
+        <label class="form-label">Категория *</label>
+        <input type="text" class="form-input" id="ae-category" placeholder="напр. Площадка, Кейтеринг">
       </div>
       <div class="form-group">
-        <label class="form-label">Item *</label>
-        <input type="text" class="form-input" id="ae-item" placeholder="e.g. Deposit">
+        <label class="form-label">Статья *</label>
+        <input type="text" class="form-input" id="ae-item" placeholder="напр. Депозит">
       </div>
     </div>
     <div class="form-row">
       <div class="form-group">
-        <label class="form-label">Amount *</label>
+        <label class="form-label">Сумма *</label>
         <input type="number" class="form-input" id="ae-amount" placeholder="0">
       </div>
       <div class="form-group">
-        <label class="form-label">Note</label>
-        <input type="text" class="form-input" id="ae-note" placeholder="Optional note">
+        <label class="form-label">Заметка</label>
+        <input type="text" class="form-input" id="ae-note" placeholder="Необязательная заметка">
       </div>
     </div>
     <div style="display:flex;gap:8px;margin-top:8px">
-      <button class="btn" id="ae-submit">Add</button>
-      <button class="btn-outline" onclick="closeModal('modal-add-expense')">Cancel</button>
+      <button class="btn" id="ae-submit">Добавить</button>
+      <button class="btn-outline" onclick="closeModal('modal-add-expense')">Отмена</button>
     </div>
     <div class="form-msg" id="ae-msg"></div>
   </div>
@@ -873,30 +1020,30 @@ tbody td { padding: 10px 14px; font-size: .85rem; vertical-align: middle; }
 <!-- Add Vendor Modal -->
 <div class="modal-overlay" id="modal-add-vendor">
   <div class="modal">
-    <h3>Add Vendor</h3>
+    <h3>Добавить подрядчика</h3>
     <div class="form-row">
       <div class="form-group">
-        <label class="form-label">Role *</label>
-        <input type="text" class="form-input" id="av-role" placeholder="e.g. Photographer">
+        <label class="form-label">Роль *</label>
+        <input type="text" class="form-input" id="av-role" placeholder="напр. Фотограф">
       </div>
       <div class="form-group">
-        <label class="form-label">Name *</label>
-        <input type="text" class="form-input" id="av-name" placeholder="Full name">
+        <label class="form-label">Имя *</label>
+        <input type="text" class="form-input" id="av-name" placeholder="Полное имя">
       </div>
     </div>
     <div class="form-row">
       <div class="form-group">
-        <label class="form-label">Phone</label>
+        <label class="form-label">Телефон</label>
         <input type="text" class="form-input" id="av-phone" placeholder="+7 ...">
       </div>
       <div class="form-group">
-        <label class="form-label">Note</label>
-        <input type="text" class="form-input" id="av-note" placeholder="Optional note">
+        <label class="form-label">Заметка</label>
+        <input type="text" class="form-input" id="av-note" placeholder="Необязательная заметка">
       </div>
     </div>
     <div style="display:flex;gap:8px;margin-top:8px">
-      <button class="btn" id="av-submit">Add</button>
-      <button class="btn-outline" onclick="closeModal('modal-add-vendor')">Cancel</button>
+      <button class="btn" id="av-submit">Добавить</button>
+      <button class="btn-outline" onclick="closeModal('modal-add-vendor')">Отмена</button>
     </div>
     <div class="form-msg" id="av-msg"></div>
   </div>
@@ -1016,6 +1163,9 @@ function loadSection(section) {
     case 'budget': loadBudget(); break;
     case 'vendors': loadVendors(); break;
     case 'analytics': loadAnalytics(); break;
+    case 'checklist': loadAdminChecklist(); break;
+    case 'timeline': loadAdminTimeline(); break;
+    case 'reactions': loadAdminReactions(); break;
     case 'texts': loadTexts(); break;
   }
 }
@@ -1084,7 +1234,7 @@ async function loadAll() {
     loadDashboard();
     renderGuestTable();
   } catch(e) {
-    console.error('Failed to load:', e);
+    console.error('Ошибка загрузки:', e);
   }
 }
 
@@ -1100,11 +1250,11 @@ function loadDashboard() {
   var primary = document.getElementById('dash-stats-primary');
   primary.innerHTML = '';
   var cards = [
-    { label: 'Total', value: s.total, pct: '100%', cls: 'c-accent' },
-    { label: 'Accepted', value: s.accepted, pct: Math.round(s.accepted/total*100)+'%', cls: 'c-green' },
-    { label: 'Declined', value: s.declined, pct: Math.round(s.declined/total*100)+'%', cls: 'c-red' },
-    { label: 'Maybe', value: s.maybe, pct: Math.round(s.maybe/total*100)+'%', cls: 'c-yellow' },
-    { label: 'Pending', value: s.pending, pct: Math.round(s.pending/total*100)+'%', cls: 'c-blue' },
+    { label: 'Всего', value: s.total, pct: '100%', cls: 'c-accent' },
+    { label: 'Придут', value: s.accepted, pct: Math.round(s.accepted/total*100)+'%', cls: 'c-green' },
+    { label: 'Не придут', value: s.declined, pct: Math.round(s.declined/total*100)+'%', cls: 'c-red' },
+    { label: 'Думают', value: s.maybe, pct: Math.round(s.maybe/total*100)+'%', cls: 'c-yellow' },
+    { label: 'Ожидают', value: s.pending, pct: Math.round(s.pending/total*100)+'%', cls: 'c-blue' },
   ];
   cards.forEach(function(c) {
     var d = document.createElement('div');
@@ -1117,9 +1267,9 @@ function loadDashboard() {
   var secondary = document.getElementById('dash-stats-secondary');
   secondary.innerHTML = '';
   var cards2 = [
-    { label: 'Telegram bound', value: s.withTelegram, cls: 'c-purple' },
-    { label: 'VK bound', value: s.withVk, cls: 'c-orange' },
-    { label: 'With dietary info', value: s.withDietary, cls: 'c-gray' },
+    { label: 'Telegram', value: s.withTelegram, cls: 'c-purple' },
+    { label: 'VK', value: s.withVk, cls: 'c-orange' },
+    { label: 'С диетой', value: s.withDietary, cls: 'c-gray' },
   ];
   cards2.forEach(function(c) {
     var d = document.createElement('div');
@@ -1131,7 +1281,7 @@ function loadDashboard() {
   // Progress bar
   var responded = s.total - s.pending;
   var pct = s.total ? Math.round(responded / s.total * 100) : 0;
-  document.getElementById('dash-progress-label').textContent = 'Response rate: ' + pct + '% (' + responded + '/' + s.total + ')';
+  document.getElementById('dash-progress-label').textContent = 'Ответили: ' + pct + '% (' + responded + '/' + s.total + ')';
   document.getElementById('dash-progress-fill').style.width = pct + '%';
 
   // Recent activity
@@ -1142,16 +1292,16 @@ function loadDashboard() {
     .slice(0, 10);
 
   if (recent.length === 0) {
-    container.innerHTML = '<div class="no-data">No RSVP responses yet</div>';
+    container.innerHTML = '<div class="no-data">Ответов пока нет</div>';
     return;
   }
 
   var emojiMap = { accepted: '\u2705', declined: '\u274C', maybe: '\uD83E\uDD14', pending: '\u23F3' };
-  var labelMap = { accepted: 'accepted', declined: 'declined', maybe: 'maybe', pending: 'pending' };
+  var labelMap = { accepted: 'придёт', declined: 'не придёт', maybe: 'думает', pending: 'ожидает' };
   recent.forEach(function(g) {
     var item = document.createElement('div');
     item.className = 'activity-item';
-    var timeStr = g.responded_at ? new Date(g.responded_at).toLocaleDateString('en', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }) : '';
+    var timeStr = g.responded_at ? new Date(g.responded_at).toLocaleDateString('ru', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }) : '';
     item.innerHTML = '<span class="emoji">' + (emojiMap[g.status]||'') + '</span><span class="name">' + esc(g.name) + '</span> <span style="color:var(--text-muted);font-size:.82rem">' + (labelMap[g.status]||'') + '</span><span class="time">' + timeStr + '</span>';
     container.appendChild(item);
   });
@@ -1194,15 +1344,15 @@ function getFilteredGuests() {
 function renderGuestTable() {
   var container = document.getElementById('guest-table-container');
   var filtered = getFilteredGuests();
-  document.getElementById('guest-count').textContent = 'Showing: ' + filtered.length + ' / ' + allGuests.length;
+  document.getElementById('guest-count').textContent = 'Показано: ' + filtered.length + ' / ' + allGuests.length;
 
   if (filtered.length === 0) {
-    container.innerHTML = '<div class="no-data">No guests found</div>';
+    container.innerHTML = '<div class="no-data">Гости не найдены</div>';
     return;
   }
 
   var statusBadge = function(s) {
-    var map = { accepted: ['status-accepted','Accepted'], declined: ['status-declined','Declined'], maybe: ['status-maybe','Maybe'], pending: ['status-pending','Pending'] };
+    var map = { accepted: ['status-accepted','Придёт'], declined: ['status-declined','Не придёт'], maybe: ['status-maybe','Думает'], pending: ['status-pending','Ожидает'] };
     var e = map[s] || ['status-pending', s||'-'];
     return '<span class="status-badge ' + e[0] + '">' + e[1] + '</span>';
   };
@@ -1217,12 +1367,12 @@ function renderGuestTable() {
 
   var html = '<table><thead><tr>';
   var headers = [
-    { text: 'Name', key: 'name' },
-    { text: 'Status', key: 'status' },
-    { text: 'Platform', key: null },
-    { text: 'Dietary', key: null },
-    { text: 'Comment', key: null },
-    { text: 'Responded', key: 'responded_at' },
+    { text: 'Имя', key: 'name' },
+    { text: 'Статус', key: 'status' },
+    { text: 'Платформа', key: null },
+    { text: 'Диета', key: null },
+    { text: 'Комментарий', key: null },
+    { text: 'Ответил', key: 'responded_at' },
   ];
   headers.forEach(function(h) {
     var cls = (h.key && guestSortKey === h.key) ? ' class="sorted"' : '';
@@ -1295,23 +1445,23 @@ async function loadGuestDetail(gid) {
 
   var html = '<div class="guest-detail-grid">';
   html += '<div><div class="detail-label">ID</div><div class="detail-value" style="font-family:monospace;font-size:.8rem">' + esc(guest.id) + '</div></div>';
-  html += '<div><div class="detail-label">Status</div><div class="detail-value">' + esc(guest.status) + '</div></div>';
+  html += '<div><div class="detail-label">Статус</div><div class="detail-value">' + esc(guest.status) + '</div></div>';
   html += '<div><div class="detail-label">Telegram</div><div class="detail-value">' + (guest.telegram ? '@' + esc(guest.telegram) : '\u2014') + '</div></div>';
   html += '<div><div class="detail-label">VK</div><div class="detail-value">' + (guest.vk_id ? 'vk:' + esc(String(guest.vk_id)) : '\u2014') + '</div></div>';
-  html += '<div><div class="detail-label">Dietary</div><div class="detail-value">' + (guest.dietary || '\u2014') + '</div></div>';
-  html += '<div><div class="detail-label">Seating</div><div class="detail-value">' + (seating.table_name || 'Unassigned') + '</div></div>';
-  html += '<div><div class="detail-label">Tags</div><div class="detail-value">' + (tags.length ? tags.map(function(t) { return '<span class="tag-pill">' + esc(t) + '</span>'; }).join(' ') : '\u2014') + '</div></div>';
-  html += '<div><div class="detail-label">Notes</div><div class="detail-value">' + (notes.length ? notes.map(function(n) { return '<div style="font-size:.8rem;color:var(--text-muted);margin-bottom:4px">' + esc(n.note) + ' <span style="font-size:.7rem">(' + (n.created_at||'').slice(0,10) + ')</span></div>'; }).join('') : '\u2014') + '</div></div>';
+  html += '<div><div class="detail-label">Диета</div><div class="detail-value">' + (guest.dietary || '\u2014') + '</div></div>';
+  html += '<div><div class="detail-label">Стол</div><div class="detail-value">' + (seating.table_name || 'Не назначен') + '</div></div>';
+  html += '<div><div class="detail-label">Теги</div><div class="detail-value">' + (tags.length ? tags.map(function(t) { return '<span class="tag-pill">' + esc(t) + '</span>'; }).join(' ') : '\u2014') + '</div></div>';
+  html += '<div><div class="detail-label">Заметки</div><div class="detail-value">' + (notes.length ? notes.map(function(n) { return '<div style="font-size:.8rem;color:var(--text-muted);margin-bottom:4px">' + esc(n.note) + ' <span style="font-size:.7rem">(' + (n.created_at||'').slice(0,10) + ')</span></div>'; }).join('') : '\u2014') + '</div></div>';
   html += '</div>';
 
   html += '<div class="detail-actions">';
-  html += '<select class="form-select" style="font-size:.8rem;padding:5px 10px" id="gd-status-' + esc(gid) + '"><option value="pending"' + (guest.status==='pending'?' selected':'') + '>Pending</option><option value="accepted"' + (guest.status==='accepted'?' selected':'') + '>Accepted</option><option value="declined"' + (guest.status==='declined'?' selected':'') + '>Declined</option><option value="maybe"' + (guest.status==='maybe'?' selected':'') + '>Maybe</option></select>';
-  html += '<button class="btn btn-sm" data-action="set-status" data-gid="' + esc(gid) + '">Set Status</button>';
-  html += '<button class="btn-outline btn-sm" data-action="add-tag" data-gid="' + esc(gid) + '">+ Tag</button>';
-  html += '<button class="btn-outline btn-sm" data-action="add-note" data-gid="' + esc(gid) + '">+ Note</button>';
-  html += '<button class="btn-outline btn-sm" data-action="set-table" data-gid="' + esc(gid) + '">Set Table</button>';
-  html += '<button class="btn-outline btn-sm btn-danger" data-action="remove-guest" data-gid="' + esc(gid) + '">Remove</button>';
-  html += '<button class="btn-outline btn-sm btn-danger" data-action="unbind-guest" data-gid="' + esc(gid) + '">Unbind</button>';
+  html += '<select class="form-select" style="font-size:.8rem;padding:5px 10px" id="gd-status-' + esc(gid) + '"><option value="pending"' + (guest.status==='pending'?' selected':'') + '>Ожидает</option><option value="accepted"' + (guest.status==='accepted'?' selected':'') + '>Придёт</option><option value="declined"' + (guest.status==='declined'?' selected':'') + '>Не придёт</option><option value="maybe"' + (guest.status==='maybe'?' selected':'') + '>Думает</option></select>';
+  html += '<button class="btn btn-sm" data-action="set-status" data-gid="' + esc(gid) + '">Сохранить статус</button>';
+  html += '<button class="btn-outline btn-sm" data-action="add-tag" data-gid="' + esc(gid) + '">+ Тег</button>';
+  html += '<button class="btn-outline btn-sm" data-action="add-note" data-gid="' + esc(gid) + '">+ Заметка</button>';
+  html += '<button class="btn-outline btn-sm" data-action="set-table" data-gid="' + esc(gid) + '">Стол</button>';
+  html += '<button class="btn-outline btn-sm btn-danger" data-action="remove-guest" data-gid="' + esc(gid) + '">Удалить</button>';
+  html += '<button class="btn-outline btn-sm btn-danger" data-action="unbind-guest" data-gid="' + esc(gid) + '">Отвязать</button>';
   html += '</div>';
 
   el.innerHTML = html;
@@ -1343,28 +1493,28 @@ async function handleGuestAction(action, gid) {
         if (expandedGuestId === gid) loadGuestDetail(gid);
         break;
       case 'add-tag':
-        var tag = prompt('Enter tag:');
+        var tag = prompt('Введите тег:');
         if (tag && tag.trim()) {
           await postJson('/api/tags/' + gid, { tag: tag.trim() });
           loadGuestDetail(gid);
         }
         break;
       case 'add-note':
-        var note = prompt('Enter note:');
+        var note = prompt('Введите заметку:');
         if (note && note.trim()) {
           await postJson('/api/notes/' + gid, { note: note.trim() });
           loadGuestDetail(gid);
         }
         break;
       case 'set-table':
-        var table = prompt('Enter table name:');
+        var table = prompt('Введите название стола:');
         if (table && table.trim()) {
           await postJson('/api/admin/seating', { guest_id: gid, table_name: table.trim() });
           loadGuestDetail(gid);
         }
         break;
       case 'remove-guest':
-        if (confirm('Remove this guest? This cannot be undone.')) {
+        if (confirm('Удалить этого гостя? Действие необратимо.')) {
           await api('/api/admin/guest/' + gid, { method: 'DELETE' });
           expandedGuestId = null;
           allGuests = await api('/api/admin/guests');
@@ -1373,17 +1523,13 @@ async function handleGuestAction(action, gid) {
         }
         break;
       case 'unbind-guest':
-        if (confirm('Unbind this guest from all platforms?')) {
-          // Use tags endpoint as proxy - unbind via dedicated endpoint if exists
-          // Actually we need to hit the service directly - let's use the existing unbind logic
-          // For now use the status endpoint trick - actually we need a dedicated endpoint
-          // Just reload after the action
-          alert('Unbind functionality requires a dedicated API endpoint. Please use the bot commands for now.');
+        if (confirm('Отвязать гостя от всех платформ?')) {
+          alert('Для отвязки используйте команды бота.');
         }
         break;
     }
   } catch(e) {
-    alert('Error: ' + e.message);
+    alert('Ошибка: ' + e.message);
   }
 }
 
@@ -1397,10 +1543,10 @@ document.getElementById('btn-add-guest').addEventListener('click', function() {
 document.getElementById('ag-submit').addEventListener('click', async function() {
   var name = document.getElementById('ag-name').value.trim();
   var text = document.getElementById('ag-text').value.trim();
-  if (!name) { showMsg('ag-msg', 'Name is required', 'error'); return; }
+  if (!name) { showMsg('ag-msg', 'Введите имя', 'error'); return; }
   try {
     var result = await postJson('/api/admin/addguest', { name: name, personal_text: text || null });
-    showMsg('ag-msg', 'Guest created: ' + result.name + ' (ID: ' + result.id + ')', 'success');
+    showMsg('ag-msg', 'Гость добавлен: ' + result.name + ' (ID: ' + result.id + ')', 'success');
     document.getElementById('ag-name').value = '';
     document.getElementById('ag-text').value = '';
     allGuests = await api('/api/admin/guests');
@@ -1420,7 +1566,7 @@ document.getElementById('btn-import-guests').addEventListener('click', function(
 
 document.getElementById('import-submit').addEventListener('click', async function() {
   var lines = document.getElementById('import-text').value.split('\n').filter(function(l) { return l.trim(); });
-  if (lines.length === 0) { showMsg('import-msg', 'No guests to import', 'error'); return; }
+  if (lines.length === 0) { showMsg('import-msg', 'Нет гостей для импорта', 'error'); return; }
   var count = 0;
   for (var i = 0; i < lines.length; i++) {
     var parts = lines[i].split('|').map(function(p) { return p.trim(); });
@@ -1433,7 +1579,7 @@ document.getElementById('import-submit').addEventListener('click', async functio
       } catch(e) { /* skip */ }
     }
   }
-  showMsg('import-msg', 'Imported ' + count + ' guests', 'success');
+  showMsg('import-msg', 'Импортировано: ' + count + ' гостей', 'success');
   allGuests = await api('/api/admin/guests');
   allStats = await api('/api/admin/stats');
   renderGuestTable();
@@ -1442,7 +1588,7 @@ document.getElementById('import-submit').addEventListener('click', async functio
 
 // Export CSV
 document.getElementById('btn-export-csv').addEventListener('click', function() {
-  var csv = 'Name,Status,Telegram,VK,Dietary,Comment,Responded\n';
+  var csv = 'Имя,Статус,Telegram,VK,Диета,Комментарий,Ответил\n';
   allGuests.forEach(function(g) {
     csv += '"' + (g.name||'').replace(/"/g,'""') + '","' + (g.status||'') + '","' + (g.telegram||'') + '","' + (g.vk_id||'') + '","' + (g.dietary||'').replace(/"/g,'""') + '","' + (g.comment||'').replace(/"/g,'""') + '","' + (g.responded_at||'') + '"\n';
   });
@@ -1462,7 +1608,7 @@ async function loadPolls() {
   try {
     allPolls = await api('/api/admin/polls');
   } catch(e) {
-    container.innerHTML = '<div class="no-data">Failed to load polls</div>';
+    container.innerHTML = '<div class="no-data">Не удалось загрузить опросы</div>';
     return;
   }
   renderPolls();
@@ -1471,7 +1617,7 @@ async function loadPolls() {
 function renderPolls() {
   var container = document.getElementById('polls-list');
   if (allPolls.length === 0) {
-    container.innerHTML = '<div class="no-data">No polls yet</div>';
+    container.innerHTML = '<div class="no-data">Опросов пока нет</div>';
     return;
   }
   var html = '';
@@ -1482,7 +1628,7 @@ function renderPolls() {
 
     html += '<div class="card poll-card">';
     html += '<div class="poll-question">' + esc(p.question) + '</div>';
-    html += '<div class="poll-meta">' + (p.active ? '<span style="color:var(--green)">Active</span>' : '<span style="color:var(--text-muted)">Closed</span>') + ' &middot; ' + (p.multiple ? 'Multiple choice' : 'Single choice') + ' &middot; ' + totalVotes + ' vote' + (totalVotes !== 1 ? 's' : '') + '</div>';
+    html += '<div class="poll-meta">' + (p.active ? '<span style="color:var(--green)">Активен</span>' : '<span style="color:var(--text-muted)">Закрыт</span>') + ' &middot; ' + (p.multiple ? 'Множественный выбор' : 'Один вариант') + ' &middot; ' + totalVotes + ' голос' + (totalVotes === 1 ? '' : totalVotes < 5 ? 'а' : 'ов') + '</div>';
 
     p.options.forEach(function(opt) {
       var count = results[opt] || 0;
@@ -1495,7 +1641,7 @@ function renderPolls() {
     });
 
     if (p.active) {
-      html += '<button class="btn-outline btn-sm btn-danger" style="margin-top:10px" data-close-poll="' + p.id + '">Close Poll</button>';
+      html += '<button class="btn-outline btn-sm btn-danger" style="margin-top:10px" data-close-poll="' + p.id + '">Закрыть опрос</button>';
     }
     html += '</div>';
   });
@@ -1504,7 +1650,7 @@ function renderPolls() {
   container.querySelectorAll('button[data-close-poll]').forEach(function(btn) {
     btn.addEventListener('click', async function() {
       var id = btn.getAttribute('data-close-poll');
-      if (confirm('Close this poll?')) {
+      if (confirm('Закрыть этот опрос?')) {
         await postJson('/api/admin/closepoll/' + id, {});
         loadPolls();
       }
@@ -1529,7 +1675,7 @@ function addPollOptionInput(container) {
   var input = document.createElement('input');
   input.type = 'text';
   input.className = 'form-input';
-  input.placeholder = 'Option ' + (container.children.length + 1);
+  input.placeholder = 'Вариант ' + (container.children.length + 1);
   input.style.flex = '1';
   var removeBtn = document.createElement('button');
   removeBtn.className = 'btn-outline btn-sm btn-danger';
@@ -1555,11 +1701,11 @@ document.getElementById('cp-submit').addEventListener('click', async function() 
   optInputs.forEach(function(inp) {
     if (inp.value.trim()) options.push(inp.value.trim());
   });
-  if (!question) { showMsg('cp-msg', 'Question is required', 'error'); return; }
-  if (options.length < 2) { showMsg('cp-msg', 'At least 2 options required', 'error'); return; }
+  if (!question) { showMsg('cp-msg', 'Введите вопрос', 'error'); return; }
+  if (options.length < 2) { showMsg('cp-msg', 'Нужно минимум 2 варианта', 'error'); return; }
   try {
     await postJson('/api/admin/addpoll', { question: question, options: options, multiple: multiple });
-    showMsg('cp-msg', 'Poll created!', 'success');
+    showMsg('cp-msg', 'Опрос создан!', 'success');
     setTimeout(function() { closeModal('modal-create-poll'); loadPolls(); }, 1000);
   } catch(e) {
     showMsg('cp-msg', e.message, 'error');
@@ -1600,7 +1746,7 @@ function renderSeating() {
   var tableNames = Object.keys(tables).sort();
 
   if (tableNames.length === 0) {
-    tablesEl.innerHTML = '<div class="no-data">No tables assigned yet</div>';
+    tablesEl.innerHTML = '<div class="no-data">Столы ещё не назначены</div>';
   } else {
     var html = '';
     tableNames.forEach(function(tn) {
@@ -1617,7 +1763,7 @@ function renderSeating() {
   // Unassigned guests
   var unassigned = allGuests.filter(function(g) { return !assignedIds[g.id]; });
   if (unassigned.length === 0) {
-    unassignedEl.innerHTML = '<div style="color:var(--text-muted);font-size:.85rem">All guests are assigned to tables</div>';
+    unassignedEl.innerHTML = '<div style="color:var(--text-muted);font-size:.85rem">Все гости распределены по столам</div>';
   } else {
     var html2 = '<div style="display:flex;flex-wrap:wrap;gap:6px">';
     unassigned.forEach(function(g) {
@@ -1644,10 +1790,10 @@ document.getElementById('btn-assign-seat').addEventListener('click', function() 
 document.getElementById('as-submit').addEventListener('click', async function() {
   var gid = document.getElementById('as-guest').value;
   var table = document.getElementById('as-table').value.trim();
-  if (!gid || !table) { showMsg('as-msg', 'Both fields are required', 'error'); return; }
+  if (!gid || !table) { showMsg('as-msg', 'Оба поля обязательны', 'error'); return; }
   try {
     await postJson('/api/admin/seating', { guest_id: gid, table_name: table });
-    showMsg('as-msg', 'Assigned!', 'success');
+    showMsg('as-msg', 'Рассажено!', 'success');
     setTimeout(function() { closeModal('modal-assign-seat'); loadSeating(); }, 1000);
   } catch(e) {
     showMsg('as-msg', e.message, 'error');
@@ -1681,9 +1827,9 @@ function renderBudget() {
 
   summaryEl.innerHTML = '';
   var summaryCards = [
-    { label: 'Total Budget', value: formatMoney(totalAmount), cls: 'c-accent' },
-    { label: 'Paid', value: formatMoney(totalPaid), cls: 'c-green' },
-    { label: 'Remaining', value: formatMoney(totalAmount - totalPaid), cls: 'c-yellow' },
+    { label: 'Всего', value: formatMoney(totalAmount), cls: 'c-accent' },
+    { label: 'Оплачено', value: formatMoney(totalPaid), cls: 'c-green' },
+    { label: 'Осталось', value: formatMoney(totalAmount - totalPaid), cls: 'c-yellow' },
   ];
   summaryCards.forEach(function(c) {
     var d = document.createElement('div');
@@ -1700,7 +1846,7 @@ function renderBudget() {
   });
 
   if (allBudget.length === 0) {
-    listEl.innerHTML = '<div class="no-data">No expenses yet</div>';
+    listEl.innerHTML = '<div class="no-data">Расходов пока нет</div>';
     return;
   }
 
@@ -1720,9 +1866,9 @@ function renderBudget() {
       html += '<span class="item-name">' + esc(b.item) + (b.note ? ' <span style="color:var(--text-muted);font-size:.75rem">(' + esc(b.note) + ')</span>' : '') + '</span>';
       html += '<span class="item-amount">' + formatMoney(b.amount) + '</span>';
       if (!b.paid) {
-        html += '<button class="btn btn-sm btn-success" data-pay-budget="' + b.id + '" style="font-size:.72rem;padding:3px 8px">Paid</button>';
+        html += '<button class="btn btn-sm btn-success" data-pay-budget="' + b.id + '" style="font-size:.72rem;padding:3px 8px">Оплачено</button>';
       } else {
-        html += '<span class="item-paid" style="color:var(--green)">Paid</span>';
+        html += '<span class="item-paid" style="color:var(--green)">Оплачено</span>';
       }
       html += '<button class="btn-outline btn-sm btn-danger" data-del-budget="' + b.id + '" style="font-size:.72rem;padding:3px 8px">\u00D7</button>';
       html += '</div>';
@@ -1741,7 +1887,7 @@ function renderBudget() {
   });
   listEl.querySelectorAll('button[data-del-budget]').forEach(function(btn) {
     btn.addEventListener('click', async function() {
-      if (confirm('Delete this expense?')) {
+      if (confirm('Удалить этот расход?')) {
         await api('/api/admin/budget/' + btn.getAttribute('data-del-budget'), { method: 'DELETE' });
         loadBudget();
       }
@@ -1766,10 +1912,10 @@ document.getElementById('ae-submit').addEventListener('click', async function() 
   var item = document.getElementById('ae-item').value.trim();
   var amount = Number(document.getElementById('ae-amount').value);
   var note = document.getElementById('ae-note').value.trim();
-  if (!cat || !item || !amount) { showMsg('ae-msg', 'Category, item, and amount are required', 'error'); return; }
+  if (!cat || !item || !amount) { showMsg('ae-msg', 'Категория, статья и сумма обязательны', 'error'); return; }
   try {
     await postJson('/api/admin/budget', { category: cat, item: item, amount: amount, note: note || null });
-    showMsg('ae-msg', 'Expense added!', 'success');
+    showMsg('ae-msg', 'Расход добавлен!', 'success');
     setTimeout(function() { closeModal('modal-add-expense'); loadBudget(); }, 1000);
   } catch(e) {
     showMsg('ae-msg', e.message, 'error');
@@ -1793,7 +1939,7 @@ async function loadVendors() {
 function renderVendors() {
   var container = document.getElementById('vendor-list');
   if (allVendors.length === 0) {
-    container.innerHTML = '<div class="no-data" style="grid-column:1/-1">No vendors yet</div>';
+    container.innerHTML = '<div class="no-data" style="grid-column:1/-1">Подрядчиков пока нет</div>';
     return;
   }
 
@@ -1802,16 +1948,16 @@ function renderVendors() {
     html += '<div class="vendor-card">';
     html += '<div class="vendor-role">' + esc(v.role) + '</div>';
     html += '<div class="vendor-name">' + esc(v.name) + '</div>';
-    if (v.phone) html += '<div class="vendor-info">Phone: ' + esc(v.phone) + '</div>';
+    if (v.phone) html += '<div class="vendor-info"><a href="tel:' + esc(v.phone.replace(/\s/g,'')) + '" style="color:var(--accent);text-decoration:none;font-weight:600">' + esc(v.phone) + '</a></div>';
     if (v.note) html += '<div class="vendor-info">' + esc(v.note) + '</div>';
-    html += '<button class="btn-outline btn-sm btn-danger" data-del-vendor="' + v.id + '" style="margin-top:10px">Delete</button>';
+    html += '<button class="btn-outline btn-sm btn-danger" data-del-vendor="' + v.id + '" style="margin-top:10px">Удалить</button>';
     html += '</div>';
   });
   container.innerHTML = html;
 
   container.querySelectorAll('button[data-del-vendor]').forEach(function(btn) {
     btn.addEventListener('click', async function() {
-      if (confirm('Delete this vendor?')) {
+      if (confirm('Удалить этого подрядчика?')) {
         await api('/api/admin/vendors/' + btn.getAttribute('data-del-vendor'), { method: 'DELETE' });
         loadVendors();
       }
@@ -1832,10 +1978,10 @@ document.getElementById('av-submit').addEventListener('click', async function() 
   var name = document.getElementById('av-name').value.trim();
   var phone = document.getElementById('av-phone').value.trim();
   var note = document.getElementById('av-note').value.trim();
-  if (!role || !name) { showMsg('av-msg', 'Role and name are required', 'error'); return; }
+  if (!role || !name) { showMsg('av-msg', 'Роль и имя обязательны', 'error'); return; }
   try {
     await postJson('/api/admin/vendors', { role: role, name: name, phone: phone || null, note: note || null });
-    showMsg('av-msg', 'Vendor added!', 'success');
+    showMsg('av-msg', 'Подрядчик добавлен!', 'success');
     setTimeout(function() { closeModal('modal-add-vendor'); loadVendors(); }, 1000);
   } catch(e) {
     showMsg('av-msg', e.message, 'error');
@@ -1847,17 +1993,17 @@ document.getElementById('av-submit').addEventListener('click', async function() 
 // ═══════════════════════════════════════════
 document.getElementById('broadcast-text').addEventListener('input', function() {
   var text = this.value;
-  document.getElementById('broadcast-preview').textContent = text || 'Type a message above...';
+  document.getElementById('broadcast-preview').textContent = text || 'Введите сообщение выше...';
 });
 
 document.getElementById('btn-send-broadcast').addEventListener('click', async function() {
   var text = document.getElementById('broadcast-text').value.trim();
   var platform = document.getElementById('broadcast-platform').value;
-  if (!text) { showMsg('broadcast-msg', 'Message is required', 'error'); return; }
-  if (!confirm('Send this broadcast to ' + platform + ' recipients?')) return;
+  if (!text) { showMsg('broadcast-msg', 'Введите сообщение', 'error'); return; }
+  if (!confirm('Отправить рассылку для платформы: ' + platform + '?')) return;
   try {
     var result = await postJson('/api/admin/broadcast', { text: text, platform: platform === 'all' ? null : platform });
-    showMsg('broadcast-msg', 'Broadcast queued for ' + result.targets + ' recipients', 'success');
+    showMsg('broadcast-msg', 'Рассылка поставлена в очередь для ' + result.targets + ' получателей', 'success');
   } catch(e) {
     showMsg('broadcast-msg', e.message, 'error');
   }
@@ -1885,7 +2031,7 @@ function renderTimeline() {
 
   var dates = Object.keys(dateCounts).sort();
   if (dates.length === 0) {
-    container.innerHTML = '<div class="no-data">No responses yet</div>';
+    container.innerHTML = '<div class="no-data">Ответов пока нет</div>';
     return;
   }
 
@@ -1916,7 +2062,7 @@ function renderPlatformDist() {
   var items = [
     { label: 'Telegram', count: tg, color: 'var(--blue)' },
     { label: 'VK', count: vk, color: '#4a76a8' },
-    { label: 'Web only', count: web, color: 'var(--text-muted)' },
+    { label: 'Только Web', count: web, color: 'var(--text-muted)' },
   ];
 
   var maxCount = Math.max.apply(null, items.map(function(i) { return i.count; })) || 1;
@@ -1944,7 +2090,7 @@ function renderDietaryBreakdown() {
 
   var diets = Object.keys(dietMap).sort(function(a, b) { return dietMap[b] - dietMap[a]; });
   if (diets.length === 0) {
-    container.innerHTML = '<div class="no-data">No dietary information yet</div>';
+    container.innerHTML = '<div class="no-data">Нет данных о диете</div>';
     return;
   }
 
@@ -2023,6 +2169,255 @@ function showTextsToast() {
   toast.style.display = 'block';
   setTimeout(function() { toast.style.display = 'none'; }, 2500);
 }
+
+// ═══════════════════════════════════════════
+// CHECKLIST (ADMIN)
+// ═══════════════════════════════════════════
+var adminChecklistTab = 'registration';
+
+function loadAdminChecklist() {
+  // Tab switching
+  document.getElementById('cl-tab-registration').classList.toggle('active', adminChecklistTab === 'registration');
+  document.getElementById('cl-tab-wedding').classList.toggle('active', adminChecklistTab === 'wedding');
+  document.getElementById('cl-progress-reg').style.display = adminChecklistTab === 'registration' ? '' : 'none';
+  document.getElementById('cl-progress-wed').style.display = adminChecklistTab === 'wedding' ? '' : 'none';
+  document.getElementById('cl-content-reg').style.display = adminChecklistTab === 'registration' ? '' : 'none';
+  document.getElementById('cl-content-wed').style.display = adminChecklistTab === 'wedding' ? '' : 'none';
+
+  loadAdminChecklistTab('registration');
+  loadAdminChecklistTab('wedding');
+}
+
+document.getElementById('cl-tab-registration').addEventListener('click', function() {
+  adminChecklistTab = 'registration';
+  loadAdminChecklist();
+});
+document.getElementById('cl-tab-wedding').addEventListener('click', function() {
+  adminChecklistTab = 'wedding';
+  loadAdminChecklist();
+});
+
+document.getElementById('btn-add-cl-item').addEventListener('click', function() {
+  var text = prompt('Введите текст нового пункта:');
+  if (!text || !text.trim()) return;
+  postJson('/api/checklist/add', { tab: adminChecklistTab, text: text.trim() })
+    .then(function() { loadAdminChecklistTab(adminChecklistTab); })
+    .catch(function(e) { alert('Ошибка: ' + e.message); });
+});
+
+async function loadAdminChecklistTab(tab) {
+  var progEl = document.getElementById(tab === 'registration' ? 'cl-progress-reg' : 'cl-progress-wed');
+  var contentEl = document.getElementById(tab === 'registration' ? 'cl-content-reg' : 'cl-content-wed');
+  try {
+    var res = await fetch('/api/checklist/' + tab);
+    if (!res.ok) throw new Error('err');
+    var data = await res.json();
+    renderAdminChecklistTab(progEl, contentEl, data, tab);
+  } catch(e) {
+    contentEl.innerHTML = '<div class="no-data">Чеклист недоступен</div>';
+    progEl.innerHTML = '';
+  }
+}
+
+function renderAdminChecklistTab(progEl, contentEl, data, tab) {
+  var progress = data.progress || { done: 0, total: 0 };
+  var groups = data.groups || {};
+  var pct = progress.total > 0 ? Math.round((progress.done / progress.total) * 100) : 0;
+
+  progEl.innerHTML = '<div class="cl-progress-card">' +
+    '<div class="cl-progress-header"><span>Прогресс</span><span>' + progress.done + ' / ' + progress.total + '</span></div>' +
+    '<div class="cl-prog-bar-wrap"><div class="cl-prog-bar-fill" style="width:' + pct + '%"></div></div>' +
+    '</div>';
+
+  var html = '';
+  Object.keys(groups).forEach(function(groupName) {
+    var items = groups[groupName] || [];
+    html += '<div class="cl-group-title">' + esc(groupName) + '</div>';
+    html += '<div class="cl-items-list">';
+    items.forEach(function(item) {
+      html += '<div class="cl-item' + (item.done ? ' done' : '') + '" data-cl-id="' + esc(String(item.id)) + '" data-cl-done="' + (item.done ? '1' : '0') + '">';
+      html += '<div class="cl-check-circle"><span class="cl-check-tick">✓</span></div>';
+      html += '<div class="cl-item-text">' + esc(item.text || '') + '</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+  });
+  contentEl.innerHTML = html || '<div class="no-data">Нет пунктов</div>';
+
+  contentEl.querySelectorAll('.cl-item').forEach(function(row) {
+    row.addEventListener('click', function() {
+      var id = row.getAttribute('data-cl-id');
+      var isDone = row.getAttribute('data-cl-done') === '1';
+      var action = isDone ? 'uncheck' : 'check';
+      fetch('/api/checklist/' + id + '/' + action, { method: 'POST' })
+        .then(function() { loadAdminChecklistTab(tab); })
+        .catch(function() {});
+    });
+  });
+}
+
+// ═══════════════════════════════════════════
+// TIMELINE (ADMIN)
+// ═══════════════════════════════════════════
+var ADMIN_TIMELINE_DATA = [
+  { time: '15:00', h: 15, m: 0, title: 'Фуршет',        desc: 'Welcome-зона, встреча гостей' },
+  { time: '16:00', h: 16, m: 0, title: 'Церемония',      desc: 'Главный зал' },
+  { time: '17:00', h: 17, m: 0, title: 'Банкет',         desc: 'Рассадка по столам, начало ужина' },
+  { time: '20:00', h: 20, m: 0, title: 'Первый танец',   desc: 'Молодожёны открывают танцпол' },
+  { time: '23:00', h: 23, m: 0, title: 'Финал вечера',   desc: 'Прощание с гостями' },
+];
+
+function loadAdminTimeline() {
+  fetch('/api/config').then(function(r) { return r.json(); }).then(function(config) {
+    // Try to load timeline from config if available
+    if (config['timeline.events']) {
+      try { ADMIN_TIMELINE_DATA = JSON.parse(config['timeline.events']); } catch(_) {}
+    }
+    renderAdminTimeline();
+  }).catch(function() {
+    renderAdminTimeline();
+  });
+}
+
+function renderAdminTimeline() {
+  var wrap = document.getElementById('admin-timeline-wrap');
+  var now = new Date();
+  var nowMins = now.getHours() * 60 + now.getMinutes();
+  var html = '';
+
+  ADMIN_TIMELINE_DATA.forEach(function(ev, idx) {
+    var evMins = ev.h * 60 + ev.m;
+    var nextMins = idx + 1 < ADMIN_TIMELINE_DATA.length ? (ADMIN_TIMELINE_DATA[idx+1].h * 60 + ADMIN_TIMELINE_DATA[idx+1].m) : evMins + 120;
+    var cls = 'atl-item';
+    var nowBadge = '';
+    if (nowMins >= evMins && nowMins < nextMins) { cls += ' active'; nowBadge = '<span class="atl-now-badge">сейчас</span>'; }
+    else if (nowMins >= nextMins) { cls += ' past'; }
+
+    html += '<div class="' + cls + '">';
+    html += '<div class="atl-dot"></div>';
+    html += '<div class="atl-header">';
+    html += '<div class="atl-time">' + esc(ev.time) + nowBadge + '</div>';
+    html += '<button class="atl-edit-btn" data-atl-idx="' + idx + '">Изменить</button>';
+    html += '</div>';
+    html += '<div class="atl-title">' + esc(ev.title) + '</div>';
+    html += '<div class="atl-desc">' + esc(ev.desc) + '</div>';
+    html += '<div class="atl-edit-form" id="atl-form-' + idx + '" style="display:none">';
+    html += '<input type="text" placeholder="Время (напр. 15:00)" value="' + esc(ev.time) + '" id="atl-time-' + idx + '">';
+    html += '<input type="text" placeholder="Название события" value="' + esc(ev.title) + '" id="atl-title-' + idx + '">';
+    html += '<textarea rows="2" placeholder="Описание" id="atl-desc-' + idx + '">' + esc(ev.desc) + '</textarea>';
+    html += '<div class="atl-edit-actions">';
+    html += '<button class="btn btn-sm" data-atl-save="' + idx + '">Сохранить</button>';
+    html += '<button class="btn-outline btn-sm" data-atl-cancel="' + idx + '">Отмена</button>';
+    html += '</div></div>';
+    html += '</div>';
+  });
+  wrap.innerHTML = html;
+
+  wrap.querySelectorAll('.atl-edit-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var idx = btn.getAttribute('data-atl-idx');
+      var form = document.getElementById('atl-form-' + idx);
+      form.style.display = form.style.display === 'none' ? '' : 'none';
+    });
+  });
+
+  wrap.querySelectorAll('button[data-atl-cancel]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var idx = btn.getAttribute('data-atl-cancel');
+      document.getElementById('atl-form-' + idx).style.display = 'none';
+    });
+  });
+
+  wrap.querySelectorAll('button[data-atl-save]').forEach(function(btn) {
+    btn.addEventListener('click', async function() {
+      var idx = parseInt(btn.getAttribute('data-atl-save'));
+      var time = document.getElementById('atl-time-' + idx).value.trim();
+      var title = document.getElementById('atl-title-' + idx).value.trim();
+      var desc = document.getElementById('atl-desc-' + idx).value.trim();
+      if (!time || !title) { alert('Время и название обязательны'); return; }
+
+      var parts = time.split(':');
+      ADMIN_TIMELINE_DATA[idx] = { time: time, h: parseInt(parts[0]||0), m: parseInt(parts[1]||0), title: title, desc: desc };
+
+      try {
+        await fetch('/api/config/batch', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ items: [{ key: 'timeline.events', value: JSON.stringify(ADMIN_TIMELINE_DATA) }] })
+        });
+      } catch(_) {}
+      renderAdminTimeline();
+    });
+  });
+
+  document.getElementById('btn-add-tl-event').onclick = function() {
+    var time = prompt('Время (напр. 14:30):');
+    if (!time) return;
+    var title = prompt('Название события:');
+    if (!title) return;
+    var desc = prompt('Описание (необязательно):') || '';
+    var parts = time.split(':');
+    ADMIN_TIMELINE_DATA.push({ time: time, h: parseInt(parts[0]||0), m: parseInt(parts[1]||0), title: title, desc: desc });
+    ADMIN_TIMELINE_DATA.sort(function(a,b){ return (a.h*60+a.m) - (b.h*60+b.m); });
+    fetch('/api/config/batch', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: [{ key: 'timeline.events', value: JSON.stringify(ADMIN_TIMELINE_DATA) }] })
+    }).catch(function(){});
+    renderAdminTimeline();
+  };
+}
+
+// ═══════════════════════════════════════════
+// REACTIONS (ADMIN)
+// ═══════════════════════════════════════════
+var adminReactionsInterval = null;
+
+function loadAdminReactions() {
+  fetchAdminReactions();
+  if (!adminReactionsInterval) {
+    adminReactionsInterval = setInterval(fetchAdminReactions, 10000);
+  }
+}
+
+async function fetchAdminReactions() {
+  var grid = document.getElementById('admin-reactions-grid');
+  try {
+    var res = await fetch('/api/reactions');
+    if (!res.ok) throw new Error('err');
+    var data = await res.json();
+    renderAdminReactions(grid, data);
+    var now = new Date();
+    document.getElementById('admin-reactions-label').textContent = 'Обновлено в ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0') + ':' + String(now.getSeconds()).padStart(2,'0');
+  } catch(e) {
+    grid.innerHTML = '<div class="reactions-empty">Реакций пока нет</div>';
+  }
+}
+
+function renderAdminReactions(grid, data) {
+  grid.innerHTML = '';
+  var keys = Object.keys(data);
+  if (keys.length === 0) {
+    grid.innerHTML = '<div class="reactions-empty">Реакций пока нет</div>';
+    return;
+  }
+  keys.sort(function(a, b) { return (data[b]||0) - (data[a]||0); });
+  keys.forEach(function(emoji) {
+    var card = document.createElement('div');
+    card.className = 'reaction-card';
+    card.innerHTML = '<div class="reaction-emoji">' + emoji + '</div><div class="reaction-count">' + String(data[emoji]||0) + '</div>';
+    grid.appendChild(card);
+  });
+}
+
+document.getElementById('btn-reset-reactions').addEventListener('click', async function() {
+  if (!confirm('Сбросить все реакции? Действие необратимо.')) return;
+  try {
+    await fetch('/api/reactions/reset', { method: 'POST' });
+    fetchAdminReactions();
+  } catch(e) {
+    alert('Ошибка: ' + e.message);
+  }
+});
 
 // ═══════════════════════════════════════════
 // UTILS
