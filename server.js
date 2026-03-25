@@ -96,14 +96,28 @@ app.use((err, req, res, next) => {
 
 app.listen(PORT, '0.0.0.0', async () => {
   logger.info('Server started', { port: PORT });
-  try {
-    await tgBot.telegram.setWebhook(`${SITE_URL}/webhook/telegram/${WEBHOOK_SECRET}`);
-    const me = await tgBot.telegram.getMe();
-    logger.info('Telegram bot connected', { username: me.username });
-  } catch (e) {
-    logger.warn('Webhook setup failed', { error: e.message });
-    logger.info('Starting in polling mode');
+
+  const useWebhook = SITE_URL.startsWith('https://');
+
+  if (useWebhook) {
+    try {
+      const webhookUrl = `${SITE_URL}/webhook/telegram/${WEBHOOK_SECRET}`;
+      await tgBot.telegram.setWebhook(webhookUrl);
+      const me = await tgBot.telegram.getMe();
+      logger.info('Telegram bot connected via webhook', { username: me.username, webhook: webhookUrl });
+    } catch (e) {
+      logger.warn('Webhook setup failed, falling back to polling', { error: e.message });
+      await tgBot.telegram.deleteWebhook().catch(() => {});
+      tgBot.launch();
+      const me = await tgBot.telegram.getMe();
+      logger.info('Telegram bot connected via polling', { username: me.username });
+    }
+  } else {
+    // HTTP only — use polling
+    await tgBot.telegram.deleteWebhook().catch(() => {});
     tgBot.launch();
+    const me = await tgBot.telegram.getMe();
+    logger.info('Telegram bot connected via polling', { username: me.username });
   }
 });
 
