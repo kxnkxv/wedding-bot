@@ -198,12 +198,19 @@ function createRoutes({ guestService, pollService, adminService, checklistServic
     res.json(questions.map(q => ({ ...q, options: JSON.parse(q.options) })));
   });
   router.post('/api/quiz/:qId/answer', express.json(), auth, (req, res) => {
-    const { guest_id, selected } = req.body;
-    const q = db_raw().prepare('SELECT * FROM quiz_questions WHERE id = ?').get(Number(req.params.qId));
-    if (!q) return res.status(404).json({ error: 'Question not found' });
-    const isCorrect = selected === q.correct ? 1 : 0;
-    db_raw().prepare('INSERT OR REPLACE INTO quiz_answers (question_id, guest_id, selected, correct, answered_at) VALUES (?, ?, ?, ?, datetime("now"))').run(q.id, guest_id, selected, isCorrect);
-    res.json({ correct: isCorrect, correctAnswer: q.correct });
+    try {
+      const { guest_id, selected } = req.body;
+      if (guest_id === undefined || selected === undefined) return res.status(400).json({ error: 'guest_id and selected required' });
+      const q = db_raw().prepare('SELECT * FROM quiz_questions WHERE id = ?').get(Number(req.params.qId));
+      if (!q) return res.status(404).json({ error: 'Question not found' });
+      const isCorrect = (selected === q.correct) ? 1 : 0;
+      db_raw().prepare(`INSERT INTO quiz_answers (question_id, guest_id, selected, correct, answered_at) VALUES (?, ?, ?, ?, datetime('now'))
+        ON CONFLICT(question_id, guest_id) DO UPDATE SET selected = excluded.selected, correct = excluded.correct, answered_at = excluded.answered_at`
+      ).run(q.id, guest_id, selected, isCorrect);
+      res.json({ correct: isCorrect, correctAnswer: q.correct });
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+    }
   });
   router.get('/api/quiz/scores', (req, res) => {
     const scores = db_raw().prepare(`
