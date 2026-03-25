@@ -63,6 +63,7 @@ if (process.env.VK_TOKEN) {
 
 // Express
 const app = express();
+app.set('trust proxy', 1); // Behind bothost.ru reverse proxy
 app.use(compression());
 
 // Security headers
