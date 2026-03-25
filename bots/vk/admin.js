@@ -1,6 +1,17 @@
 module.exports = function registerAdminCommands(vk, ctx) {
   const { siteUrl, guestService, pollService, adminService, checklistService } = ctx;
 
+  async function reply(context, message, opts = {}) {
+    const peerId = context.peerId || context.senderId;
+    if (!peerId) return;
+    await vk.api.messages.send({
+      peer_id: peerId,
+      message,
+      random_id: Math.floor(Math.random() * 1e15),
+      ...opts,
+    });
+  }
+
   const STATUS_EMOJI = {
     pending: '⏳',
     accepted: '✅',
@@ -35,7 +46,7 @@ module.exports = function registerAdminCommands(vk, ctx) {
   async function sendChunked(context, text) {
     const chunks = chunkMessage(text);
     for (const chunk of chunks) {
-      await context.send(chunk);
+      await reply(context,chunk);
     }
   }
 
@@ -49,7 +60,7 @@ module.exports = function registerAdminCommands(vk, ctx) {
     if (text.startsWith('/addguest')) {
       const arg = text.replace('/addguest', '').trim();
       if (!arg) {
-        await context.send(
+        await reply(context,
           '📝 Формат:\n/addguest Имя | Персональный текст\n\n' +
           'Пример:\n/addguest Мария Иванова | Дорогая Маша, ждём тебя!\n/addguest Алексей Смирнов'
         );
@@ -67,7 +78,7 @@ module.exports = function registerAdminCommands(vk, ctx) {
       if (personalText) msg += `\n💬 ${personalText}`;
       if (link) msg += `\n\n🔗 Ссылка:\n${link}`;
 
-      await context.send(msg);
+      await reply(context,msg);
       return;
     }
 
@@ -75,7 +86,7 @@ module.exports = function registerAdminCommands(vk, ctx) {
     if (text === '/guests') {
       const guests = guestService.listAll();
       if (!guests.length) {
-        await context.send('Список гостей пуст. Добавьте гостей через /addguest');
+        await reply(context,'Список гостей пуст. Добавьте гостей через /addguest');
         return;
       }
 
@@ -96,7 +107,7 @@ module.exports = function registerAdminCommands(vk, ctx) {
       const total = stats.total;
       const pct = total ? Math.round(((total - stats.pending) / total) * 100) : 0;
 
-      await context.send(
+      await reply(context,
         `📊 Статистика RSVP\n\n` +
         `Всего гостей: ${total}\n\n` +
         `✅ Придут: ${stats.accepted}\n` +
@@ -112,13 +123,13 @@ module.exports = function registerAdminCommands(vk, ctx) {
     if (text.startsWith('/link')) {
       const guestId = text.replace('/link', '').trim();
       if (!guestId) {
-        await context.send('Укажите ID гостя: /link <id>');
+        await reply(context,'Укажите ID гостя: /link <id>');
         return;
       }
 
       const guest = guestService.getById(guestId);
       if (!guest) {
-        await context.send('Гость не найден. Проверьте ID.');
+        await reply(context,'Гость не найден. Проверьте ID.');
         return;
       }
 
@@ -127,7 +138,7 @@ module.exports = function registerAdminCommands(vk, ctx) {
       if (link) msg += `\n${link}`;
       else msg += '\n(siteUrl не настроен)';
 
-      await context.send(msg);
+      await reply(context,msg);
       return;
     }
 
@@ -135,18 +146,18 @@ module.exports = function registerAdminCommands(vk, ctx) {
     if (text.startsWith('/remove')) {
       const guestId = text.replace('/remove', '').trim();
       if (!guestId) {
-        await context.send('Укажите ID гостя: /remove <id>');
+        await reply(context,'Укажите ID гостя: /remove <id>');
         return;
       }
 
       const guest = guestService.getById(guestId);
       if (!guest) {
-        await context.send('Гость не найден.');
+        await reply(context,'Гость не найден.');
         return;
       }
 
       guestService.remove(guestId);
-      await context.send(`🗑 Гость "${guest.name}" удалён.`);
+      await reply(context,`🗑 Гость "${guest.name}" удалён.`);
       return;
     }
 
@@ -154,18 +165,18 @@ module.exports = function registerAdminCommands(vk, ctx) {
     if (text.startsWith('/unbind')) {
       const guestId = text.replace('/unbind', '').trim();
       if (!guestId) {
-        await context.send('Укажите ID гостя: /unbind <id>');
+        await reply(context,'Укажите ID гостя: /unbind <id>');
         return;
       }
 
       const guest = guestService.getById(guestId);
       if (!guest) {
-        await context.send('Гость не найден.');
+        await reply(context,'Гость не найден.');
         return;
       }
 
       guestService.unbind(guestId);
-      await context.send(`🔓 Привязка для "${guest.name}" снята.`);
+      await reply(context,`🔓 Привязка для "${guest.name}" снята.`);
       return;
     }
 
@@ -173,7 +184,7 @@ module.exports = function registerAdminCommands(vk, ctx) {
     if (text.startsWith('/broadcast')) {
       const msg = text.replace('/broadcast', '').trim();
       if (!msg) {
-        await context.send('Формат: /broadcast Текст сообщения');
+        await reply(context,'Формат: /broadcast Текст сообщения');
         return;
       }
 
@@ -184,7 +195,7 @@ module.exports = function registerAdminCommands(vk, ctx) {
       for (const guest of guests) {
         try {
           await vk.api.messages.send({
-            user_id: guest.vk_id,
+            peer_id: guest.vk_id,
             message: `💌 ${msg}`,
             random_id: Math.floor(Math.random() * 1e9),
           });
@@ -199,7 +210,7 @@ module.exports = function registerAdminCommands(vk, ctx) {
         report += `\n❌ Не доставлено (${failedNames.length}):\n${failedNames.join(', ')}`;
       }
 
-      await context.send(report);
+      await reply(context,report);
       return;
     }
 
@@ -214,7 +225,7 @@ module.exports = function registerAdminCommands(vk, ctx) {
       }
 
       if (!arg || !arg.includes('|')) {
-        await context.send(
+        await reply(context,
           'Формат: /addpoll [--multi] Вопрос | Вариант1, Вариант2\n\n' +
           'Пример:\n/addpoll Выберите меню | Мясо, Рыба, Вегетарианское'
         );
@@ -227,12 +238,12 @@ module.exports = function registerAdminCommands(vk, ctx) {
       const options = optionsRaw.split(',').map(s => s.trim()).filter(Boolean);
 
       if (!question || options.length < 2) {
-        await context.send('Нужен вопрос и минимум 2 варианта ответа.');
+        await reply(context,'Нужен вопрос и минимум 2 варианта ответа.');
         return;
       }
 
       const poll = pollService.create(question, options, multiple);
-      await context.send(
+      await reply(context,
         `✅ Опрос создан!\nID: ${poll.id}\nВопрос: ${poll.question}\nВарианты: ${options.join(', ')}\n${multiple ? '(множественный выбор)' : ''}\n\n📤 Рассылаю гостям...`
       );
 
@@ -248,7 +259,7 @@ module.exports = function registerAdminCommands(vk, ctx) {
             kb.textButton({ label: opt, payload: { action: 'poll_answer', poll_id: poll.id, guest_id: g.id, selected: [opt] }, color: 'secondary' });
           }
           await vk.api.messages.send({
-            user_id: g.vk_id,
+            peer_id: g.vk_id,
             message: `📊 Новый опрос!\n\n${question}${multiple ? '\n(можно выбрать несколько)' : ''}`,
             keyboard: kb.oneTime(),
             random_id: Math.floor(Math.random() * 1e9),
@@ -259,7 +270,7 @@ module.exports = function registerAdminCommands(vk, ctx) {
 
       let report = `📤 Опрос разослан в VK: ${sent} из ${allGuests.length}`;
       if (failedNames.length) report += `\n❌ Не доставлено: ${failedNames.join(', ')}`;
-      await context.send(report);
+      await reply(context,report);
       return;
     }
 
@@ -267,7 +278,7 @@ module.exports = function registerAdminCommands(vk, ctx) {
     if (text === '/polls') {
       const polls = pollService.listAll();
       if (!polls.length) {
-        await context.send('Опросов нет.');
+        await reply(context,'Опросов нет.');
         return;
       }
 
@@ -294,18 +305,18 @@ module.exports = function registerAdminCommands(vk, ctx) {
       const pollIdStr = text.replace('/closepoll', '').trim();
       const pollId = Number(pollIdStr);
       if (!pollIdStr || isNaN(pollId)) {
-        await context.send('Укажите ID опроса: /closepoll <id>');
+        await reply(context,'Укажите ID опроса: /closepoll <id>');
         return;
       }
 
       const poll = pollService.getById(pollId);
       if (!poll) {
-        await context.send('Опрос не найден.');
+        await reply(context,'Опрос не найден.');
         return;
       }
 
       pollService.close(pollId);
-      await context.send(`🔒 Опрос "${poll.question}" закрыт.`);
+      await reply(context,`🔒 Опрос "${poll.question}" закрыт.`);
       return;
     }
 
@@ -313,7 +324,7 @@ module.exports = function registerAdminCommands(vk, ctx) {
     if (text.startsWith('/addadmin')) {
       const name = text.replace('/addadmin', '').trim() || null;
       const admin = adminService.addVk(userId, name);
-      await context.send(`✅ VK-администратор добавлен!\nID записи: ${admin.id}\nVK ID: ${userId}${name ? `\nИмя: ${name}` : ''}`);
+      await reply(context,`✅ VK-администратор добавлен!\nID записи: ${admin.id}\nVK ID: ${userId}${name ? `\nИмя: ${name}` : ''}`);
       return;
     }
 
@@ -322,25 +333,25 @@ module.exports = function registerAdminCommands(vk, ctx) {
       const adminIdStr = text.replace('/removeadmin', '').trim();
       const adminId = Number(adminIdStr);
       if (!adminIdStr || isNaN(adminId)) {
-        await context.send('Укажите ID записи администратора: /removeadmin <id>');
+        await reply(context,'Укажите ID записи администратора: /removeadmin <id>');
         return;
       }
 
       adminService.remove(adminId);
-      await context.send(`🗑 Администратор с ID ${adminId} удалён.`);
+      await reply(context,`🗑 Администратор с ID ${adminId} удалён.`);
       return;
     }
 
     // ── /myid ─────────────────────────────────────────────────────────────────
     if (text === '/myid') {
-      await context.send(`Ваш VK ID: ${userId}`);
+      await reply(context,`Ваш VK ID: ${userId}`);
       return;
     }
 
     // ── /checklist [tab] ─────────────────────────────────────────────────────
     if (text.startsWith('/checklist')) {
       if (!checklistService) {
-        await context.send('Сервис чеклиста недоступен.');
+        await reply(context,'Сервис чеклиста недоступен.');
         return;
       }
 
@@ -348,7 +359,7 @@ module.exports = function registerAdminCommands(vk, ctx) {
       const items = tab ? checklistService.listByTab(tab) : checklistService.listAll();
 
       if (!items || !items.length) {
-        await context.send('Чеклист пуст.');
+        await reply(context,'Чеклист пуст.');
         return;
       }
 
@@ -367,49 +378,49 @@ module.exports = function registerAdminCommands(vk, ctx) {
     // ── /check <id> ──────────────────────────────────────────────────────────
     if (text.startsWith('/check ') || text === '/check') {
       if (!checklistService) {
-        await context.send('Сервис чеклиста недоступен.');
+        await reply(context,'Сервис чеклиста недоступен.');
         return;
       }
 
       const itemId = text.replace('/check', '').trim();
       if (!itemId) {
-        await context.send('Укажите ID задачи: /check <id>');
+        await reply(context,'Укажите ID задачи: /check <id>');
         return;
       }
 
       checklistService.setDone(itemId, true);
-      await context.send(`✅ Задача ${itemId} отмечена как выполненная.`);
+      await reply(context,`✅ Задача ${itemId} отмечена как выполненная.`);
       return;
     }
 
     // ── /uncheck <id> ────────────────────────────────────────────────────────
     if (text.startsWith('/uncheck ') || text === '/uncheck') {
       if (!checklistService) {
-        await context.send('Сервис чеклиста недоступен.');
+        await reply(context,'Сервис чеклиста недоступен.');
         return;
       }
 
       const itemId = text.replace('/uncheck', '').trim();
       if (!itemId) {
-        await context.send('Укажите ID задачи: /uncheck <id>');
+        await reply(context,'Укажите ID задачи: /uncheck <id>');
         return;
       }
 
       checklistService.setDone(itemId, false);
-      await context.send(`⬜ Задача ${itemId} отмечена как невыполненная.`);
+      await reply(context,`⬜ Задача ${itemId} отмечена как невыполненная.`);
       return;
     }
 
     // ── /addtask tab | cat | text | note ────────────────────────────────────
     if (text.startsWith('/addtask')) {
       if (!checklistService) {
-        await context.send('Сервис чеклиста недоступен.');
+        await reply(context,'Сервис чеклиста недоступен.');
         return;
       }
 
       const arg = text.replace('/addtask', '').trim();
       if (!arg) {
-        await context.send('Формат: /addtask вкладка | категория | текст | заметка');
+        await reply(context,'Формат: /addtask вкладка | категория | текст | заметка');
         return;
       }
 
@@ -417,30 +428,30 @@ module.exports = function registerAdminCommands(vk, ctx) {
       const [tab, category, taskText, note] = parts;
 
       if (!tab || !taskText) {
-        await context.send('Укажите минимум вкладку и текст задачи: /addtask вкладка | категория | текст');
+        await reply(context,'Укажите минимум вкладку и текст задачи: /addtask вкладка | категория | текст');
         return;
       }
 
       const item = checklistService.addCustom({ tab, category: category || null, text: taskText, note: note || null });
-      await context.send(`✅ Задача добавлена! ID: ${item.id}\n${tab} / ${category || '—'}: ${taskText}`);
+      await reply(context,`✅ Задача добавлена! ID: ${item.id}\n${tab} / ${category || '—'}: ${taskText}`);
       return;
     }
 
     // ── /removetask <id> ─────────────────────────────────────────────────────
     if (text.startsWith('/removetask')) {
       if (!checklistService) {
-        await context.send('Сервис чеклиста недоступен.');
+        await reply(context,'Сервис чеклиста недоступен.');
         return;
       }
 
       const itemId = text.replace('/removetask', '').trim();
       if (!itemId) {
-        await context.send('Укажите ID задачи: /removetask <id>');
+        await reply(context,'Укажите ID задачи: /removetask <id>');
         return;
       }
 
       checklistService.removeCustom(itemId);
-      await context.send(`🗑 Задача ${itemId} удалена.`);
+      await reply(context,`🗑 Задача ${itemId} удалена.`);
       return;
     }
 
@@ -449,11 +460,11 @@ module.exports = function registerAdminCommands(vk, ctx) {
       const pending = guestService.listAll().filter(g => g.status === 'pending' && g.vk_id);
 
       if (pending.length === 0) {
-        await context.send('🎉 Все гости ответили!');
+        await reply(context,'🎉 Все гости ответили!');
         return;
       }
 
-      await context.send(`📤 Отправляю напоминания ${pending.length} гостям...`);
+      await reply(context,`📤 Отправляю напоминания ${pending.length} гостям...`);
 
       const { Keyboard } = require('vk-io');
       let sent = 0;
@@ -471,7 +482,7 @@ module.exports = function registerAdminCommands(vk, ctx) {
           kb.textButton({ label: '🤔 Думаю', payload: { action: 'rsvp', guest_id: g.id, status: 'maybe' }, color: 'secondary' });
           kb.textButton({ label: '❌ Не смогу', payload: { action: 'rsvp', guest_id: g.id, status: 'declined' }, color: 'negative' });
           await vk.api.messages.send({
-            user_id: g.vk_id,
+            peer_id: g.vk_id,
             message: msg,
             keyboard: kb.oneTime(),
             random_id: Math.floor(Math.random() * 1e9),
@@ -482,7 +493,7 @@ module.exports = function registerAdminCommands(vk, ctx) {
 
       let report = '📤 Напоминания отправлены: ' + sent + ' из ' + pending.length;
       if (failedNames.length) report += '\n❌ Не доставлено:\n' + failedNames.join('\n');
-      await context.send(report);
+      await reply(context,report);
       return;
     }
 

@@ -29,7 +29,7 @@ async function notifyAdmins({ adminService, telegram, vk, text, keyboard, vkKeyb
     for (const id of vkIds) {
       try {
         await vk.messages.send({
-          user_id: id,
+          peer_id: id,
           message: text,
           random_id: Math.floor(Math.random() * 1e9),
           ...(vkKeyboard ? { keyboard: JSON.stringify(vkKeyboard) } : {}),

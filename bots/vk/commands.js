@@ -49,18 +49,33 @@ async function sendNextPoll(ctx, userId, guestId) {
   kb.oneTime();
 
   await vk.api.messages.send({
-    user_id: userId,
+    peer_id: userId,
     message: `📊 Вопрос: ${poll.question}`,
     keyboard: kb.toString(),
-    random_id: Math.floor(Math.random() * 1e9),
+    random_id: Math.floor(Math.random() * 1e15),
   });
 }
 
 module.exports = function registerCommands(vk, ctx) {
   const { siteUrl, guestService, pollService, adminService } = ctx;
 
+  // Helper: send message with explicit peer_id (context.send() may fail with handleWebhookUpdate)
+  async function reply(context, message, opts = {}) {
+    const peerId = context.peerId || context.senderId;
+    if (!peerId) {
+      console.error('VK reply: no peerId/senderId', JSON.stringify(context));
+      return;
+    }
+    await vk.api.messages.send({
+      peer_id: peerId,
+      message,
+      random_id: Math.floor(Math.random() * 1e15),
+      ...opts,
+    });
+  }
+
   vk.updates.on('message_new', async (context, next) => {
-    console.log('VK message_new from:', context.senderId, 'text:', context.text);
+    console.log('VK message_new from:', context.senderId, 'peerId:', context.peerId, 'text:', context.text);
     const userId = context.senderId;
     const text = (context.text || '').trim();
 
@@ -76,7 +91,7 @@ module.exports = function registerCommands(vk, ctx) {
       const { guest_id: guestId, status } = payload;
       const guest = guestService.getById(guestId);
       if (!guest) {
-        await context.send('Гость не найден.');
+        await reply(context,'Гость не найден.');
         return;
       }
 
@@ -85,7 +100,7 @@ module.exports = function registerCommands(vk, ctx) {
       const emoji = STATUS_EMOJI[status] || '';
       const statusText = STATUS_TEXT[status] || status;
 
-      await context.send(`${emoji} Ваш ответ записан: ${statusText}\n\nСпасибо!`);
+      await reply(context,`${emoji} Ваш ответ записан: ${statusText}\n\nСпасибо!`);
 
       await notifyAdmins({
         adminService,
@@ -102,15 +117,15 @@ module.exports = function registerCommands(vk, ctx) {
       const { poll_id: pollId, guest_id: guestId, selected } = payload;
       const guest = guestService.getById(guestId);
       if (!guest) {
-        await context.send('Гость не найден.');
+        await reply(context,'Гость не найден.');
         return;
       }
 
       try {
         pollService.answer(pollId, guestId, selected);
-        await context.send(`✅ Ответ записан: ${selected.join(', ')}`);
+        await reply(context,`✅ Ответ записан: ${selected.join(', ')}`);
       } catch (e) {
-        await context.send(`Не удалось записать ответ: ${e.message}`);
+        await reply(context,`Не удалось записать ответ: ${e.message}`);
         return;
       }
 
@@ -124,13 +139,13 @@ module.exports = function registerCommands(vk, ctx) {
       const guest = guestService.getById(guestId);
 
       if (!guest) {
-        await context.send('Приглашение не найдено. Возможно, ссылка устарела.');
+        await reply(context,'Приглашение не найдено. Возможно, ссылка устарела.');
         return;
       }
 
       const hasConflict = guestService.checkBindingConflict(guestId, 'vk', userId);
       if (hasConflict) {
-        await context.send('Это приглашение уже привязано к другому аккаунту ВКонтакте.');
+        await reply(context,'Это приглашение уже привязано к другому аккаунту ВКонтакте.');
         return;
       }
 
@@ -139,7 +154,7 @@ module.exports = function registerCommands(vk, ctx) {
       const greeting = guest.name ? `${guest.name}, ` : '';
       const personalPart = guest.personal_text ? `\n\n${guest.personal_text}` : '';
 
-      await context.send(
+      await reply(context,
         `💌 ${greeting}спасибо, что открыли приглашение!${personalPart}\n\n` +
         `Мы — Артём и Полина — приглашаем вас на нашу свадьбу 1 августа 2026 года.\n\n` +
         `Пожалуйста, подтвердите своё присутствие:`,
@@ -154,7 +169,7 @@ module.exports = function registerCommands(vk, ctx) {
       if (guest) {
         const hasConflict = guestService.checkBindingConflict(text, 'vk', userId);
         if (hasConflict) {
-          await context.send('Это приглашение уже привязано к другому аккаунту ВКонтакте.');
+          await reply(context,'Это приглашение уже привязано к другому аккаунту ВКонтакте.');
           return;
         }
 
@@ -163,7 +178,7 @@ module.exports = function registerCommands(vk, ctx) {
         const greeting = guest.name ? `${guest.name}, ` : '';
         const personalPart = guest.personal_text ? `\n\n${guest.personal_text}` : '';
 
-        await context.send(
+        await reply(context,
           `💌 ${greeting}спасибо, что открыли приглашение!${personalPart}\n\n` +
           `Мы — Артём и Полина — приглашаем вас на нашу свадьбу 1 августа 2026 года.\n\n` +
           `Пожалуйста, подтвердите своё присутствие:`,
@@ -183,16 +198,16 @@ module.exports = function registerCommands(vk, ctx) {
       let msg = `👋 С возвращением, ${existingGuest.name}!\n\nВаш текущий статус: ${STATUS_EMOJI[existingGuest.status] || ''} ${STATUS_TEXT[existingGuest.status] || existingGuest.status}`;
       if (webLink) msg += `\n\n🔗 Ваше приглашение:\n${webLink}`;
 
-      await context.send(msg, { keyboard: buildRsvpKeyboard(existingGuest.id).toString() });
+      await reply(context,msg, { keyboard: buildRsvpKeyboard(existingGuest.id).toString() });
       return;
     }
 
     // ── /link_account command ─────────────────────────────────────────────────
     if (text === '/link_account') {
       const guest = guestService.findByVkId(userId);
-      if (!guest) { await context.send('Вы не привязаны ни к одному приглашению.'); return; }
+      if (!guest) { await reply(context,'Вы не привязаны ни к одному приглашению.'); return; }
       const code = guestService.generateLinkCode(guest.id);
-      await context.send(`🔗 Код для привязки: ${code}\n\nОтправьте этот код в Telegram-боте командой /link ${code}\n\n⏱ Код действует 5 минут.`);
+      await reply(context,`🔗 Код для привязки: ${code}\n\nОтправьте этот код в Telegram-боте командой /link ${code}\n\n⏱ Код действует 5 минут.`);
       return;
     }
 
@@ -201,16 +216,16 @@ module.exports = function registerCommands(vk, ctx) {
       const code = text.replace('/link ', '').trim();
       const result = guestService.redeemLinkCode(code, 'vk', userId);
       if (result.success) {
-        await context.send(`✅ Аккаунт привязан! Теперь вы будете получать уведомления и здесь.\n\nДобро пожаловать, ${result.guest.name}!`);
+        await reply(context,`✅ Аккаунт привязан! Теперь вы будете получать уведомления и здесь.\n\nДобро пожаловать, ${result.guest.name}!`);
       } else {
-        await context.send(`❌ ${result.error}`);
+        await reply(context,`❌ ${result.error}`);
       }
       return;
     }
 
     // ── Unknown user (not admin) ──────────────────────────────────────────────
     if (!adminService.isVkAdmin(userId)) {
-      await context.send(
+      await reply(context,
         '💒 Свадьба Артёма и Полины\n1 августа 2026\n\n' +
         'У нас нет вашего приглашения. Отправьте код приглашения или перейдите по персональной ссылке.'
       );
