@@ -879,6 +879,518 @@ module.exports = function registerAdmin(bot) {
     const chunks = msg.match(/[\s\S]{1,4000}/g) || [msg];
     for (const c of chunks) await ctx.reply(c, { parse_mode: 'Markdown' });
   });
+
+  // ── Menu callbacks ──────────────────────────────────────────────────
+  bot.action('menu:guests', async (ctx) => {
+    if (!requireAdmin(ctx)) return ctx.answerCbQuery('Нет доступа.');
+    await ctx.answerCbQuery();
+    await ctx.editMessageText(
+      '📋 Управление гостями',
+      Markup.inlineKeyboard([
+        [Markup.button.callback('📋 Список гостей', 'do:guests')],
+        [Markup.button.callback('➕ Добавить гостя', 'do:addguest_help')],
+        [Markup.button.callback('📥 Массовый импорт', 'do:import_help')],
+        [Markup.button.callback('🔍 Поиск', 'do:search_help'), Markup.button.callback('📤 Экспорт CSV', 'do:export')],
+        [Markup.button.callback('🔙 Назад', 'menu:main')],
+      ])
+    );
+  });
+
+  bot.action('menu:stats', async (ctx) => {
+    if (!requireAdmin(ctx)) return ctx.answerCbQuery('Нет доступа.');
+    await ctx.answerCbQuery();
+    const { guests } = ctx.services;
+    const s = guests.getStats();
+    const pct = s.total ? Math.round(((s.total - s.pending) / s.total) * 100) : 0;
+    await ctx.editMessageText(
+      `📊 Статистика RSVP\n\n` +
+      `Всего: ${s.total}\n` +
+      `✅ Придут: ${s.accepted}\n` +
+      `🤔 Думают: ${s.maybe}\n` +
+      `❌ Не придут: ${s.declined}\n` +
+      `⏳ Не ответили: ${s.pending}\n` +
+      `\nОтветили: ${pct}%`,
+      Markup.inlineKeyboard([
+        [Markup.button.callback('📈 Таймлайн ответов', 'do:timeline')],
+        [Markup.button.callback('📤 Фильтр: не ответившие', 'do:filter_pending')],
+        [Markup.button.callback('📢 Напомнить', 'do:remind')],
+        [Markup.button.callback('🔙 Назад', 'menu:main')],
+      ])
+    );
+  });
+
+  bot.action('menu:polls', async (ctx) => {
+    if (!requireAdmin(ctx)) return ctx.answerCbQuery('Нет доступа.');
+    await ctx.answerCbQuery();
+    await ctx.editMessageText(
+      '📊 Опросы',
+      Markup.inlineKeyboard([
+        [Markup.button.callback('📋 Все опросы', 'do:polls')],
+        [Markup.button.callback('➕ Создать опрос', 'do:addpoll_help')],
+        [Markup.button.callback('🔙 Назад', 'menu:main')],
+      ])
+    );
+  });
+
+  bot.action('menu:seating', async (ctx) => {
+    if (!requireAdmin(ctx)) return ctx.answerCbQuery('Нет доступа.');
+    await ctx.answerCbQuery();
+    await ctx.editMessageText(
+      '🪑 Рассадка гостей',
+      Markup.inlineKeyboard([
+        [Markup.button.callback('📋 План рассадки', 'do:seating')],
+        [Markup.button.callback('ℹ️ Как назначить', 'do:seat_help')],
+        [Markup.button.callback('🔙 Назад', 'menu:main')],
+      ])
+    );
+  });
+
+  bot.action('menu:budget', async (ctx) => {
+    if (!requireAdmin(ctx)) return ctx.answerCbQuery('Нет доступа.');
+    await ctx.answerCbQuery();
+    await ctx.editMessageText(
+      '💰 Бюджет',
+      Markup.inlineKeyboard([
+        [Markup.button.callback('📋 Показать бюджет', 'do:budget')],
+        [Markup.button.callback('➕ Добавить расход', 'do:addexpense_help')],
+        [Markup.button.callback('🔙 Назад', 'menu:main')],
+      ])
+    );
+  });
+
+  bot.action('menu:vendors', async (ctx) => {
+    if (!requireAdmin(ctx)) return ctx.answerCbQuery('Нет доступа.');
+    await ctx.answerCbQuery();
+    await ctx.editMessageText(
+      '📞 Подрядчики',
+      Markup.inlineKeyboard([
+        [Markup.button.callback('📋 Список', 'do:vendors')],
+        [Markup.button.callback('➕ Добавить', 'do:addvendor_help')],
+        [Markup.button.callback('🔙 Назад', 'menu:main')],
+      ])
+    );
+  });
+
+  bot.action('menu:checklist', async (ctx) => {
+    if (!requireAdmin(ctx)) return ctx.answerCbQuery('Нет доступа.');
+    await ctx.answerCbQuery();
+    await ctx.editMessageText(
+      '✅ Чеклист',
+      Markup.inlineKeyboard([
+        [Markup.button.callback('📋 День росписи', 'do:checklist_registration')],
+        [Markup.button.callback('💒 День свадьбы', 'do:checklist_wedding')],
+        [Markup.button.callback('🔙 Назад', 'menu:main')],
+      ])
+    );
+  });
+
+  bot.action('menu:broadcast', async (ctx) => {
+    if (!requireAdmin(ctx)) return ctx.answerCbQuery('Нет доступа.');
+    await ctx.answerCbQuery();
+    await ctx.editMessageText(
+      '📢 Рассылка\n\nОтправьте команду:\n/broadcast Текст сообщения',
+      Markup.inlineKeyboard([
+        [Markup.button.callback('📋 Шаблоны', 'do:templates')],
+        [Markup.button.callback('📢 Напомнить не ответившим', 'do:remind')],
+        [Markup.button.callback('🔙 Назад', 'menu:main')],
+      ])
+    );
+  });
+
+  bot.action('menu:notes', async (ctx) => {
+    if (!requireAdmin(ctx)) return ctx.answerCbQuery('Нет доступа.');
+    await ctx.answerCbQuery();
+    await ctx.editMessageText(
+      '🏷 Теги и заметки\n\n' +
+      '/tag ID тег — добавить тег\n' +
+      '/tags ID — просмотр тегов\n' +
+      '/note ID заметка — добавить заметку\n' +
+      '/notes ID — просмотр заметок\n' +
+      '/info ID — полная карточка гостя',
+      Markup.inlineKeyboard([
+        [Markup.button.callback('🔙 Назад', 'menu:main')],
+      ])
+    );
+  });
+
+  bot.action('menu:analytics', async (ctx) => {
+    if (!requireAdmin(ctx)) return ctx.answerCbQuery('Нет доступа.');
+    await ctx.answerCbQuery();
+    await ctx.editMessageText(
+      '📈 Аналитика',
+      Markup.inlineKeyboard([
+        [Markup.button.callback('📈 Таймлайн ответов', 'do:timeline')],
+        [Markup.button.callback('📊 Фильтр по платформе', 'do:filter_help')],
+        [Markup.button.callback('📝 Тексты сайта', 'do:texts')],
+        [Markup.button.callback('💾 Скачать базу', 'do:backup')],
+        [Markup.button.callback('🔙 Назад', 'menu:main')],
+      ])
+    );
+  });
+
+  bot.action('menu:settings', async (ctx) => {
+    if (!requireAdmin(ctx)) return ctx.answerCbQuery('Нет доступа.');
+    await ctx.answerCbQuery();
+    await ctx.editMessageText(
+      '⚙️ Настройки',
+      Markup.inlineKeyboard([
+        [Markup.button.callback('📝 Тексты сайта', 'do:texts_help')],
+        [Markup.button.callback('👤 Админы', 'do:admins_help')],
+        [Markup.button.callback('💾 Бэкап базы', 'do:backup')],
+        [Markup.button.callback('🆔 Мой ID', 'do:myid')],
+        [Markup.button.callback('🔙 Назад', 'menu:main')],
+      ])
+    );
+  });
+
+  bot.action('menu:main', async (ctx) => {
+    if (!requireAdmin(ctx)) return ctx.answerCbQuery('Нет доступа.');
+    await ctx.answerCbQuery();
+    await ctx.editMessageText(
+      '👋 Панель управления\nАртём × Полина — 1 августа 2026',
+      Markup.inlineKeyboard([
+        [Markup.button.callback('📋 Гости', 'menu:guests'), Markup.button.callback('📊 Статистика', 'menu:stats')],
+        [Markup.button.callback('📊 Опросы', 'menu:polls'), Markup.button.callback('🪑 Рассадка', 'menu:seating')],
+        [Markup.button.callback('💰 Бюджет', 'menu:budget'), Markup.button.callback('📞 Подрядчики', 'menu:vendors')],
+        [Markup.button.callback('✅ Чеклист', 'menu:checklist'), Markup.button.callback('📢 Рассылка', 'menu:broadcast')],
+        [Markup.button.callback('🏷 Теги/Заметки', 'menu:notes'), Markup.button.callback('📈 Аналитика', 'menu:analytics')],
+        [Markup.button.callback('⚙️ Настройки', 'menu:settings')],
+      ])
+    );
+  });
+
+  // ── Action handlers that trigger existing command logic ─────────────
+  bot.action('do:guests', async (ctx) => {
+    if (!requireAdmin(ctx)) return ctx.answerCbQuery('Нет доступа.');
+    await ctx.answerCbQuery();
+    const { guests } = ctx.services;
+    const list = guests.listAll();
+    if (list.length === 0) return ctx.reply('Список пуст. /addguest');
+    const EMOJI = { pending: '⏳', accepted: '✅', declined: '❌', maybe: '🤔' };
+    let msg = `📋 Гости (${list.length}):\n\n`;
+    list.forEach(g => {
+      const u = g.telegram_username ? ` (@${g.telegram_username})` : '';
+      msg += `${EMOJI[g.status]||'❓'} ${g.name}${u}\n   ID: \`${g.id}\`\n\n`;
+    });
+    const chunks = msg.match(/[\s\S]{1,4000}/g) || [msg];
+    for (const c of chunks) await ctx.reply(c, { parse_mode: 'Markdown' });
+  });
+
+  bot.action('do:addguest_help', async (ctx) => {
+    if (!requireAdmin(ctx)) return ctx.answerCbQuery('Нет доступа.');
+    await ctx.answerCbQuery();
+    await ctx.reply('➕ Добавить гостя:\n\n/addguest Имя | Персональный текст\n\nПример:\n/addguest Мария Иванова | Дорогая Маша, ждём тебя!');
+  });
+
+  bot.action('do:import_help', async (ctx) => {
+    if (!requireAdmin(ctx)) return ctx.answerCbQuery('Нет доступа.');
+    await ctx.answerCbQuery();
+    await ctx.reply('📥 Массовый импорт:\n\n/import\nИмя 1 | Текст 1\nИмя 2 | Текст 2\nИмя 3');
+  });
+
+  bot.action('do:search_help', async (ctx) => {
+    if (!requireAdmin(ctx)) return ctx.answerCbQuery('Нет доступа.');
+    await ctx.answerCbQuery();
+    await ctx.reply('🔍 Поиск:\n/search Имя');
+  });
+
+  bot.action('do:export', async (ctx) => {
+    if (!requireAdmin(ctx)) return ctx.answerCbQuery('Нет доступа.');
+    await ctx.answerCbQuery();
+    const { guests } = ctx.services;
+    const all = guests.listAll();
+    let csv = 'ID,Имя,Статус,Telegram,VK,Диета,Комментарий,Ответил\n';
+    all.forEach(g => {
+      csv += `${g.id},"${g.name}",${g.status},${g.telegram_username||''},${g.vk_id||''},` +
+        `"${(g.dietary||'').replace(/"/g,'""')}","${(g.comment||'').replace(/"/g,'""')}",${g.responded_at||''}\n`;
+    });
+    await ctx.replyWithDocument({ source: Buffer.from(csv, 'utf-8'), filename: 'guests.csv' });
+  });
+
+  bot.action('do:addpoll_help', async (ctx) => {
+    if (!requireAdmin(ctx)) return ctx.answerCbQuery('Нет доступа.');
+    await ctx.answerCbQuery();
+    await ctx.reply('➕ Создать опрос:\n\n/addpoll Вопрос | Вариант1, Вариант2, Вариант3\n\nМножественный выбор:\n/addpoll --multi Вопрос | Вариант1, Вариант2');
+  });
+
+  bot.action('do:seat_help', async (ctx) => {
+    if (!requireAdmin(ctx)) return ctx.answerCbQuery('Нет доступа.');
+    await ctx.answerCbQuery();
+    await ctx.reply('🪑 Назначить стол:\n/seat GUEST_ID Стол 1\n\nПосмотреть план:\n/seating');
+  });
+
+  bot.action('do:addexpense_help', async (ctx) => {
+    if (!requireAdmin(ctx)) return ctx.answerCbQuery('Нет доступа.');
+    await ctx.answerCbQuery();
+    await ctx.reply('💰 Добавить расход:\n/addexpense Категория | Статья | Сумма\n\nПример:\n/addexpense Декор | Цветы | 25000');
+  });
+
+  bot.action('do:addvendor_help', async (ctx) => {
+    if (!requireAdmin(ctx)) return ctx.answerCbQuery('Нет доступа.');
+    await ctx.answerCbQuery();
+    await ctx.reply('📞 Добавить подрядчика:\n/addvendor Роль | Имя | Телефон | Заметка\n\nПример:\n/addvendor Фотограф | Иван | +79001234567');
+  });
+
+  bot.action('do:filter_help', async (ctx) => {
+    if (!requireAdmin(ctx)) return ctx.answerCbQuery('Нет доступа.');
+    await ctx.answerCbQuery();
+    await ctx.reply('📊 Фильтры:\n/filter accepted\n/filter declined\n/filter pending\n/filter telegram\n/filter vk');
+  });
+
+  bot.action('do:filter_pending', async (ctx) => {
+    if (!requireAdmin(ctx)) return ctx.answerCbQuery('Нет доступа.');
+    await ctx.answerCbQuery();
+    const { guests } = ctx.services;
+    const pending = guests.listAll().filter(g => g.status === 'pending');
+    if (!pending.length) return ctx.reply('🎉 Все ответили!');
+    let msg = `⏳ Не ответили (${pending.length}):\n\n`;
+    pending.forEach(g => { msg += `• ${g.name} [\`${g.id}\`]\n`; });
+    await ctx.reply(msg, { parse_mode: 'Markdown' });
+  });
+
+  bot.action('do:texts_help', async (ctx) => {
+    if (!requireAdmin(ctx)) return ctx.answerCbQuery('Нет доступа.');
+    await ctx.answerCbQuery();
+    await ctx.reply('📝 Управление текстами:\n\n/texts — показать все\n/settext ключ | значение — изменить\n\nПример:\n/settext venue.name | Загородный клуб "Романтика"');
+  });
+
+  bot.action('do:admins_help', async (ctx) => {
+    if (!requireAdmin(ctx)) return ctx.answerCbQuery('Нет доступа.');
+    await ctx.answerCbQuery();
+    await ctx.reply('👤 Админы:\n/addadmin Имя — добавить себя\n/removeadmin ID — удалить');
+  });
+
+  bot.action('do:myid', async (ctx) => {
+    await ctx.answerCbQuery();
+    await ctx.reply(`🆔 Твой Telegram ID: \`${ctx.from.id}\``, { parse_mode: 'Markdown' });
+  });
+
+  bot.action('do:backup', async (ctx) => {
+    if (!requireAdmin(ctx)) return ctx.answerCbQuery('Нет доступа.');
+    await ctx.answerCbQuery();
+    const path = require('path');
+    const fs = require('fs');
+    const dbPath = path.join(__dirname, '../../db/wedding.db');
+    const actualPath = fs.existsSync('/app/data/wedding.db') ? '/app/data/wedding.db' : dbPath;
+    try {
+      await ctx.replyWithDocument({ source: actualPath, filename: `wedding-backup-${new Date().toISOString().slice(0,10)}.db` });
+    } catch (e) {
+      await ctx.reply('Ошибка: ' + e.message);
+    }
+  });
+
+  bot.action('do:templates', async (ctx) => {
+    if (!requireAdmin(ctx)) return ctx.answerCbQuery('Нет доступа.');
+    await ctx.answerCbQuery();
+    await ctx.reply(
+      '📋 Шаблоны рассылок:\n\n' +
+      '1️⃣ /broadcast 💌 Напоминаем, что ждём тебя 1 августа!\n\n' +
+      '2️⃣ /broadcast ❤️ Спасибо, что подтвердил(а)! Ждём с нетерпением!\n\n' +
+      '3️⃣ /broadcast 📍 Адрес площадки: [АДРЕС]\n\n' +
+      '4️⃣ /broadcast ✨ Уже завтра! Ждём тебя в 15:00!\n\n' +
+      '5️⃣ /broadcast 🎉 Сегодня наш день! Координатор: [ТЕЛЕФОН]'
+    );
+  });
+
+  bot.action('do:remind', async (ctx) => {
+    if (!requireAdmin(ctx)) return ctx.answerCbQuery('Нет доступа.');
+    await ctx.answerCbQuery();
+    const { guests } = ctx.services;
+    const pending = guests.listAll().filter(g => g.status === 'pending' && (g.telegram_id || g.vk_id));
+    if (pending.length === 0) return ctx.reply('🎉 Все гости ответили!');
+    await ctx.reply(`📤 Отправляю напоминания ${pending.length} гостям...`);
+    let sent = 0;
+    const failedNames = [];
+    for (const g of pending) {
+      const webLink = ctx.siteUrl + '/?id=' + g.id;
+      const msg = '💌 Напоминаем о приглашении на свадьбу Артёма и Полины!\n\n' +
+        '1 августа 2026 года мы ждём вас.\n\n' +
+        'Пожалуйста, подтвердите своё присутствие:\n' + webLink;
+      if (g.telegram_id) {
+        try {
+          await ctx.telegram.sendMessage(g.telegram_id, msg,
+            Markup.inlineKeyboard([
+              [Markup.button.callback('✅ Приду!', 'rsvp:' + g.id + ':accepted')],
+              [Markup.button.callback('🤔 Думаю', 'rsvp:' + g.id + ':maybe')],
+              [Markup.button.callback('❌ Не смогу', 'rsvp:' + g.id + ':declined')],
+            ])
+          );
+          sent++;
+        } catch { failedNames.push(g.name + ' (TG)'); }
+      }
+    }
+    let report = '📤 Напоминания отправлены: ' + sent + ' из ' + pending.length;
+    if (failedNames.length) report += '\n❌ Не доставлено:\n' + failedNames.join('\n');
+    await ctx.reply(report);
+  });
+
+  bot.action('do:polls', async (ctx) => {
+    if (!requireAdmin(ctx)) return ctx.answerCbQuery('Нет доступа.');
+    await ctx.answerCbQuery();
+    const { polls } = ctx.services;
+    const all = polls.listAll();
+    if (all.length === 0) return ctx.reply('Опросов пока нет.');
+    const lines = all.map((p) => {
+      const results = polls.getResults(p.id);
+      const status = p.active ? '🟢' : '🔴';
+      const opts = Object.entries(results || {})
+        .map(([opt, count]) => `  ${opt}: ${count}`)
+        .join('\n');
+      return `${status} [${p.id}] ${p.question}\n${opts}`;
+    });
+    const msg = lines.join('\n\n');
+    const chunks = msg.match(/[\s\S]{1,4000}/g) || [msg];
+    for (const c of chunks) await ctx.reply(c);
+  });
+
+  bot.action('do:budget', async (ctx) => {
+    if (!requireAdmin(ctx)) return ctx.answerCbQuery('Нет доступа.');
+    await ctx.answerCbQuery();
+    const db = ctx.services.db;
+    const items = db.prepare('SELECT * FROM budget ORDER BY category, item').all();
+    if (items.length === 0) return ctx.reply('Бюджет пуст. /addexpense категория | статья | сумма');
+    const categories = {};
+    let totalBudget = 0, totalPaid = 0;
+    items.forEach(i => {
+      if (!categories[i.category]) categories[i.category] = [];
+      categories[i.category].push(i);
+      totalBudget += i.amount;
+      if (i.paid) totalPaid += i.amount;
+    });
+    let msg = '💰 Бюджет свадьбы:\n\n';
+    Object.entries(categories).forEach(([cat, catItems]) => {
+      const catTotal = catItems.reduce((s, i) => s + i.amount, 0);
+      msg += `📂 ${cat} — ${catTotal.toLocaleString('ru')} ₽\n`;
+      catItems.forEach(i => {
+        msg += `  ${i.paid ? '✅' : '⬜'} ${i.item}: ${i.amount.toLocaleString('ru')} ₽\n`;
+      });
+      msg += '\n';
+    });
+    msg += `💰 Итого: ${totalBudget.toLocaleString('ru')} ₽\n✅ Оплачено: ${totalPaid.toLocaleString('ru')} ₽\n⏳ Осталось: ${(totalBudget - totalPaid).toLocaleString('ru')} ₽`;
+    await ctx.reply(msg);
+  });
+
+  bot.action('do:vendors', async (ctx) => {
+    if (!requireAdmin(ctx)) return ctx.answerCbQuery('Нет доступа.');
+    await ctx.answerCbQuery();
+    const db = ctx.services.db;
+    const vendors = db.prepare('SELECT * FROM vendors ORDER BY role').all();
+    if (vendors.length === 0) return ctx.reply('Список подрядчиков пуст. /addvendor роль | имя | телефон');
+    let msg = '📞 Подрядчики:\n\n';
+    vendors.forEach(v => {
+      msg += `${v.role}: ${v.name}\n`;
+      if (v.phone) msg += `  📱 ${v.phone}\n`;
+      if (v.note) msg += `  💬 ${v.note}\n`;
+      msg += '\n';
+    });
+    await ctx.reply(msg);
+  });
+
+  bot.action('do:seating', async (ctx) => {
+    if (!requireAdmin(ctx)) return ctx.answerCbQuery('Нет доступа.');
+    await ctx.answerCbQuery();
+    const { guests } = ctx.services;
+    const all = guests.getAllSeating();
+    if (all.length === 0) return ctx.reply('Рассадка пуста. Используйте /seat GUEST_ID Стол');
+    const tables = {};
+    all.forEach(s => { if (!tables[s.table_name]) tables[s.table_name] = []; tables[s.table_name].push(s.name); });
+    let msg = '🪑 Рассадка:\n\n';
+    Object.entries(tables).forEach(([table, names]) => {
+      msg += `${table}:\n${names.map(n => `  • ${n}`).join('\n')}\n\n`;
+    });
+    await ctx.reply(msg);
+  });
+
+  bot.action('do:timeline', async (ctx) => {
+    if (!requireAdmin(ctx)) return ctx.answerCbQuery('Нет доступа.');
+    await ctx.answerCbQuery();
+    const { guests } = ctx.services;
+    const all = guests.listAll().filter(g => g.responded_at);
+    if (all.length === 0) return ctx.reply('Ещё никто не ответил.');
+    const byDate = {};
+    all.forEach(g => {
+      const date = g.responded_at.slice(0, 10);
+      if (!byDate[date]) byDate[date] = [];
+      byDate[date].push(g);
+    });
+    const EMOJI = { accepted: '✅', declined: '❌', maybe: '🤔' };
+    let msg = '📈 Таймлайн ответов:\n\n';
+    Object.entries(byDate).sort(([a], [b]) => a.localeCompare(b)).forEach(([date, gs]) => {
+      msg += `📅 ${date} (${gs.length}):\n`;
+      gs.forEach(g => { msg += `  ${EMOJI[g.status]||'❓'} ${g.name}\n`; });
+      msg += '\n';
+    });
+    await ctx.reply(msg);
+  });
+
+  bot.action('do:texts', async (ctx) => {
+    if (!requireAdmin(ctx)) return ctx.answerCbQuery('Нет доступа.');
+    await ctx.answerCbQuery();
+    const db = ctx.services.db;
+    const rows = db.prepare('SELECT key, value FROM site_config ORDER BY key').all();
+    if (rows.length === 0) return ctx.reply('Конфигурация пуста.');
+    let msg = '📝 Тексты сайта:\n\n';
+    rows.forEach(r => {
+      const short = r.value.length > 50 ? r.value.slice(0, 50) + '...' : r.value;
+      msg += `\`${r.key}\`\n  ${short}\n\n`;
+    });
+    const chunks = msg.match(/[\s\S]{1,4000}/g) || [msg];
+    for (const c of chunks) await ctx.reply(c, { parse_mode: 'Markdown' });
+  });
+
+  bot.action('do:checklist_registration', async (ctx) => {
+    if (!requireAdmin(ctx)) return ctx.answerCbQuery('Нет доступа.');
+    await ctx.answerCbQuery();
+    if (!ctx.services.checklist) return ctx.reply('Сервис чеклиста не подключён.');
+    const checklist = ctx.services.checklist;
+    const items = checklist.getByTab('registration');
+    if (!items || items.length === 0) return ctx.reply('📋 День росписи: пусто');
+    const categories = {};
+    for (const item of items) {
+      const cat = item.category || 'Без категории';
+      if (!categories[cat]) categories[cat] = [];
+      categories[cat].push(item);
+    }
+    const lines = ['📋 ДЕНЬ РОСПИСИ'];
+    for (const [cat, catItems] of Object.entries(categories)) {
+      lines.push(`\n${cat}:`);
+      for (const item of catItems) {
+        const check = item.done ? '✅' : '⬜';
+        const note = item.note ? ` (${item.note})` : '';
+        lines.push(`${check} [${item.id}] ${item.text}${note}`);
+      }
+    }
+    const msg = lines.join('\n');
+    const chunks = msg.match(/[\s\S]{1,4000}/g) || [msg];
+    for (const c of chunks) await ctx.reply(c);
+  });
+
+  bot.action('do:checklist_wedding', async (ctx) => {
+    if (!requireAdmin(ctx)) return ctx.answerCbQuery('Нет доступа.');
+    await ctx.answerCbQuery();
+    if (!ctx.services.checklist) return ctx.reply('Сервис чеклиста не подключён.');
+    const checklist = ctx.services.checklist;
+    const items = checklist.getByTab('wedding');
+    if (!items || items.length === 0) return ctx.reply('📋 День свадьбы: пусто');
+    const categories = {};
+    for (const item of items) {
+      const cat = item.category || 'Без категории';
+      if (!categories[cat]) categories[cat] = [];
+      categories[cat].push(item);
+    }
+    const lines = ['💒 ДЕНЬ СВАДЬБЫ'];
+    for (const [cat, catItems] of Object.entries(categories)) {
+      lines.push(`\n${cat}:`);
+      for (const item of catItems) {
+        const check = item.done ? '✅' : '⬜';
+        const note = item.note ? ` (${item.note})` : '';
+        lines.push(`${check} [${item.id}] ${item.text}${note}`);
+      }
+    }
+    const msg = lines.join('\n');
+    const chunks = msg.match(/[\s\S]{1,4000}/g) || [msg];
+    for (const c of chunks) await ctx.reply(c);
+  });
 };
 
 function buildLinksText(ctx, guest) {

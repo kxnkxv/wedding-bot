@@ -18,6 +18,21 @@ function createTelegramBot({ botToken, webhookSecret, siteUrl, guestService, pol
   require('./callbacks.js')(bot);
   require('./admin.js')(bot);
 
+  // Set command suggestions for autocomplete
+  bot.telegram.setMyCommands([
+    { command: 'start', description: 'Главное меню' },
+    { command: 'guests', description: 'Список гостей' },
+    { command: 'stats', description: 'Статистика RSVP' },
+    { command: 'addguest', description: 'Добавить гостя' },
+    { command: 'polls', description: 'Опросы' },
+    { command: 'checklist', description: 'Чеклист подготовки' },
+    { command: 'budget', description: 'Бюджет свадьбы' },
+    { command: 'broadcast', description: 'Рассылка гостям' },
+    { command: 'remind', description: 'Напомнить не ответившим' },
+    { command: 'export', description: 'Экспорт CSV' },
+    { command: 'backup', description: 'Скачать базу данных' },
+  ]).catch(() => {});
+
   return bot;
 }
 

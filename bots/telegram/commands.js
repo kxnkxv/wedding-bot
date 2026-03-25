@@ -80,46 +80,15 @@ module.exports = function registerCommands(bot) {
 
     if (admins.isTelegramAdmin(telegramId)) {
       return ctx.reply(
-        '👋 Панель управления\n\n' +
-        '📋 Гости:\n' +
-        '/addguest — добавить гостя\n' +
-        '/import — массовый импорт\n' +
-        '/guests — список гостей\n' +
-        '/search — поиск по имени\n' +
-        '/filter — фильтр (accepted/pending/telegram/vk)\n' +
-        '/info — подробная карточка гостя\n' +
-        '/remove — удалить гостя\n\n' +
-        '📊 Статистика:\n' +
-        '/stats — общая статистика RSVP\n' +
-        '/export — выгрузить CSV\n\n' +
-        '🔗 Ссылки:\n' +
-        '/link — ссылки для гостя\n' +
-        '/unbind — отвязать аккаунт\n\n' +
-        '📢 Рассылки:\n' +
-        '/broadcast — отправить всем\n' +
-        '/remind — напомнить не ответившим\n' +
-        '/templates — шаблоны рассылок\n\n' +
-        '📊 Опросы:\n' +
-        '/addpoll — создать опрос\n' +
-        '/polls — список опросов\n' +
-        '/closepoll — закрыть опрос\n\n' +
-        '🏷 Теги и заметки:\n' +
-        '/tag — добавить тег гостю\n' +
-        '/tags — просмотр тегов\n' +
-        '/note — добавить заметку\n' +
-        '/notes — просмотр заметок\n\n' +
-        '🪑 Рассадка:\n' +
-        '/seat — посадить за стол\n' +
-        '/seating — план рассадки\n\n' +
-        '✅ Чеклист:\n' +
-        '/checklist — просмотр\n' +
-        '/check /uncheck — отметить пункт\n' +
-        '/addtask /removetask — свои пункты\n\n' +
-        '👤 Админы:\n' +
-        '/addadmin — добавить админа\n' +
-        '/removeadmin — удалить\n' +
-        '/myid — узнать свой ID\n' +
-        '/backup — скачать базу данных'
+        '👋 Панель управления\nАртём × Полина — 1 августа 2026',
+        Markup.inlineKeyboard([
+          [Markup.button.callback('📋 Гости', 'menu:guests'), Markup.button.callback('📊 Статистика', 'menu:stats')],
+          [Markup.button.callback('📊 Опросы', 'menu:polls'), Markup.button.callback('🪑 Рассадка', 'menu:seating')],
+          [Markup.button.callback('💰 Бюджет', 'menu:budget'), Markup.button.callback('📞 Подрядчики', 'menu:vendors')],
+          [Markup.button.callback('✅ Чеклист', 'menu:checklist'), Markup.button.callback('📢 Рассылка', 'menu:broadcast')],
+          [Markup.button.callback('🏷 Теги/Заметки', 'menu:notes'), Markup.button.callback('📈 Аналитика', 'menu:analytics')],
+          [Markup.button.callback('⚙️ Настройки', 'menu:settings')],
+        ])
       );
     }
 
