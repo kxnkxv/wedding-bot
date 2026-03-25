@@ -699,9 +699,9 @@ module.exports = function registerAdmin(bot) {
   // /budget — show budget summary
   bot.command('budget', async (ctx) => {
     if (!requireAdmin(ctx)) return;
-    const db = require('../../db/index.js').createDb();
+    const db = ctx.services.db;
     const items = db.prepare('SELECT * FROM budget ORDER BY category, item').all();
-    db.close();
+
     if (items.length === 0) return ctx.reply('Бюджет пуст. /addexpense категория | статья | сумма');
 
     const categories = {};
@@ -735,9 +735,9 @@ module.exports = function registerAdmin(bot) {
     if (parts.length < 3) return ctx.reply('Нужно 3 параметра: категория | статья | сумма');
     const amount = parseFloat(parts[2]);
     if (isNaN(amount)) return ctx.reply('Сумма должна быть числом.');
-    const db = require('../../db/index.js').createDb();
+    const db = ctx.services.db;
     db.prepare('INSERT INTO budget (category, item, amount) VALUES (?, ?, ?)').run(parts[0], parts[1], amount);
-    db.close();
+
     await ctx.reply(`✅ Добавлено: ${parts[1]} (${parts[0]}) — ${amount.toLocaleString('ru')} ₽`);
   });
 
@@ -746,18 +746,18 @@ module.exports = function registerAdmin(bot) {
     if (!requireAdmin(ctx)) return;
     const id = ctx.message.text.replace('/pay', '').trim();
     if (!id) return ctx.reply('Формат: /pay <id расхода>');
-    const db = require('../../db/index.js').createDb();
+    const db = ctx.services.db;
     db.prepare('UPDATE budget SET paid = 1 WHERE id = ?').run(Number(id));
-    db.close();
+
     await ctx.reply(`✅ Расход #${id} отмечен как оплаченный.`);
   });
 
   // /vendors — list vendors
   bot.command('vendors', async (ctx) => {
     if (!requireAdmin(ctx)) return;
-    const db = require('../../db/index.js').createDb();
+    const db = ctx.services.db;
     const vendors = db.prepare('SELECT * FROM vendors ORDER BY role').all();
-    db.close();
+
     if (vendors.length === 0) return ctx.reply('Список подрядчиков пуст. /addvendor роль | имя | телефон');
     let msg = '📞 Подрядчики:\n\n';
     vendors.forEach(v => {
@@ -776,9 +776,9 @@ module.exports = function registerAdmin(bot) {
     if (!text) return ctx.reply('Формат: /addvendor Фотограф | Иван Иванов | +7... | заметка');
     const parts = text.split('|').map(s => s.trim());
     if (parts.length < 2) return ctx.reply('Минимум: роль | имя');
-    const db = require('../../db/index.js').createDb();
+    const db = ctx.services.db;
     db.prepare('INSERT INTO vendors (role, name, phone, note) VALUES (?, ?, ?, ?)').run(parts[0], parts[1], parts[2] || null, parts[3] || null);
-    db.close();
+
     await ctx.reply(`✅ Подрядчик добавлен: ${parts[0]} — ${parts[1]}`);
   });
 
@@ -854,9 +854,9 @@ module.exports = function registerAdmin(bot) {
     const key = text.substring(0, sepIdx).trim();
     const value = text.substring(sepIdx + 1).trim();
 
-    const db = require('../../db/index.js').createDb();
+    const db = ctx.services.db;
     db.prepare('INSERT OR REPLACE INTO site_config (key, value, updated_at) VALUES (?, ?, datetime("now"))').run(key, value);
-    db.close();
+
 
     await ctx.reply(`✅ Обновлено:\n${key} = ${value}`);
   });
@@ -864,9 +864,9 @@ module.exports = function registerAdmin(bot) {
   // /texts — show all config keys
   bot.command('texts', async (ctx) => {
     if (!requireAdmin(ctx)) return;
-    const db = require('../../db/index.js').createDb();
+    const db = ctx.services.db;
     const rows = db.prepare('SELECT key, value FROM site_config ORDER BY key').all();
-    db.close();
+
 
     if (rows.length === 0) return ctx.reply('Конфигурация пуста.');
 

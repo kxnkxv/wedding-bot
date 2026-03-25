@@ -43,7 +43,7 @@ adminService.seedFromEnv(process.env.ADMIN_IDS);
 // Telegram bot
 const tgBot = createTelegramBot({
   botToken: BOT_TOKEN, webhookSecret: WEBHOOK_SECRET, siteUrl: SITE_URL,
-  guestService, pollService, adminService, checklistService,
+  guestService, pollService, adminService, checklistService, db,
 });
 
 // VK bot

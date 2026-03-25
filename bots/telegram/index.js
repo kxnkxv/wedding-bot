@@ -1,6 +1,6 @@
 const { Telegraf } = require('telegraf');
 
-function createTelegramBot({ botToken, webhookSecret, siteUrl, guestService, pollService, adminService, checklistService }) {
+function createTelegramBot({ botToken, webhookSecret, siteUrl, guestService, pollService, adminService, checklistService, db }) {
   const bot = new Telegraf(botToken);
 
   // Global error handler — don't crash on errors
@@ -9,7 +9,7 @@ function createTelegramBot({ botToken, webhookSecret, siteUrl, guestService, pol
   });
 
   bot.use((ctx, next) => {
-    ctx.services = { guests: guestService, polls: pollService, admins: adminService, checklist: checklistService };
+    ctx.services = { guests: guestService, polls: pollService, admins: adminService, checklist: checklistService, db: db };
     ctx.siteUrl = siteUrl;
     return next();
   });
