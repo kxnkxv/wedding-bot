@@ -85,14 +85,10 @@ body {
   text-transform: uppercase;
   color: var(--red);
   margin-bottom: 36px;
-  opacity: 0;
-  animation: fadeUp 1s ease forwards .3s;
 }
 
 .names-block {
   margin-bottom: 28px;
-  opacity: 0;
-  animation: fadeUp 1s ease forwards .6s;
 }
 
 .name {
@@ -119,8 +115,6 @@ body {
   justify-content: center;
   gap: 20px;
   margin-bottom: 28px;
-  opacity: 0;
-  animation: fadeUp 1s ease forwards .75s;
 }
 
 .hero-line::before, .hero-line::after {
@@ -139,46 +133,8 @@ body {
   font-weight: 400;
   letter-spacing: 5px;
   color: rgba(255,255,255,.6);
-  opacity: 0;
-  animation: fadeUp 1s ease forwards .9s;
 }
 
-.scroll-hint {
-  margin-top: auto;
-  padding-bottom: 8px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  opacity: 0;
-  animation: fadeUp 1s ease forwards 1.4s;
-}
-
-.scroll-hint span {
-  font-size: 9px;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  color: rgba(255,255,255,.3);
-}
-
-.scroll-arrow {
-  width: 16px; height: 16px;
-  border-right: 1px solid var(--red);
-  border-bottom: 1px solid var(--red);
-  transform: rotate(45deg);
-  animation: bounce 2s ease-in-out infinite;
-  opacity: .6;
-}
-
-@keyframes bounce {
-  0%, 100% { transform: rotate(45deg) translate(0,0); }
-  50% { transform: rotate(45deg) translate(3px,3px); }
-}
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
 
 /* ===== SECTIONS ===== */
 .section {
@@ -658,20 +614,12 @@ body {
 .footer-heart {
   color: var(--red);
   font-size: 18px;
-  animation: pulse 2s ease-in-out infinite;
 }
-
-@keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.15); } }
 
 /* ===== RSVP BUTTON TRANSITIONS ===== */
 .rsvp-btn { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 .rsvp-btn:active { transform: scale(0.97); }
-.rsvp-btn.selected { animation: selectPulse 0.4s ease; }
-@keyframes selectPulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
 
-/* ===== LOADING ANIMATIONS ===== */
-@keyframes textPulse { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
-@keyframes loading-bar { 0% { width: 20px; } 50% { width: 80px; } 100% { width: 20px; } }
 
 /* Dark theme removed — the original design already alternates dark/light sections */
 
@@ -680,21 +628,8 @@ body {
   .dark-section { background: white !important; color: black !important; }
   .dark-section * { color: black !important; }
   .rsvp-buttons, #dietary-section, #comment-section, #wishes-section, .tg-btn, #connect-section { display: none !important; }
-  .reveal { opacity: 1 !important; transform: none !important; }
   body { background: white; }
   .card { box-shadow: none; border: 1px solid #ccc; }
-}
-
-/* Scroll animations */
-.reveal {
-  opacity: 0;
-  transform: translateY(28px);
-  transition: opacity .7s ease, transform .7s ease;
-}
-
-.reveal.visible {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 /* ===== LOADING STATE ===== */
@@ -717,11 +652,8 @@ body {
   border: 2px solid rgba(196,30,58,.2);
   border-top-color: var(--red);
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
   margin-bottom: 20px;
 }
-
-@keyframes spin { to { transform: rotate(360deg); } }
 
 .loading-text {
   font-family: 'Cormorant Garamond', serif;
@@ -773,8 +705,7 @@ body {
 
 <!-- LOADING OVERLAY -->
 <div id="loadingOverlay" class="loading-overlay" style="position:fixed;inset:0;background:var(--deep-black,#1A1A1A);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .5s ease;">
-  <div style="font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--off-white,#FAF7F1);letter-spacing:4px;animation:textPulse 1.5s ease-in-out infinite;">Загружаем приглашение...</div>
-  <div style="margin-top:20px;width:60px;height:2px;background:var(--red,#C41E3A);animation:loading-bar 1.5s ease-in-out infinite;"></div>
+  <div style="font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--off-white,#FAF7F1);letter-spacing:4px;">Загружаем...</div>
 </div>
 
 <!-- ERROR PAGE -->
@@ -814,14 +745,10 @@ body {
     <div class="hero-date">01 · августа · 2026</div>
   </div>
 
-  <div class="scroll-hint">
-    <span>подробнее</span>
-    <div class="scroll-arrow"></div>
-  </div>
 </section>
 
 <!-- INVITATION -->
-<section class="section reveal">
+<section class="section">
   <div class="section-label" id="invLabel">Дорогие друзья</div>
   <div class="section-title" id="invTitle">Мы приглашаем тебя!</div>
   <p class="section-text">
@@ -832,10 +759,10 @@ body {
   </div>
 </section>
 
-<div class="divider reveal"><div class="divider-dot"></div></div>
+<div class="divider"><div class="divider-dot"></div></div>
 
 <!-- COUPLE STORY -->
-<section class="dark-section reveal">
+<section class="dark-section">
   <div class="section-label">Наша история</div>
   <div class="section-title">Как всё началось</div>
   <div style="max-width:380px;margin:0 auto;">
@@ -861,10 +788,10 @@ body {
     </div>
   </div>
 </section>
-<div class="divider reveal"><div class="divider-dot"></div></div>
+<div class="divider"><div class="divider-dot"></div></div>
 
 <!-- WITNESSES -->
-<section class="reveal" style="padding:60px 20px;">
+<section class="" style="padding:60px 20px;">
   <div class="section-label">Команда</div>
   <div class="section-title">Наши свидетели</div>
   <div class="info-grid">
@@ -882,10 +809,10 @@ body {
     </div>
   </div>
 </section>
-<div class="divider reveal"><div class="divider-dot"></div></div>
+<div class="divider"><div class="divider-dot"></div></div>
 
 <!-- SCHEDULE -->
-<section class="section reveal">
+<section class="section">
   <div class="section-label">Расписание</div>
   <div class="section-title">Программа дня</div>
 
@@ -933,10 +860,10 @@ body {
   </div>
 </section>
 
-<div class="divider reveal"><div class="divider-dot"></div></div>
+<div class="divider"><div class="divider-dot"></div></div>
 
 <!-- INFO -->
-<section class="section reveal">
+<section class="section">
   <div class="section-label">Детали</div>
   <div class="section-title">Место и время</div>
 
@@ -969,7 +896,7 @@ body {
 </section>
 
 <!-- PALETTE -->
-<section class="section reveal" style="padding-top: 0;">
+<section class="section" style="padding-top: 0;">
   <p class="section-text" style="margin-bottom: 12px;">Будем рады, если твой наряд будет в палитре нашей свадьбы:</p>
   <div class="palette">
     <div class="palette-item"><div class="swatch" style="background: #3E2216;"></div><span>Коричневый</span></div>
@@ -980,10 +907,10 @@ body {
   </div>
 </section>
 
-<div class="divider reveal"><div class="divider-dot"></div></div>
+<div class="divider"><div class="divider-dot"></div></div>
 
 <!-- VENUE & MAP -->
-<section class="reveal" style="padding: 40px 20px;">
+<section class="" style="padding: 40px 20px;">
   <div class="section-label">Как добраться</div>
   <div class="section-title">Площадка</div>
   <div class="info-grid">
@@ -1013,10 +940,10 @@ body {
   </div>
 </section>
 
-<div class="divider reveal"><div class="divider-dot"></div></div>
+<div class="divider"><div class="divider-dot"></div></div>
 
 <!-- HOTELS -->
-<section class="reveal" style="padding:40px 20px;">
+<section class="" style="padding:40px 20px;">
   <div class="section-label">Размещение</div>
   <div class="section-title">Где остановиться</div>
   <p style="text-align:center;font-family:'Nunito Sans',sans-serif;font-size:13px;color:var(--mid-gray,#9E9E9E);margin-bottom:24px;">Для гостей из других городов</p>
@@ -1033,10 +960,10 @@ body {
     </div>
   </div>
 </section>
-<div class="divider reveal"><div class="divider-dot"></div></div>
+<div class="divider"><div class="divider-dot"></div></div>
 
 <!-- RULES -->
-<section class="dark-section reveal">
+<section class="dark-section">
   <div class="section-label">Важно знать</div>
   <div class="section-title">Правила площадки</div>
   <div style="max-width:380px;margin:0 auto;text-align:left;">
@@ -1058,10 +985,10 @@ body {
     </div>
   </div>
 </section>
-<div class="divider reveal"><div class="divider-dot"></div></div>
+<div class="divider"><div class="divider-dot"></div></div>
 
 <!-- WIFI & HASHTAG -->
-<section class="reveal" style="padding:40px 20px;">
+<section class="" style="padding:40px 20px;">
   <div class="info-grid">
     <div class="info-card">
       <div class="info-icon">📶</div>
@@ -1075,10 +1002,10 @@ body {
     </div>
   </div>
 </section>
-<div class="divider reveal"><div class="divider-dot"></div></div>
+<div class="divider"><div class="divider-dot"></div></div>
 
 <!-- WISHES -->
-<section class="dark-section reveal">
+<section class="dark-section">
   <div class="section-label">Пожелания</div>
   <div class="section-title">Вместо цветов</div>
   <p class="story-quote">
@@ -1090,15 +1017,15 @@ body {
 </section>
 
 <!-- FAQ -->
-<section class="dark-section reveal">
+<section class="dark-section">
   <div class="section-label">Частые вопросы</div>
   <div class="section-title">FAQ</div>
   <div id="faq-block" style="max-width: 380px; margin: 0 auto; text-align: left;"></div>
 </section>
-<div class="divider reveal"><div class="divider-dot"></div></div>
+<div class="divider"><div class="divider-dot"></div></div>
 
 <!-- COUNTDOWN -->
-<section class="countdown-section reveal">
+<section class="countdown-section">
   <div class="section-label">Отсчёт</div>
   <div class="section-title">До нашей свадьбы</div>
   <div class="countdown">
@@ -1110,7 +1037,7 @@ body {
 </section>
 
 <!-- RSVP -->
-<section class="rsvp-section reveal" id="rsvp">
+<section class="rsvp-section" id="rsvp">
   <div class="section-label">Подтверждение</div>
   <div class="section-title">Ждём твой ответ</div>
   <p class="section-text" style="margin-bottom: 28px;">Пожалуйста, подтверди присутствие до <strong>1 июля 2026</strong></p>
@@ -1124,7 +1051,7 @@ body {
 </section>
 
 <!-- DIETARY -->
-<section id="dietary-section" class="reveal" style="padding: 40px 20px; display: none;">
+<section id="dietary-section" class="" style="padding: 40px 20px; display: none;">
   <div class="section-label">Предпочтения</div>
   <div class="section-title">Есть ли у тебя ограничения в питании?</div>
   <div style="max-width: 340px; margin: 20px auto;">
@@ -1134,7 +1061,7 @@ body {
 </section>
 
 <!-- COMMENT -->
-<section id="comment-section" class="reveal" style="padding:40px 20px;display:none;">
+<section id="comment-section" class="" style="padding:40px 20px;display:none;">
   <div class="section-label">Комментарий</div>
   <div class="section-title">Хотите что-то добавить?</div>
   <div style="max-width:340px;margin:20px auto;">
@@ -1150,7 +1077,7 @@ body {
 </div>
 
 <!-- POLLS -->
-<section class="polls-section reveal" id="pollsSection">
+<section class="polls-section" id="pollsSection">
   <div class="section-label">Опросы</div>
   <div class="section-title">Пара вопросов</div>
   <p class="section-text" style="margin-bottom: 32px;">Помогите нам лучше подготовиться!</p>
@@ -1158,7 +1085,7 @@ body {
 </section>
 
 <!-- WISHES WALL -->
-<section class="dark-section reveal" id="wishes-section">
+<section class="dark-section" id="wishes-section">
   <div class="section-label">Гостевая книга</div>
   <div class="section-title">Пожелания</div>
   <div id="wishes-list" style="max-width:380px;margin:20px auto;"></div>
@@ -1168,10 +1095,10 @@ body {
   </div>
 </section>
 
-<div class="divider reveal" id="connectDivider" style="display:none;"><div class="divider-dot"></div></div>
+<div class="divider" id="connectDivider" style="display:none;"><div class="divider-dot"></div></div>
 
 <!-- CONNECT MESSENGER -->
-<section class="connect-section reveal hidden" id="connectSection">
+<section class="connect-section hidden" id="connectSection">
   <div class="section-label">Уведомления</div>
   <div class="section-title">Оставайтесь на связи</div>
   <p class="section-text">Хотите получать новости и напоминания о свадьбе прямо в мессенджер?</p>
@@ -1182,15 +1109,15 @@ body {
 </section>
 
 <!-- AFTER PARTY -->
-<section class="dark-section reveal">
+<section class="dark-section">
   <div class="section-label">Продолжение</div>
   <div class="section-title">After-party</div>
   <p class="story-quote">Для самых стойких — продолжение вечера! Подробности объявим ближе к дате. 🎶</p>
 </section>
-<div class="divider reveal"><div class="divider-dot"></div></div>
+<div class="divider"><div class="divider-dot"></div></div>
 
 <!-- INTERACTIVE -->
-<section class="reveal" style="padding:40px 20px;">
+<section class="" style="padding:40px 20px;">
   <div class="section-label">Интерактив</div>
   <div class="section-title">Развлечения для гостей</div>
   <div class="info-grid">
@@ -1236,10 +1163,10 @@ body {
     </a>
   </div>
 </section>
-<div class="divider reveal"><div class="divider-dot"></div></div>
+<div class="divider"><div class="divider-dot"></div></div>
 
 <!-- LIVE STREAM -->
-<section class="reveal" style="padding:40px 20px;text-align:center;">
+<section class="" style="padding:40px 20px;text-align:center;">
   <div class="section-label">Онлайн</div>
   <div class="section-title">Не можете присутствовать?</div>
   <p style="font-family:'Nunito Sans',sans-serif;font-size:14px;color:var(--text-light,#777);margin-bottom:20px;">Ссылка на трансляцию появится в день свадьбы</p>
@@ -1413,23 +1340,6 @@ body {
     } catch(e) {}
   }
 
-  // ─── Confetti ─────────────────────────────────────────────────────────────
-  function launchConfetti() {
-    var colors = ['#C41E3A', '#8B1A2B', '#5C1220', '#3E2216', '#FAF7F1'];
-    var count = 80;
-    for (var i = 0; i < count; i++) {
-      var el = document.createElement('div');
-      el.style.cssText = 'position:fixed;width:' + (6 + Math.random()*6) + 'px;height:' + (6 + Math.random()*6) + 'px;background:' + colors[Math.floor(Math.random()*colors.length)] + ';border-radius:' + (Math.random()>0.5?'50%':'2px') + ';top:-10px;left:' + (Math.random()*100) + 'vw;z-index:9999;pointer-events:none;opacity:1;';
-      document.body.appendChild(el);
-      var duration = 1500 + Math.random()*2000;
-      var endY = window.innerHeight + 20;
-      var drift = (Math.random()-0.5) * 200;
-      el.animate([
-        { transform: 'translateY(0) translateX(0) rotate(0deg)', opacity: 1 },
-        { transform: 'translateY(' + endY + 'px) translateX(' + drift + 'px) rotate(' + (Math.random()*720-360) + 'deg)', opacity: 0 }
-      ], { duration: duration, easing: 'cubic-bezier(0.25,0.46,0.45,0.94)' }).onfinish = function() { el.remove(); };
-    }
-  }
 
   // ─── RSVP ────────────────────────────────────────────────────────────────
   var RSVP_MESSAGES = {
@@ -1473,7 +1383,7 @@ body {
       .then(function() {
         highlightRsvp(status);
         setRsvpMessage(status);
-        if (status === 'accepted') { launchConfetti(); playSuccessSound(); }
+        if (status === 'accepted') { playSuccessSound(); }
         var dietarySection = document.getElementById('dietary-section');
         if (dietarySection) dietarySection.style.display = (status === 'accepted') ? '' : 'none';
         var commentSection = document.getElementById('comment-section');
@@ -1594,14 +1504,9 @@ body {
     if (cdS) cdS.textContent = Math.floor((d % 6e4) / 1e3);
   }
 
-  // ─── Scroll reveal ────────────────────────────────────────────────────────
+  // ─── Scroll ────────────────────────────────────────────────────────
   function initReveal() {
-    var obs = new IntersectionObserver(function(entries) {
-      entries.forEach(function(e) {
-        if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
-      });
-    }, { threshold: 0.12 });
-    document.querySelectorAll('.reveal').forEach(function(el) { obs.observe(el); });
+    // Animations removed — static design only
   }
 
   // ─── FAQ ─────────────────────────────────────────────────────────────────
@@ -1790,18 +1695,6 @@ body {
     }
   }
 
-  // ─── Parallax hero ───────────────────────────────────────────────────────
-  var hero = document.querySelector('.hero') || document.querySelector('[class*="hero"]');
-  if (hero) {
-    window.addEventListener('scroll', function() {
-      var y = window.scrollY;
-      if (y < window.innerHeight) {
-        hero.style.transform = 'translateY(' + (y * 0.3) + 'px)';
-        hero.style.opacity = 1 - (y / (window.innerHeight * 0.8));
-      }
-    }, { passive: true });
-  }
-
   // ─── Keyboard accessibility ───────────────────────────────────────────────
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Enter' && e.target.classList.contains('rsvp-btn')) e.target.click();
@@ -1819,18 +1712,6 @@ body {
   document.querySelectorAll('.react-btn').forEach(function(btn) {
     btn.addEventListener('click', function() {
       var emoji = btn.getAttribute('data-emoji');
-      btn.style.transform = 'scale(1.5)';
-      setTimeout(function() { btn.style.transform = 'scale(1)'; }, 200);
-
-      // Float emoji animation
-      var float = document.createElement('div');
-      float.textContent = emoji;
-      float.style.cssText = 'position:fixed;bottom:60px;left:' + (btn.getBoundingClientRect().left) + 'px;font-size:32px;pointer-events:none;z-index:101;';
-      document.body.appendChild(float);
-      float.animate([
-        { transform: 'translateY(0) scale(1)', opacity: 1 },
-        { transform: 'translateY(-200px) scale(1.5)', opacity: 0 }
-      ], { duration: 1500 }).onfinish = function() { float.remove(); };
 
       // Send to API
       fetch('/api/react', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({emoji: emoji}) }).catch(function(){});
