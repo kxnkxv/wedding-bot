@@ -60,6 +60,7 @@ module.exports = function registerCommands(vk, ctx) {
   const { siteUrl, guestService, pollService, adminService } = ctx;
 
   vk.updates.on('message_new', async (context, next) => {
+    console.log('VK message_new from:', context.senderId, 'text:', context.text);
     const userId = context.senderId;
     const text = (context.text || '').trim();
 
