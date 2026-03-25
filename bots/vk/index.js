@@ -9,8 +9,14 @@ function createVkBot({ vkToken, vkGroupId, vkConfirmation, vkSecret, siteUrl, gu
 
   function callbackMiddleware(req, res) {
     const body = req.body;
-    if (vkSecret && body.secret !== vkSecret) return res.status(403).send('Invalid secret');
-    if (body.type === 'confirmation' && Number(body.group_id) === Number(vkGroupId)) return res.send(vkConfirmation);
+    // Confirmation request (no secret check — VK sends it without secret)
+    if (body.type === 'confirmation' && Number(body.group_id) === Number(vkGroupId)) {
+      return res.send(vkConfirmation);
+    }
+    // For other events, check secret if configured in VK community settings
+    if (vkSecret && body.secret && body.secret !== vkSecret) {
+      return res.status(403).send('Invalid secret');
+    }
     vk.updates.handleWebhookUpdate(body).catch(console.error);
     res.send('ok');
   }
