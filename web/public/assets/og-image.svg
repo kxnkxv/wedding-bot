@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#1A1A1A"/>
+  <text x="600" y="250" text-anchor="middle" font-family="serif" font-size="72" fill="#FAF7F1" letter-spacing="8">Артём × Полина</text>
+  <text x="600" y="340" text-anchor="middle" font-family="sans-serif" font-size="28" fill="#9E9E9E" letter-spacing="4">1 АВГУСТА 2026</text>
+  <line x1="500" y1="380" x2="700" y2="380" stroke="#C41E3A" stroke-width="2"/>
+  <text x="600" y="430" text-anchor="middle" font-family="sans-serif" font-size="22" fill="#9E9E9E">Мы приглашаем вас на нашу свадьбу</text>
+</svg>

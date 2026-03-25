@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Таймкапсула</title>
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #1A1A1A;
+  --card: rgba(255,255,255,0.05);
+  --border: rgba(255,255,255,0.1);
+  --text: #FAF7F1;
+  --text-secondary: #9E9E9E;
+  --accent: #C41E3A;
+  --accent-hover: #9B1B30;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Nunito Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 24px 16px 48px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.container {
+  width: 100%;
+  max-width: 560px;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.page-header h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(28px, 7vw, 48px);
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.page-header .subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  max-width: 360px;
+  margin: 0 auto;
+}
+
+.divider {
+  width: 48px;
+  height: 1px;
+  background: var(--accent);
+  margin: 12px auto;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px 24px;
+  margin-bottom: 16px;
+}
+
+/* Counter */
+.counter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+}
+
+.counter-bar .count-val {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--accent);
+  font-family: 'Cormorant Garamond', serif;
+}
+
+/* Form */
+.form-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.message-textarea {
+  width: 100%;
+  min-height: 180px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  color: var(--text);
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.message-textarea:focus {
+  border-color: rgba(196,30,58,0.5);
+}
+
+.message-textarea::placeholder {
+  color: var(--text-secondary);
+}
+
+.char-count {
+  text-align: right;
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 6px;
+}
+
+.btn-submit {
+  width: 100%;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 14px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  letter-spacing: 0.05em;
+  margin-top: 16px;
+}
+
+.btn-submit:hover { background: var(--accent-hover); }
+.btn-submit:active { transform: scale(0.98); }
+.btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Sealed state */
+.sealed-view {
+  text-align: center;
+  animation: sealIn 0.6s ease;
+}
+
+@keyframes sealIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.envelope-wrap {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 24px;
+}
+
+.envelope {
+  font-size: 72px;
+  line-height: 1;
+  display: block;
+  animation: floatUp 3s ease-in-out infinite;
+}
+
+@keyframes floatUp {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.seal-ring {
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  animation: sealPulse 2s ease-in-out infinite;
+}
+
+@keyframes sealPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(196,30,58,0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(196,30,58,0); }
+}
+
+.sealed-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(20px, 5vw, 28px);
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+
+.sealed-msg {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 360px;
+  margin: 0 auto 20px;
+}
+
+.open-date {
+  display: inline-block;
+  background: rgba(196,30,58,0.12);
+  border: 1px solid rgba(196,30,58,0.3);
+  border-radius: 20px;
+  padding: 8px 20px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #e57373;
+  letter-spacing: 0.04em;
+}
+
+.counter-sealed {
+  margin-top: 20px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.counter-sealed strong {
+  color: var(--text);
+}
+
+/* Particles */
+.particles {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 50;
+}
+
+.particle {
+  position: absolute;
+  top: -20px;
+  font-size: 18px;
+  animation: fall linear forwards;
+  opacity: 0.8;
+}
+
+@keyframes fall {
+  to {
+    transform: translateY(110vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: rgba(30,30,30,0.95);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 20px;
+  font-size: 14px;
+  color: var(--text);
+  transition: transform 0.3s ease;
+  z-index: 100;
+  white-space: nowrap;
+}
+
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="page-header">
+    <h1>Таймкапсула 💌</h1>
+    <div class="divider"></div>
+    <p class="subtitle">Напишите послание, которое Артём и Полина откроют через год</p>
+  </div>
+
+  <div id="app">
+    <div style="text-align:center;padding:32px;color:var(--text-secondary);font-size:14px;">Загружаем...</div>
+  </div>
+</div>
+
+<div class="particles" id="particles"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function() {
+  var guestId = new URLSearchParams(location.search).get('id') || localStorage.getItem('wedding_guest_id') || 'anon';
+  var submitted = localStorage.getItem('capsule_submitted_' + guestId) === '1';
+  var app = document.getElementById('app');
+  var capsuleCount = 0;
+
+  function showToast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(function() { t.classList.remove('show'); }, 2800);
+  }
+
+  function loadCount() {
+    // Try to get count from API if supported
+    fetch('/api/timecapsule/count')
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        capsuleCount = d.count || 0;
+        updateCountDisplay();
+      })
+      .catch(function() {});
+  }
+
+  function updateCountDisplay() {
+    var el = document.getElementById('countVal');
+    if (el) el.textContent = capsuleCount;
+    var el2 = document.getElementById('countValSealed');
+    if (el2) el2.textContent = capsuleCount;
+  }
+
+  function renderForm() {
+    while (app.firstChild) { app.removeChild(app.firstChild); }
+
+    // Counter
+    var counterBar = document.createElement('div');
+    counterBar.className = 'counter-bar';
+    var countVal = document.createElement('span');
+    countVal.className = 'count-val';
+    countVal.id = 'countVal';
+    countVal.textContent = capsuleCount;
+    counterBar.appendChild(countVal);
+    var countText = document.createElement('span');
+    countText.textContent = ' посланий уже запечатано';
+    counterBar.appendChild(countText);
+    app.appendChild(counterBar);
+
+    // Card
+    var card = document.createElement('div');
+    card.className = 'card';
+
+    var label = document.createElement('label');
+    label.className = 'form-label';
+    label.setAttribute('for', 'msgArea');
+    label.textContent = 'Ваше послание';
+    card.appendChild(label);
+
+    var textarea = document.createElement('textarea');
+    textarea.className = 'message-textarea';
+    textarea.id = 'msgArea';
+    textarea.placeholder = 'Дорогие Артём и Полина,\n\nчерез год, когда вы откроете этот конверт...';
+    textarea.maxLength = 2000;
+    card.appendChild(textarea);
+
+    var charCount = document.createElement('div');
+    charCount.className = 'char-count';
+    charCount.textContent = '0 / 2000';
+    card.appendChild(charCount);
+
+    textarea.addEventListener('input', function() {
+      charCount.textContent = textarea.value.length + ' / 2000';
+    });
+
+    var btn = document.createElement('button');
+    btn.className = 'btn-submit';
+    btn.textContent = 'Запечатать послание \uD83D\uDCEE';
+    btn.addEventListener('click', function() { submitCapsule(textarea.value, btn); });
+    card.appendChild(btn);
+
+    app.appendChild(card);
+  }
+
+  function submitCapsule(text, btn) {
+    var msg = text.trim();
+    if (!msg) { showToast('Напишите послание перед отправкой'); return; }
+    if (msg.length < 10) { showToast('Послание слишком короткое'); return; }
+
+    btn.disabled = true;
+    btn.textContent = 'Запечатываем...';
+
+    fetch('/api/timecapsule', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ guest_id: guestId, message: msg })
+    })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.error) throw new Error(data.error);
+        capsuleCount = data.count || capsuleCount + 1;
+        localStorage.setItem('capsule_submitted_' + guestId, '1');
+        submitted = true;
+        launchParticles();
+        setTimeout(function() { showSealed(); }, 400);
+      })
+      .catch(function(e) {
+        showToast(e.message || 'Ошибка. Попробуйте ещё раз');
+        btn.disabled = false;
+        btn.textContent = 'Запечатать послание \uD83D\uDCEE';
+      });
+  }
+
+  function launchParticles() {
+    var emojis = ['\uD83D\uDC8C', '\u2665\uFE0F', '\u2728', '\uD83C\uDF39', '\uD83E\uDD0D', '\uD83C\uDF1F'];
+    var container = document.getElementById('particles');
+    for (var i = 0; i < 24; i++) {
+      (function(idx) {
+        setTimeout(function() {
+          var p = document.createElement('span');
+          p.className = 'particle';
+          p.textContent = emojis[idx % emojis.length];
+          p.style.left = (Math.random() * 100) + 'vw';
+          p.style.animationDuration = (1.5 + Math.random() * 2) + 's';
+          p.style.animationDelay = (Math.random() * 0.5) + 's';
+          container.appendChild(p);
+          setTimeout(function() {
+            if (p.parentNode) p.parentNode.removeChild(p);
+          }, 4000);
+        }, idx * 60);
+      })(i);
+    }
+  }
+
+  function showSealed() {
+    while (app.firstChild) { app.removeChild(app.firstChild); }
+
+    var card = document.createElement('div');
+    card.className = 'card sealed-view';
+
+    var envelopeWrap = document.createElement('div');
+    envelopeWrap.className = 'envelope-wrap';
+
+    var envelope = document.createElement('span');
+    envelope.className = 'envelope';
+    envelope.textContent = '\uD83D\uDCEC';
+
+    var sealRing = document.createElement('div');
+    sealRing.className = 'seal-ring';
+    sealRing.textContent = '\u2665';
+
+    envelopeWrap.appendChild(envelope);
+    envelopeWrap.appendChild(sealRing);
+
+    var title = document.createElement('div');
+    title.className = 'sealed-title';
+    title.textContent = 'Ваше послание запечатано';
+
+    var msg = document.createElement('div');
+    msg.className = 'sealed-msg';
+    msg.textContent = 'Оно будет храниться в тайне до дня открытия. Только Артём и Полина смогут прочитать его вместе.';
+
+    var dateTag = document.createElement('div');
+    dateTag.className = 'open-date';
+    dateTag.textContent = '\uD83D\uDDD3  Открыть 1 августа 2027 года';
+
+    var counterSealed = document.createElement('div');
+    counterSealed.className = 'counter-sealed';
+    var countSpan = document.createElement('strong');
+    countSpan.id = 'countValSealed';
+    countSpan.textContent = capsuleCount;
+    counterSealed.appendChild(document.createTextNode('Уже '));
+    counterSealed.appendChild(countSpan);
+    counterSealed.appendChild(document.createTextNode(' посланий от гостей'));
+
+    card.appendChild(envelopeWrap);
+    card.appendChild(title);
+    card.appendChild(msg);
+    card.appendChild(dateTag);
+    card.appendChild(counterSealed);
+
+    app.appendChild(card);
+  }
+
+  // Init
+  if (submitted) {
+    showSealed();
+  } else {
+    renderForm();
+  }
+  loadCount();
+})();
+</script>
+</body>
+</html>

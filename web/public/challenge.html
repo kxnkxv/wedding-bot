@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Фото-челлендж</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Nunito+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #1A1A1A;
+      color: #FAF7F1;
+      font-family: 'Nunito Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px 48px;
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.2rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      margin-bottom: 6px;
+      text-align: center;
+    }
+
+    .subtitle {
+      font-size: 0.85rem;
+      color: #9a9080;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    /* Progress bar */
+    .progress-wrap {
+      width: 100%;
+      max-width: 480px;
+      margin-bottom: 24px;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: #9a9080;
+      margin-bottom: 8px;
+    }
+
+    .progress-bar {
+      height: 4px;
+      background: #2a2520;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: #C41E3A;
+      border-radius: 2px;
+      transition: width 0.4s ease;
+    }
+
+    /* Cards list */
+    .list {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .card {
+      background: #2a2520;
+      border: 1px solid #3a3530;
+      border-radius: 10px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.18s, border-color 0.18s, transform 0.1s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .card:active {
+      transform: scale(0.97);
+    }
+
+    .card.done {
+      background: rgba(196, 30, 58, 0.12);
+      border-color: #C41E3A;
+    }
+
+    .card-icon {
+      font-size: 1.8rem;
+      flex-shrink: 0;
+      width: 40px;
+      text-align: center;
+    }
+
+    .card-task {
+      flex: 1;
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+
+    .card.done .card-task {
+      text-decoration: line-through;
+      color: #9a9080;
+    }
+
+    .card-check {
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid #4a4540;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.18s, border-color 0.18s;
+    }
+
+    .card.done .card-check {
+      background: #C41E3A;
+      border-color: #C41E3A;
+    }
+
+    .card-check svg {
+      display: none;
+      width: 12px;
+      height: 12px;
+    }
+
+    .card.done .card-check svg {
+      display: block;
+    }
+
+    /* Hashtag footer */
+    .hashtag {
+      margin-top: 28px;
+      font-size: 0.85rem;
+      color: #C41E3A;
+      letter-spacing: 0.04em;
+      text-align: center;
+    }
+
+    /* All-done banner */
+    .done-banner {
+      display: none;
+      margin-top: 20px;
+      text-align: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      color: #C41E3A;
+      animation: pop 0.4s cubic-bezier(.36,1.56,.64,1) both;
+    }
+
+    .done-banner.show { display: block; }
+
+    @keyframes pop {
+      from { transform: scale(0.5); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+<h1>Фото-челлендж 📸</h1>
+<p class="subtitle">Отметьте всё, что удалось снять</p>
+
+<div class="progress-wrap">
+  <div class="progress-label">
+    <span id="progress-text">0 из 12</span>
+    <span id="progress-pct">0%</span>
+  </div>
+  <div class="progress-bar">
+    <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+  </div>
+</div>
+
+<div class="list" id="list"></div>
+
+<div class="done-banner" id="done-banner">Все задания выполнены! 🎉</div>
+
+<p class="hashtag">#АртёмИПолина2026</p>
+
+<script>
+var challenges = [
+  { icon: '🎂', task: 'Сфотографируй торт' },
+  { icon: '💐', task: 'Поймай букет на фото' },
+  { icon: '💃', task: 'Танцпол в разгаре' },
+  { icon: '😂', task: 'Самый смешной момент' },
+  { icon: '👫', task: 'Селфи с молодожёнами' },
+  { icon: '🥂', task: 'Момент тоста' },
+  { icon: '👴', task: 'Три поколения на одном фото' },
+  { icon: '🌅', task: 'Закат на площадке' },
+  { icon: '👠', task: 'Самые красивые туфли' },
+  { icon: '🎵', task: 'Кто-то поёт караоке' },
+  { icon: '🤗', task: 'Самые тёплые объятия' },
+  { icon: '🍾', task: 'Открытие шампанского' },
+];
+
+var STORAGE_KEY = 'challenge_checked_v1';
+var checked = [];
+
+function load() {
+  try {
+    var stored = localStorage.getItem(STORAGE_KEY);
+    checked = stored ? JSON.parse(stored) : new Array(challenges.length).fill(false);
+    if (checked.length !== challenges.length) {
+      checked = new Array(challenges.length).fill(false);
+    }
+  } catch (e) {
+    checked = new Array(challenges.length).fill(false);
+  }
+}
+
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(checked));
+}
+
+function updateProgress() {
+  var done = checked.filter(Boolean).length;
+  var total = challenges.length;
+  var pct = Math.round(done / total * 100);
+  document.getElementById('progress-text').textContent = done + ' из ' + total;
+  document.getElementById('progress-pct').textContent = pct + '%';
+  document.getElementById('progress-fill').style.width = pct + '%';
+  var banner = document.getElementById('done-banner');
+  if (done === total) {
+    banner.classList.add('show');
+  } else {
+    banner.classList.remove('show');
+  }
+}
+
+function render() {
+  var list = document.getElementById('list');
+  while (list.firstChild) list.removeChild(list.firstChild);
+  for (var i = 0; i < challenges.length; i++) {
+    var c = challenges[i];
+    var card = document.createElement('div');
+    card.className = 'card' + (checked[i] ? ' done' : '');
+    card.dataset.index = i;
+    card.addEventListener('click', onCardClick);
+
+    var iconEl = document.createElement('div');
+    iconEl.className = 'card-icon';
+    iconEl.textContent = c.icon;
+
+    var taskEl = document.createElement('div');
+    taskEl.className = 'card-task';
+    taskEl.textContent = c.task;
+
+    var checkEl = document.createElement('div');
+    checkEl.className = 'card-check';
+
+    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('viewBox', '0 0 12 12');
+    svg.setAttribute('fill', 'none');
+    var polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+    polyline.setAttribute('points', '1.5,6 4.5,9 10.5,3');
+    polyline.setAttribute('stroke', '#FAF7F1');
+    polyline.setAttribute('stroke-width', '2');
+    polyline.setAttribute('stroke-linecap', 'round');
+    polyline.setAttribute('stroke-linejoin', 'round');
+    svg.appendChild(polyline);
+    checkEl.appendChild(svg);
+
+    card.appendChild(iconEl);
+    card.appendChild(taskEl);
+    card.appendChild(checkEl);
+    list.appendChild(card);
+  }
+  updateProgress();
+}
+
+function onCardClick(e) {
+  var idx = parseInt(e.currentTarget.dataset.index, 10);
+  checked[idx] = !checked[idx];
+  save();
+  render();
+}
+
+load();
+render();
+</script>
+</body>
+</html>

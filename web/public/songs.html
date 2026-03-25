@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Музыкальные пожелания</title>
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #1A1A1A;
+  --card: rgba(255,255,255,0.05);
+  --border: rgba(255,255,255,0.1);
+  --text: #FAF7F1;
+  --text-secondary: #9E9E9E;
+  --accent: #C41E3A;
+  --accent-hover: #9B1B30;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Nunito Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 24px 16px 48px;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.page-header h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(28px, 7vw, 48px);
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.page-header p {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.divider {
+  width: 48px;
+  height: 1px;
+  background: var(--accent);
+  margin: 12px auto;
+}
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.card h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--text);
+}
+
+.form-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.form-group input {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  color: var(--text);
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+  border-color: rgba(196,30,58,0.5);
+}
+
+.form-group input::placeholder {
+  color: var(--text-secondary);
+}
+
+.btn-submit {
+  width: 100%;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 13px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  letter-spacing: 0.05em;
+  margin-top: 4px;
+}
+
+.btn-submit:hover { background: var(--accent-hover); }
+.btn-submit:active { transform: scale(0.98); }
+.btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.songs-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.songs-header h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.songs-count {
+  font-size: 12px;
+  color: var(--text-secondary);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 4px 12px;
+}
+
+.song-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: border-color 0.2s;
+}
+
+.song-item:hover {
+  border-color: rgba(255,255,255,0.18);
+}
+
+.song-rank {
+  font-size: 11px;
+  color: var(--text-secondary);
+  min-width: 20px;
+  text-align: center;
+}
+
+.song-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.song-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.song-artist {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.song-requester {
+  font-size: 11px;
+  color: rgba(158,158,158,0.6);
+  margin-top: 3px;
+}
+
+.vote-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 52px;
+  flex-shrink: 0;
+}
+
+.vote-btn:hover {
+  border-color: var(--accent);
+  background: rgba(196,30,58,0.1);
+}
+
+.vote-btn.voted {
+  border-color: var(--accent);
+  background: rgba(196,30,58,0.15);
+}
+
+.vote-btn .heart {
+  font-size: 18px;
+  line-height: 1;
+  transition: transform 0.15s;
+}
+
+.vote-btn:hover .heart { transform: scale(1.2); }
+
+.vote-btn .vote-count {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--text-secondary);
+}
+
+.empty-state .icon {
+  font-size: 40px;
+  margin-bottom: 12px;
+}
+
+.empty-state p {
+  font-size: 14px;
+}
+
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: rgba(30,30,30,0.95);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 20px;
+  font-size: 14px;
+  color: var(--text);
+  transition: transform 0.3s ease;
+  z-index: 100;
+  white-space: nowrap;
+}
+
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+}
+
+.loading {
+  text-align: center;
+  padding: 32px;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+@media (max-width: 480px) {
+  .form-row { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="page-header">
+    <h1>Музыкальные пожелания</h1>
+    <div class="divider"></div>
+    <p>Предложите трек — мы обязательно поставим</p>
+  </div>
+
+  <div class="card">
+    <h2>Добавить песню</h2>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="artist">Исполнитель</label>
+        <input type="text" id="artist" placeholder="Например, Земфира" maxlength="100">
+      </div>
+      <div class="form-group">
+        <label for="songTitle">Название</label>
+        <input type="text" id="songTitle" placeholder="Например, Прогулка" maxlength="100">
+      </div>
+    </div>
+    <button class="btn-submit" id="submitBtn" onclick="submitSong()">Предложить песню</button>
+  </div>
+
+  <div class="songs-header">
+    <h2>Список пожеланий</h2>
+    <span class="songs-count" id="songsCount">0 треков</span>
+  </div>
+
+  <div id="songsList">
+    <div class="loading">Загружаем список...</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function() {
+  var guestId = new URLSearchParams(location.search).get('id') || localStorage.getItem('wedding_guest_id') || 'anon';
+  var votedSongs = JSON.parse(localStorage.getItem('voted_songs') || '[]');
+
+  function showToast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(function() { t.classList.remove('show'); }, 2800);
+  }
+
+  function pluralRu(n, one, few, many) {
+    var mod10 = n % 10, mod100 = n % 100;
+    if (mod10 === 1 && mod100 !== 11) return n + ' ' + one;
+    if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return n + ' ' + few;
+    return n + ' ' + many;
+  }
+
+  function createSongElement(s, index) {
+    var item = document.createElement('div');
+    item.className = 'song-item';
+
+    var rank = document.createElement('div');
+    rank.className = 'song-rank';
+    rank.textContent = index + 1;
+
+    var info = document.createElement('div');
+    info.className = 'song-info';
+
+    var titleEl = document.createElement('div');
+    titleEl.className = 'song-title';
+    titleEl.textContent = s.title;
+
+    var artistEl = document.createElement('div');
+    artistEl.className = 'song-artist';
+    artistEl.textContent = s.artist;
+
+    info.appendChild(titleEl);
+    info.appendChild(artistEl);
+
+    if (s.requester) {
+      var req = document.createElement('div');
+      req.className = 'song-requester';
+      req.textContent = 'от ' + s.requester;
+      info.appendChild(req);
+    }
+
+    var voted = votedSongs.indexOf(s.id) !== -1;
+    var voteBtn = document.createElement('button');
+    voteBtn.className = 'vote-btn' + (voted ? ' voted' : '');
+
+    var heart = document.createElement('span');
+    heart.className = 'heart';
+    heart.textContent = voted ? '\u2764\uFE0F' : '\uD83E\uDD0D';
+
+    var voteCount = document.createElement('span');
+    voteCount.className = 'vote-count';
+    voteCount.textContent = s.votes || 0;
+
+    voteBtn.appendChild(heart);
+    voteBtn.appendChild(voteCount);
+    voteBtn.addEventListener('click', function() { vote(s.id, voteBtn, heart, voteCount); });
+
+    item.appendChild(rank);
+    item.appendChild(info);
+    item.appendChild(voteBtn);
+    return item;
+  }
+
+  function renderSongs(songs) {
+    var el = document.getElementById('songsList');
+    var countEl = document.getElementById('songsCount');
+    countEl.textContent = pluralRu(songs.length, 'трек', 'трека', 'треков');
+
+    while (el.firstChild) { el.removeChild(el.firstChild); }
+
+    if (!songs.length) {
+      var empty = document.createElement('div');
+      empty.className = 'empty-state';
+
+      var icon = document.createElement('div');
+      icon.className = 'icon';
+      icon.textContent = '\uD83C\uDFB5';
+
+      var msg = document.createElement('p');
+      msg.textContent = 'Пока нет пожеланий. Будьте первым!';
+
+      empty.appendChild(icon);
+      empty.appendChild(msg);
+      el.appendChild(empty);
+      return;
+    }
+
+    songs.forEach(function(s, i) {
+      el.appendChild(createSongElement(s, i));
+    });
+  }
+
+  function loadSongs() {
+    fetch('/api/songs')
+      .then(function(r) { return r.json(); })
+      .then(function(songs) { renderSongs(songs); })
+      .catch(function() {
+        var el = document.getElementById('songsList');
+        while (el.firstChild) { el.removeChild(el.firstChild); }
+        var msg = document.createElement('div');
+        msg.className = 'loading';
+        msg.textContent = 'Не удалось загрузить список';
+        el.appendChild(msg);
+      });
+  }
+
+  function submitSong() {
+    var artist = document.getElementById('artist').value.trim();
+    var title = document.getElementById('songTitle').value.trim();
+    if (!artist || !title) { showToast('Укажите исполнителя и название'); return; }
+
+    var btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Отправляем...';
+
+    fetch('/api/songs', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ guest_id: guestId, artist: artist, title: title })
+    })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.error) throw new Error(data.error);
+        document.getElementById('artist').value = '';
+        document.getElementById('songTitle').value = '';
+        showToast('Песня добавлена!');
+        loadSongs();
+      })
+      .catch(function(e) { showToast(e.message || 'Ошибка. Попробуйте ещё раз'); })
+      .finally(function() {
+        btn.disabled = false;
+        btn.textContent = 'Предложить песню';
+      });
+  }
+
+  function vote(songId, btn, heart, voteCount) {
+    if (votedSongs.indexOf(songId) !== -1) { showToast('Вы уже голосовали за этот трек'); return; }
+
+    fetch('/api/songs/' + songId + '/vote', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ guest_id: guestId })
+    })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.error) throw new Error(data.error);
+        votedSongs.push(songId);
+        localStorage.setItem('voted_songs', JSON.stringify(votedSongs));
+        btn.classList.add('voted');
+        heart.textContent = '\u2764\uFE0F';
+        voteCount.textContent = parseInt(voteCount.textContent, 10) + 1;
+        showToast('Голос отдан!');
+      })
+      .catch(function(e) { showToast(e.message || 'Ошибка голосования'); });
+  }
+
+  window.submitSong = submitSong;
+
+  loadSongs();
+  setInterval(loadSongs, 15000);
+
+  document.getElementById('songTitle').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') submitSong();
+  });
+})();
+</script>
+</body>
+</html>

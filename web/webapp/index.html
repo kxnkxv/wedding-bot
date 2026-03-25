@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Артём × Полина — Свадьба</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Marck+Script&family=Bad+Script&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Nunito+Sans:wght@300;400;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --accent: #B8243B;
+      --accent-light: rgba(184, 36, 59, 0.12);
+      --cream: #FAF6F0;
+      --card-bg: var(--tg-theme-bg-color, #FAF6F0);
+      --text: var(--tg-theme-text-color, #2C1A0E);
+      --hint: var(--tg-theme-hint-color, #8A7060);
+      --btn: var(--tg-theme-button-color, #B8243B);
+      --btn-text: var(--tg-theme-button-text-color, #FFFFFF);
+      --secondary-bg: var(--tg-theme-secondary-bg-color, #F0EAE2);
+      --font-script: 'Marck Script', cursive;
+      --font-hand: 'Bad Script', cursive;
+      --font-serif: 'Cormorant Garamond', Georgia, serif;
+      --font-body: 'Nunito Sans', sans-serif;
+    }
+
+    html, body {
+      background: var(--secondary-bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    #app {
+      max-width: 420px;
+      margin: 0 auto;
+      padding-bottom: 40px;
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50%       { transform: scale(1.04); }
+    }
+
+    .fade-in {
+      opacity: 0;
+      animation: fadeInUp 0.7s ease forwards;
+    }
+    .fade-in.visible { opacity: 1; }
+
+    /* ── Card ── */
+    .card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 28px 24px;
+      margin: 12px 12px 0;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+    }
+
+    .section-label {
+      font-family: var(--font-hand);
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    hr.divider {
+      border: none;
+      border-top: 1px solid var(--accent-light);
+      margin: 20px 0;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      text-align: center;
+      background: var(--card-bg);
+      border-radius: 0 0 32px 32px;
+      padding: 44px 24px 36px;
+      margin-bottom: 0;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+    }
+
+    .hero-ornament {
+      font-size: 22px;
+      color: var(--accent);
+      letter-spacing: 6px;
+      margin-bottom: 14px;
+      display: block;
+    }
+
+    .hero-names {
+      font-family: var(--font-script);
+      font-size: 46px;
+      color: var(--accent);
+      line-height: 1.1;
+      margin-bottom: 6px;
+      animation: pulse 4s ease-in-out infinite;
+    }
+
+    .hero-subtitle {
+      font-family: var(--font-hand);
+      font-size: 16px;
+      color: var(--hint);
+      margin-bottom: 20px;
+    }
+
+    .hero-greeting {
+      font-family: var(--font-serif);
+      font-size: 17px;
+      font-style: italic;
+      color: var(--text);
+      line-height: 1.5;
+      padding: 0 8px;
+    }
+
+    .hero-guest-name {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      font-weight: 600;
+      font-style: normal;
+      color: var(--accent);
+    }
+
+    /* ── Date ── */
+    .date-display {
+      text-align: center;
+    }
+    .date-main {
+      font-family: var(--font-serif);
+      font-size: 36px;
+      font-weight: 300;
+      color: var(--text);
+      letter-spacing: 1px;
+    }
+    .date-sub {
+      font-family: var(--font-hand);
+      font-size: 14px;
+      color: var(--hint);
+      margin-top: 4px;
+    }
+
+    /* ── Timeline ── */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .timeline-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .timeline-time {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--accent);
+      min-width: 60px;
+    }
+    .timeline-dot {
+      width: 10px;
+      height: 10px;
+      background: var(--accent);
+      border-radius: 50%;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .timeline-dot::after {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 1px;
+      height: 14px;
+      background: var(--accent-light);
+    }
+    .timeline-item:last-child .timeline-dot::after {
+      display: none;
+    }
+    .timeline-label {
+      font-family: var(--font-serif);
+      font-size: 17px;
+      color: var(--text);
+    }
+
+    /* ── Dresscode ── */
+    .dresscode-text {
+      font-size: 14px;
+      color: var(--hint);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+    .palette {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .swatch {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+    .swatch-color {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .swatch-name {
+      font-size: 10px;
+      color: var(--hint);
+      font-family: var(--font-body);
+      text-align: center;
+      line-height: 1.3;
+    }
+
+    /* ── Wishes ── */
+    .wishes-text {
+      font-family: var(--font-serif);
+      font-size: 16px;
+      font-style: italic;
+      color: var(--text);
+      line-height: 1.7;
+      text-align: center;
+    }
+
+    /* ── Location ── */
+    .location-name {
+      font-family: var(--font-serif);
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .location-address {
+      font-size: 14px;
+      color: var(--hint);
+    }
+
+    /* ── Countdown ── */
+    .countdown {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+    }
+    .countdown-unit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 56px;
+    }
+    .countdown-value {
+      font-family: var(--font-serif);
+      font-size: 38px;
+      font-weight: 300;
+      color: var(--accent);
+      line-height: 1;
+      min-width: 56px;
+      text-align: center;
+    }
+    .countdown-label {
+      font-size: 11px;
+      color: var(--hint);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+    .countdown-sep {
+      font-family: var(--font-serif);
+      font-size: 34px;
+      color: var(--accent);
+      line-height: 1;
+      align-self: flex-start;
+      padding-top: 4px;
+    }
+
+    /* ── Personal message ── */
+    .personal-msg {
+      background: var(--accent-light);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 12px 12px 0;
+      padding: 14px 16px;
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 16px;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* ── RSVP ── */
+    .rsvp-intro {
+      font-size: 14px;
+      color: var(--hint);
+      text-align: center;
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+    .rsvp-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .rsvp-btn {
+      background: var(--secondary-bg);
+      color: var(--text);
+      border: 1.5px solid transparent;
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+    }
+    .rsvp-btn:hover {
+      border-color: var(--accent);
+      background: var(--accent-light);
+    }
+    .rsvp-btn.selected-yes   { background: #2e7d32; border-color: #2e7d32; color: #fff; }
+    .rsvp-btn.selected-maybe { background: #e65100; border-color: #e65100; color: #fff; }
+    .rsvp-btn.selected-no    { background: #c62828; border-color: #c62828; color: #fff; }
+    .rsvp-confirm {
+      text-align: center;
+      font-family: var(--font-hand);
+      font-size: 15px;
+      color: var(--accent);
+      margin-top: 14px;
+      min-height: 20px;
+    }
+
+    /* ── Polls ── */
+    .poll-item {
+      margin-bottom: 24px;
+    }
+    .poll-question {
+      font-family: var(--font-serif);
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+    .poll-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .poll-opt {
+      background: var(--secondary-bg);
+      border: 1.5px solid transparent;
+      border-radius: 12px;
+      padding: 11px 15px;
+      font-size: 14px;
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+      font-family: var(--font-body);
+    }
+    .poll-opt:hover:not(:disabled) {
+      border-color: var(--accent);
+      background: var(--accent-light);
+    }
+    .poll-opt.answered {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      cursor: default;
+    }
+    .poll-opt:disabled {
+      cursor: default;
+      opacity: 0.7;
+    }
+    .poll-answered-note {
+      font-size: 12px;
+      color: var(--hint);
+      margin-top: 8px;
+      font-style: italic;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      text-align: center;
+      padding: 32px 24px 12px;
+      font-family: var(--font-script);
+      font-size: 22px;
+      color: var(--accent);
+    }
+
+    /* ── Loading / Error ── */
+    #loading-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      gap: 16px;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--accent-light);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .loading-text {
+      font-family: var(--font-hand);
+      font-size: 16px;
+      color: var(--hint);
+    }
+    #error-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 32px;
+      text-align: center;
+      gap: 12px;
+    }
+    .error-icon { font-size: 48px; }
+    .error-title { font-family: var(--font-serif); font-size: 20px; color: var(--accent); }
+    .error-msg { font-size: 14px; color: var(--hint); line-height: 1.5; }
+    #main-content { display: none; }
+  </style>
+</head>
+<body>
+<div id="app">
+  <div id="loading-screen">
+    <div class="spinner"></div>
+    <div class="loading-text">Загружаем приглашение…</div>
+  </div>
+
+  <div id="error-screen">
+    <div class="error-icon">💌</div>
+    <div class="error-title">Что-то пошло не так</div>
+    <div class="error-msg" id="error-message">Не удалось загрузить данные. Попробуйте открыть ссылку снова.</div>
+  </div>
+
+  <div id="main-content">
+    <!-- Hero -->
+    <section class="hero fade-in" style="animation-delay:0.1s">
+      <span class="hero-ornament">✦ ✦ ✦</span>
+      <div class="hero-names">Артём × Полина</div>
+      <div class="hero-subtitle">мы приглашаем вас на свадьбу</div>
+      <hr class="divider" />
+      <div class="hero-greeting" id="hero-greeting"></div>
+    </section>
+
+    <!-- Personal message -->
+    <div id="personal-msg-block" style="display:none; margin: 12px 12px 0;">
+      <div class="personal-msg fade-in" id="personal-msg-text" style="animation-delay:0.2s"></div>
+    </div>
+
+    <!-- Date -->
+    <div class="card fade-in" style="animation-delay:0.2s">
+      <div class="section-label">дата</div>
+      <div class="date-display">
+        <div class="date-main">1 августа 2026</div>
+        <div class="date-sub">воскресенье</div>
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="card fade-in" style="animation-delay:0.3s">
+      <div class="section-label">программа вечера</div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-time">15:00</div>
+          <div class="timeline-dot"></div>
+          <div class="timeline-label">Фуршет</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-time">16:00</div>
+          <div class="timeline-dot"></div>
+          <div class="timeline-label">Церемония</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-time">17:00</div>
+          <div class="timeline-dot"></div>
+          <div class="timeline-label">Банкет</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dresscode -->
+    <div class="card fade-in" style="animation-delay:0.35s">
+      <div class="section-label">дресс-код</div>
+      <p class="dresscode-text">
+        Мы будем рады, если вы поддержите нашу цветовую палитру и придёте в вечернем наряде. Дамам лучше избегать белого и айвори.
+      </p>
+      <div class="palette">
+        <div class="swatch">
+          <div class="swatch-color" style="background:#3E2216;"></div>
+          <div class="swatch-name">Коричневый</div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#8B1A2B;"></div>
+          <div class="swatch-name">Бордо</div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#5C1220;"></div>
+          <div class="swatch-name">Марсала</div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#9E9E9E;"></div>
+          <div class="swatch-name">Серый</div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#1A1A1A;"></div>
+          <div class="swatch-name">Чёрный</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Wishes -->
+    <div class="card fade-in" style="animation-delay:0.4s">
+      <div class="section-label">пожелания</div>
+      <p class="wishes-text">
+        Вместо цветов мы будем рады бутылке хорошего вина или виски — чтобы вместе вспоминать этот день ещё долгие годы. 🥂
+      </p>
+    </div>
+
+    <!-- Location -->
+    <div class="card fade-in" style="animation-delay:0.45s">
+      <div class="section-label">место</div>
+      <div class="location-name">Название площадки</div>
+      <div class="location-address">Адрес будет уточнён</div>
+    </div>
+
+    <!-- Countdown -->
+    <div class="card fade-in" style="animation-delay:0.5s">
+      <div class="section-label">до нашего дня</div>
+      <div class="countdown">
+        <div class="countdown-unit">
+          <div class="countdown-value" id="cd-days">--</div>
+          <div class="countdown-label">дней</div>
+        </div>
+        <div class="countdown-sep">:</div>
+        <div class="countdown-unit">
+          <div class="countdown-value" id="cd-hours">--</div>
+          <div class="countdown-label">часов</div>
+        </div>
+        <div class="countdown-sep">:</div>
+        <div class="countdown-unit">
+          <div class="countdown-value" id="cd-minutes">--</div>
+          <div class="countdown-label">минут</div>
+        </div>
+        <div class="countdown-sep">:</div>
+        <div class="countdown-unit">
+          <div class="countdown-value" id="cd-seconds">--</div>
+          <div class="countdown-label">секунд</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RSVP -->
+    <div class="card fade-in" style="animation-delay:0.55s">
+      <div class="section-label">подтверждение</div>
+      <p class="rsvp-intro">Пожалуйста, дайте нам знать — будете ли вы с нами?</p>
+      <div class="rsvp-buttons" id="rsvp-buttons"></div>
+      <div class="rsvp-confirm" id="rsvp-confirm"></div>
+    </div>
+
+    <!-- Polls -->
+    <div class="card fade-in" id="polls-section" style="display:none; animation-delay:0.6s">
+      <div class="section-label">опросы</div>
+      <div id="polls-container"></div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer fade-in" style="animation-delay:0.65s">
+      Артём × Полина ♥
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ── Telegram WebApp init ── */
+  var tg = window.Telegram.WebApp;
+  tg.ready();
+  tg.expand();
+
+  var guestId  = (tg.initDataUnsafe && tg.initDataUnsafe.start_param) || null;
+  var initData = tg.initData || '';
+
+  /* ── DOM helpers ── */
+  function el(id) { return document.getElementById(id); }
+
+  function show(id) { var e = el(id); if (e) e.style.display = ''; }
+  function hide(id) { var e = el(id); if (e) e.style.display = 'none'; }
+
+  function setText(id, text) { var e = el(id); if (e) e.textContent = text; }
+
+  /* ── API helper ── */
+  function api(method, path, body) {
+    var opts = {
+      method: method,
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Telegram-Init-Data': initData
+      }
+    };
+    if (body !== undefined) opts.body = JSON.stringify(body);
+    return fetch(path, opts).then(function (res) {
+      if (!res.ok) throw new Error('HTTP ' + res.status + ' on ' + method + ' ' + path);
+      return res.json();
+    });
+  }
+
+  /* ── Helpers ── */
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function showError(msg) {
+    hide('loading-screen');
+    var screen = el('error-screen');
+    if (screen) screen.style.display = 'flex';
+    setText('error-message', msg);
+  }
+
+  /* ── Countdown ── */
+  var weddingDate = new Date('2026-08-01T15:00:00');
+
+  function updateCountdown() {
+    var diff = weddingDate - Date.now();
+    if (diff <= 0) {
+      setText('cd-days', '00');
+      setText('cd-hours', '00');
+      setText('cd-minutes', '00');
+      setText('cd-seconds', '00');
+      return;
+    }
+    var totalSec = Math.floor(diff / 1000);
+    setText('cd-days',    pad(Math.floor(totalSec / 86400)));
+    setText('cd-hours',   pad(Math.floor((totalSec % 86400) / 3600)));
+    setText('cd-minutes', pad(Math.floor((totalSec % 3600) / 60)));
+    setText('cd-seconds', pad(totalSec % 60));
+  }
+
+  /* ── Hero greeting ── */
+  function renderGreeting(guest) {
+    var container = el('hero-greeting');
+    if (!container) return;
+
+    if (guest && guest.name) {
+      var prefix = document.createTextNode(
+        'Дорог' + (guest.gender === 'f' ? 'ая' : 'ой') + ' '
+      );
+      var nameSpan = document.createElement('span');
+      nameSpan.className = 'hero-guest-name';
+      nameSpan.textContent = guest.name;
+
+      var comma = document.createTextNode(',');
+      var br = document.createElement('br');
+      var suffix = document.createTextNode('мы рады видеть вас на нашем торжестве!');
+
+      container.appendChild(prefix);
+      container.appendChild(nameSpan);
+      container.appendChild(comma);
+      container.appendChild(br);
+      container.appendChild(suffix);
+    } else {
+      container.textContent = 'Дорогой гость, мы рады видеть вас на нашем торжестве!';
+    }
+  }
+
+  /* ── RSVP ── */
+  var currentStatus = null;
+
+  var rsvpMessages = {
+    yes:   '🎉 Отлично! Ждём вас с нетерпением!',
+    maybe: '🙏 Понимаем, надеемся увидеть вас!',
+    no:    '😔 Жаль, будем скучать!'
+  };
+  var rsvpClasses = {
+    yes:   'selected-yes',
+    maybe: 'selected-maybe',
+    no:    'selected-no'
+  };
+  var rsvpLabels = [
+    { status: 'yes',   label: '✅ С радостью приду!' },
+    { status: 'maybe', label: '🤔 Пока не уверен(а)' },
+    { status: 'no',    label: '❌ К сожалению, не смогу' }
+  ];
+
+  function buildRsvpButtons() {
+    var container = el('rsvp-buttons');
+    if (!container) return;
+    container.textContent = '';
+
+    rsvpLabels.forEach(function (item) {
+      var btn = document.createElement('button');
+      btn.className = 'rsvp-btn';
+      btn.dataset.status = item.status;
+      btn.textContent = item.label;
+      btn.addEventListener('click', function () { rsvp(item.status); });
+      container.appendChild(btn);
+    });
+  }
+
+  function setRsvpUI(status) {
+    currentStatus = status;
+    var btns = document.querySelectorAll('.rsvp-btn');
+    btns.forEach(function (btn) {
+      btn.classList.remove('selected-yes', 'selected-maybe', 'selected-no');
+      if (btn.dataset.status === status) {
+        btn.classList.add(rsvpClasses[status] || 'selected-yes');
+      }
+    });
+    setText('rsvp-confirm', rsvpMessages[status] || '');
+  }
+
+  function rsvp(status) {
+    if (!guestId) {
+      tg.showAlert('Не удалось определить гостя. Пожалуйста, перейдите по персональной ссылке.');
+      return;
+    }
+    api('POST', '/api/rsvp/' + guestId, { status: status })
+      .then(function () { setRsvpUI(status); })
+      .catch(function () { tg.showAlert('Не удалось сохранить ответ. Попробуйте ещё раз.'); });
+  }
+
+  /* ── Polls ── */
+  var answeredPolls = {};
+
+  function renderPolls(polls) {
+    var container = el('polls-container');
+    var section   = el('polls-section');
+    if (!container || !section) return;
+
+    var active = polls.filter(function (p) { return p.is_active !== false; });
+    if (!active.length) return;
+
+    section.style.display = '';
+    container.textContent = '';
+
+    active.forEach(function (poll) {
+      var div = document.createElement('div');
+      div.className = 'poll-item';
+      div.id = 'poll-' + poll.id;
+
+      var q = document.createElement('div');
+      q.className = 'poll-question';
+      q.textContent = poll.question;
+      div.appendChild(q);
+
+      var opts = document.createElement('div');
+      opts.className = 'poll-options';
+
+      var alreadyAnswered = poll.guest_answer !== undefined && poll.guest_answer !== null;
+
+      (poll.options || []).forEach(function (option) {
+        var btn = document.createElement('button');
+        btn.className = 'poll-opt';
+        btn.textContent = option;
+
+        if (alreadyAnswered) {
+          btn.disabled = true;
+          if (poll.guest_answer === option) btn.classList.add('answered');
+        }
+
+        btn.addEventListener('click', function () {
+          if (answeredPolls[poll.id] || alreadyAnswered) return;
+          if (!guestId) {
+            tg.showAlert('Не удалось определить гостя.');
+            return;
+          }
+          api('POST', '/api/polls/' + poll.id + '/answer', {
+            guest_id: guestId,
+            selected: option
+          }).then(function () {
+            answeredPolls[poll.id] = option;
+
+            var allBtns = opts.querySelectorAll('.poll-opt');
+            allBtns.forEach(function (b) {
+              b.disabled = true;
+              b.classList.remove('answered');
+              if (b.textContent === option) b.classList.add('answered');
+            });
+
+            var note = document.createElement('div');
+            note.className = 'poll-answered-note';
+            note.textContent = 'Ваш ответ сохранён ✓';
+            div.appendChild(note);
+          }).catch(function () {
+            tg.showAlert('Не удалось сохранить ответ. Попробуйте ещё раз.');
+          });
+        });
+
+        opts.appendChild(btn);
+      });
+
+      div.appendChild(opts);
+
+      if (alreadyAnswered) {
+        var note = document.createElement('div');
+        note.className = 'poll-answered-note';
+        note.textContent = 'Ваш ответ сохранён ✓';
+        div.appendChild(note);
+      }
+
+      container.appendChild(div);
+    });
+  }
+
+  /* ── Scroll-based fade in ── */
+  function initScrollAnimations() {
+    var elements = document.querySelectorAll('.fade-in');
+    if (!('IntersectionObserver' in window)) {
+      elements.forEach(function (e) { e.style.opacity = '1'; });
+      return;
+    }
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.style.animationPlayState = 'running';
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    elements.forEach(function (e) {
+      e.style.animationPlayState = 'paused';
+      observer.observe(e);
+    });
+  }
+
+  /* ── Main init ── */
+  function init() {
+    buildRsvpButtons();
+
+    var guestPromise = guestId
+      ? api('GET', '/api/guest/' + guestId).catch(function (e) {
+          console.warn('Could not load guest data:', e);
+          return null;
+        })
+      : Promise.resolve(null);
+
+    var pollsPromise = api('GET', '/api/polls').catch(function (e) {
+      console.warn('Could not load polls:', e);
+      return [];
+    });
+
+    Promise.all([guestPromise, pollsPromise])
+      .then(function (results) {
+        var guest = results[0];
+        var polls = results[1];
+
+        renderGreeting(guest);
+
+        if (guest && guest.personal_text) {
+          setText('personal-msg-text', guest.personal_text);
+          show('personal-msg-block');
+        }
+
+        if (guest && guest.status) {
+          setRsvpUI(guest.status);
+        }
+
+        if (Array.isArray(polls)) {
+          renderPolls(polls);
+        }
+
+        hide('loading-screen');
+        var mainContent = el('main-content');
+        if (mainContent) {
+          mainContent.style.display = 'block';
+          mainContent.style.animation = 'fadeIn 0.4s ease';
+        }
+
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+
+        initScrollAnimations();
+      })
+      .catch(function (e) {
+        showError('Произошла ошибка при загрузке. Попробуйте открыть приглашение снова.');
+        console.error(e);
+      });
+  }
+
+  init();
+}());
+</script>
+</body>
+</html>

@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Свадебное Бинго</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Nunito+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #1A1A1A;
+      color: #FAF7F1;
+      font-family: 'Nunito Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px 40px;
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.2rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      margin-bottom: 6px;
+      text-align: center;
+    }
+
+    .subtitle {
+      font-size: 0.85rem;
+      color: #9a9080;
+      margin-bottom: 28px;
+      text-align: center;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .cell {
+      background: #2a2520;
+      border: 1px solid #3a3530;
+      border-radius: 8px;
+      padding: 10px 6px;
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 0.72rem;
+      line-height: 1.35;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.18s, border-color 0.18s, transform 0.1s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .cell:active {
+      transform: scale(0.94);
+    }
+
+    .cell.checked {
+      background: #C41E3A;
+      border-color: #C41E3A;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .actions {
+      margin-top: 24px;
+      display: flex;
+      gap: 12px;
+    }
+
+    button {
+      background: transparent;
+      border: 1px solid #4a4540;
+      color: #FAF7F1;
+      font-family: 'Nunito Sans', sans-serif;
+      font-size: 0.82rem;
+      padding: 8px 18px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    button:hover {
+      border-color: #C41E3A;
+      background: rgba(196, 30, 58, 0.1);
+    }
+
+    /* Bingo overlay */
+    #bingo-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(26, 26, 26, 0.88);
+      z-index: 100;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #bingo-overlay.show {
+      display: flex;
+    }
+
+    #bingo-overlay h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 4rem;
+      color: #C41E3A;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      animation: pop 0.4s cubic-bezier(.36,1.56,.64,1) both;
+    }
+
+    #bingo-overlay p {
+      margin-top: 12px;
+      font-size: 1rem;
+      color: #FAF7F1;
+    }
+
+    #bingo-overlay button {
+      margin-top: 24px;
+      border-color: #C41E3A;
+      color: #C41E3A;
+    }
+
+    @keyframes pop {
+      from { transform: scale(0.4); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+
+    /* Confetti canvas */
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 99;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Свадебное Бинго</h1>
+<p class="subtitle">Отмечайте события — первый ряд выигрывает!</p>
+
+<div class="grid" id="grid"></div>
+
+<div class="actions">
+  <button id="btn-reset">Сбросить</button>
+  <button id="btn-shuffle">Новая карточка</button>
+</div>
+
+<canvas id="confetti-canvas"></canvas>
+
+<div id="bingo-overlay">
+  <h2>БИНГО!</h2>
+  <p>Поздравляем! У вас четыре в ряд!</p>
+  <button id="btn-close-overlay">Продолжить</button>
+</div>
+
+<script>
+var BINGO_ITEMS = [
+  'Кто-то заплакал', 'Сказали "горько"', 'Гость опоздал',
+  'Кто-то уронил бокал', 'Ребёнок расплакался', 'Дядя танцует',
+  'Кто-то вышел покурить', 'Произнесли тост', 'Фотограф попросил улыбнуться',
+  'Звучит медленный танец', 'Кто-то сменил обувь', 'Гости подпевают',
+  'Букет брошен', 'Кто-то делает селфи', 'Звучит "Горько!"',
+  'Бабушка танцует', 'Кто-то плачет от счастья', 'Торт вынесли',
+  'Жених целует невесту', 'Гость рассказывает историю',
+  'Кто-то потерял телефон', 'DJ играет попсу', 'Подарок с конвертом',
+  'Невеста смеётся', 'Кто-то задремал',
+];
+
+var GRID_SIZE = 4;
+var TOTAL = GRID_SIZE * GRID_SIZE;
+var STORAGE_KEY_CARD    = 'bingo_card_v1';
+var STORAGE_KEY_CHECKED = 'bingo_checked_v1';
+var STORAGE_KEY_SEED    = 'bingo_seed_v1';
+var BINGO_SHOWN_KEY     = 'bingo_shown_v1';
+
+// ── Seeded PRNG (mulberry32) ──────────────────────────────────────────────
+function mulberry32(seed) {
+  return function() {
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+function shuffleSeeded(arr, rand) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(rand() * (i + 1));
+    var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+  }
+  return a;
+}
+
+// ── State ─────────────────────────────────────────────────────────────────
+var card    = [];   // array of 16 strings
+var checked = [];   // array of 16 booleans
+
+function loadOrCreate() {
+  var stored = localStorage.getItem(STORAGE_KEY_CARD);
+  var storedChecked = localStorage.getItem(STORAGE_KEY_CHECKED);
+  if (stored) {
+    try {
+      card = JSON.parse(stored);
+      checked = storedChecked ? JSON.parse(storedChecked) : new Array(TOTAL).fill(false);
+      return;
+    } catch(e) {}
+  }
+  createNewCard();
+}
+
+function createNewCard() {
+  var seed = parseInt(localStorage.getItem(STORAGE_KEY_SEED) || String(Date.now()), 10);
+  if (!localStorage.getItem(STORAGE_KEY_SEED)) {
+    localStorage.setItem(STORAGE_KEY_SEED, String(seed));
+  }
+  var rand = mulberry32(seed);
+  var shuffled = shuffleSeeded(BINGO_ITEMS, rand);
+  card = shuffled.slice(0, TOTAL);
+  checked = new Array(TOTAL).fill(false);
+  localStorage.setItem(STORAGE_KEY_CARD, JSON.stringify(card));
+  localStorage.setItem(STORAGE_KEY_CHECKED, JSON.stringify(checked));
+  localStorage.removeItem(BINGO_SHOWN_KEY);
+}
+
+function saveChecked() {
+  localStorage.setItem(STORAGE_KEY_CHECKED, JSON.stringify(checked));
+}
+
+// ── Render ────────────────────────────────────────────────────────────────
+var gridEl = document.getElementById('grid');
+
+function render() {
+  // Clear grid using DOM (no innerHTML)
+  while (gridEl.firstChild) {
+    gridEl.removeChild(gridEl.firstChild);
+  }
+  for (var i = 0; i < TOTAL; i++) {
+    var cell = document.createElement('div');
+    cell.className = 'cell' + (checked[i] ? ' checked' : '');
+    cell.textContent = card[i];
+    cell.dataset.index = i;
+    cell.addEventListener('click', onCellClick);
+    gridEl.appendChild(cell);
+  }
+}
+
+function onCellClick(e) {
+  var idx = parseInt(e.currentTarget.dataset.index, 10);
+  checked[idx] = !checked[idx];
+  saveChecked();
+  render();
+  if (hasBingo() && !localStorage.getItem(BINGO_SHOWN_KEY)) {
+    localStorage.setItem(BINGO_SHOWN_KEY, '1');
+    showBingo();
+  }
+}
+
+// ── Win detection ─────────────────────────────────────────────────────────
+function hasBingo() {
+  var N = GRID_SIZE;
+  // rows
+  for (var r = 0; r < N; r++) {
+    var win = true;
+    for (var c = 0; c < N; c++) { if (!checked[r*N+c]) { win = false; break; } }
+    if (win) return true;
+  }
+  // cols
+  for (var cc = 0; cc < N; cc++) {
+    var win2 = true;
+    for (var rr = 0; rr < N; rr++) { if (!checked[rr*N+cc]) { win2 = false; break; } }
+    if (win2) return true;
+  }
+  // diag main
+  var d1 = true;
+  for (var k = 0; k < N; k++) { if (!checked[k*N+k]) { d1 = false; break; } }
+  if (d1) return true;
+  // diag anti
+  var d2 = true;
+  for (var k2 = 0; k2 < N; k2++) { if (!checked[k2*N+(N-1-k2)]) { d2 = false; break; } }
+  return d2;
+}
+
+// ── Bingo overlay ─────────────────────────────────────────────────────────
+var overlay = document.getElementById('bingo-overlay');
+document.getElementById('btn-close-overlay').addEventListener('click', function() {
+  overlay.classList.remove('show');
+  stopConfetti();
+});
+
+function showBingo() {
+  overlay.classList.add('show');
+  startConfetti();
+}
+
+// ── Confetti ──────────────────────────────────────────────────────────────
+var confettiCanvas = document.getElementById('confetti-canvas');
+var confettiCtx    = confettiCanvas.getContext('2d');
+var particles      = [];
+var confettiAnim   = null;
+var COLORS = ['#C41E3A','#FAF7F1','#d4a843','#7b4f8e','#2e6daf'];
+
+function startConfetti() {
+  confettiCanvas.width  = window.innerWidth;
+  confettiCanvas.height = window.innerHeight;
+  particles = [];
+  for (var i = 0; i < 120; i++) {
+    particles.push({
+      x:  Math.random() * confettiCanvas.width,
+      y: -Math.random() * confettiCanvas.height,
+      w:  6 + Math.random() * 8,
+      h:  3 + Math.random() * 5,
+      color: COLORS[Math.floor(Math.random() * COLORS.length)],
+      angle: Math.random() * Math.PI * 2,
+      speed: 2 + Math.random() * 3,
+      spin:  (Math.random() - 0.5) * 0.2,
+      drift: (Math.random() - 0.5) * 1.2,
+    });
+  }
+  if (confettiAnim) cancelAnimationFrame(confettiAnim);
+  animateConfetti();
+}
+
+function animateConfetti() {
+  confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+  var alive = false;
+  for (var i = 0; i < particles.length; i++) {
+    var p = particles[i];
+    p.y    += p.speed;
+    p.x    += p.drift;
+    p.angle += p.spin;
+    if (p.y < confettiCanvas.height + 20) alive = true;
+    confettiCtx.save();
+    confettiCtx.translate(p.x, p.y);
+    confettiCtx.rotate(p.angle);
+    confettiCtx.fillStyle = p.color;
+    confettiCtx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+    confettiCtx.restore();
+  }
+  if (alive) {
+    confettiAnim = requestAnimationFrame(animateConfetti);
+  } else {
+    confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+  }
+}
+
+function stopConfetti() {
+  if (confettiAnim) cancelAnimationFrame(confettiAnim);
+  confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+}
+
+// ── Buttons ───────────────────────────────────────────────────────────────
+document.getElementById('btn-reset').addEventListener('click', function() {
+  checked = new Array(TOTAL).fill(false);
+  saveChecked();
+  localStorage.removeItem(BINGO_SHOWN_KEY);
+  render();
+});
+
+document.getElementById('btn-shuffle').addEventListener('click', function() {
+  var newSeed = Date.now();
+  localStorage.setItem(STORAGE_KEY_SEED, String(newSeed));
+  createNewCard();
+  render();
+});
+
+// ── Init ──────────────────────────────────────────────────────────────────
+loadOrCreate();
+render();
+
+// Show bingo if already won (page reload)
+if (hasBingo() && !localStorage.getItem(BINGO_SHOWN_KEY)) {
+  localStorage.setItem(BINGO_SHOWN_KEY, '1');
+  showBingo();
+}
+</script>
+</body>
+</html>

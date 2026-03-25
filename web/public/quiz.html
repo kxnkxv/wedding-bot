@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Угадай пару — Квиз</title>
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #1A1A1A;
+  --card: rgba(255,255,255,0.05);
+  --border: rgba(255,255,255,0.1);
+  --text: #FAF7F1;
+  --text-secondary: #9E9E9E;
+  --accent: #C41E3A;
+  --accent-hover: #9B1B30;
+  --correct: #2e7d32;
+  --correct-light: rgba(46,125,50,0.18);
+  --wrong: #b71c1c;
+  --wrong-light: rgba(183,28,28,0.18);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Nunito Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 24px 16px 48px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.container {
+  width: 100%;
+  max-width: 560px;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.page-header h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(28px, 7vw, 48px);
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.page-header p {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.divider {
+  width: 48px;
+  height: 1px;
+  background: var(--accent);
+  margin: 12px auto;
+}
+
+/* Progress */
+.progress-wrap {
+  margin-bottom: 24px;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.progress-bar {
+  height: 3px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+/* Question card */
+.question-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px 24px;
+  margin-bottom: 16px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.question-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(18px, 4vw, 24px);
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--text);
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.option-btn {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 12px;
+  color: var(--text);
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.18s;
+  line-height: 1.3;
+}
+
+.option-btn:hover:not(:disabled) {
+  border-color: rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.09);
+  transform: translateY(-1px);
+}
+
+.option-btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.option-btn:disabled {
+  cursor: not-allowed;
+}
+
+.option-btn.correct {
+  background: var(--correct-light);
+  border-color: #4CAF50;
+  color: #81c784;
+  animation: correctPulse 0.4s ease;
+}
+
+.option-btn.wrong {
+  background: var(--wrong-light);
+  border-color: #e57373;
+  color: #ef9a9a;
+  animation: wrongShake 0.4s ease;
+}
+
+@keyframes correctPulse {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@keyframes wrongShake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-5px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+/* Feedback overlay */
+.feedback-bar {
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  margin-top: 12px;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: all 0.25s ease;
+}
+
+.feedback-bar.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.feedback-bar.correct-fb {
+  background: var(--correct-light);
+  color: #81c784;
+  border: 1px solid rgba(76,175,80,0.3);
+}
+
+.feedback-bar.wrong-fb {
+  background: var(--wrong-light);
+  color: #ef9a9a;
+  border: 1px solid rgba(229,115,115,0.3);
+}
+
+/* Results */
+.results-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px 24px;
+  text-align: center;
+  animation: fadeIn 0.4s ease;
+}
+
+.score-big {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(48px, 14vw, 80px);
+  font-weight: 600;
+  color: var(--accent);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.score-label {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+}
+
+.score-msg {
+  font-size: 18px;
+  color: var(--text);
+  font-family: 'Cormorant Garamond', serif;
+  margin-bottom: 28px;
+}
+
+.leaderboard {
+  text-align: left;
+  margin-top: 24px;
+}
+
+.leaderboard h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--text);
+  text-align: center;
+}
+
+.lb-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  margin-bottom: 6px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+}
+
+.lb-pos {
+  font-size: 12px;
+  color: var(--text-secondary);
+  min-width: 20px;
+  text-align: center;
+}
+
+.lb-name {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.lb-score {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.btn-restart {
+  margin-top: 24px;
+  width: 100%;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 13px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+  letter-spacing: 0.05em;
+}
+
+.btn-restart:hover { background: var(--accent-hover); }
+
+.loading {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.error-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+@media (max-width: 400px) {
+  .options-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="page-header">
+    <h1>Угадай пару</h1>
+    <div class="divider"></div>
+    <p>Квиз про Артёма и Полину</p>
+  </div>
+
+  <div id="app">
+    <div class="loading">Загружаем вопросы...</div>
+  </div>
+</div>
+
+<script>
+(function() {
+  var guestId = new URLSearchParams(location.search).get('id') || localStorage.getItem('wedding_guest_id') || 'anon';
+  var questions = [];
+  var currentIdx = 0;
+  var score = 0;
+  var answered = false;
+  var app = document.getElementById('app');
+
+  function loadQuiz() {
+    fetch('/api/quiz')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        questions = data;
+        if (!questions.length) {
+          showError('Квиз пока не готов. Загляните позже!');
+          return;
+        }
+        currentIdx = 0;
+        score = 0;
+        renderQuestion();
+      })
+      .catch(function() { showError('Не удалось загрузить квиз. Попробуйте обновить страницу.'); });
+  }
+
+  function renderQuestion() {
+    answered = false;
+    var q = questions[currentIdx];
+    if (!q) { showResults(); return; }
+
+    while (app.firstChild) { app.removeChild(app.firstChild); }
+
+    // Progress
+    var progressWrap = document.createElement('div');
+    progressWrap.className = 'progress-wrap';
+
+    var progressInfo = document.createElement('div');
+    progressInfo.className = 'progress-info';
+    var pLeft = document.createElement('span');
+    pLeft.textContent = 'Вопрос ' + (currentIdx + 1) + ' из ' + questions.length;
+    var pRight = document.createElement('span');
+    pRight.textContent = 'Счёт: ' + score;
+    progressInfo.appendChild(pLeft);
+    progressInfo.appendChild(pRight);
+
+    var progressBar = document.createElement('div');
+    progressBar.className = 'progress-bar';
+    var progressFill = document.createElement('div');
+    progressFill.className = 'progress-fill';
+    progressFill.style.width = Math.round((currentIdx / questions.length) * 100) + '%';
+    progressBar.appendChild(progressFill);
+
+    progressWrap.appendChild(progressInfo);
+    progressWrap.appendChild(progressBar);
+    app.appendChild(progressWrap);
+
+    // Question card
+    var card = document.createElement('div');
+    card.className = 'question-card';
+
+    var qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = q.question;
+    card.appendChild(qText);
+
+    var grid = document.createElement('div');
+    grid.className = 'options-grid';
+
+    var allBtns = [];
+
+    (q.options || []).forEach(function(opt, i) {
+      var btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.textContent = opt;
+      btn.dataset.idx = i;
+      btn.addEventListener('click', function() { handleAnswer(q, i, allBtns, feedback); });
+      grid.appendChild(btn);
+      allBtns.push(btn);
+    });
+
+    card.appendChild(grid);
+
+    var feedback = document.createElement('div');
+    feedback.className = 'feedback-bar';
+    card.appendChild(feedback);
+
+    app.appendChild(card);
+  }
+
+  function handleAnswer(q, chosenIdx, btns, feedback) {
+    if (answered) return;
+    answered = true;
+
+    btns.forEach(function(b) { b.disabled = true; });
+
+    var isCorrect = (chosenIdx === q.correct_index);
+    if (isCorrect) score++;
+
+    btns[chosenIdx].classList.add(isCorrect ? 'correct' : 'wrong');
+    if (!isCorrect && q.correct_index != null && btns[q.correct_index]) {
+      btns[q.correct_index].classList.add('correct');
+    }
+
+    feedback.className = 'feedback-bar visible ' + (isCorrect ? 'correct-fb' : 'wrong-fb');
+    feedback.textContent = isCorrect ? '\u2713 Правильно!' : '\u2715 Неверно. Правильный ответ: ' + (q.options[q.correct_index] || '—');
+
+    // Report to API
+    fetch('/api/quiz/' + q.id + '/answer', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ guest_id: guestId, answer_index: chosenIdx })
+    }).catch(function() {});
+
+    setTimeout(function() {
+      currentIdx++;
+      renderQuestion();
+    }, 1600);
+  }
+
+  function showResults() {
+    while (app.firstChild) { app.removeChild(app.firstChild); }
+
+    var card = document.createElement('div');
+    card.className = 'results-card';
+
+    var scoreBig = document.createElement('div');
+    scoreBig.className = 'score-big';
+    scoreBig.textContent = score + '/' + questions.length;
+
+    var scoreLabel = document.createElement('div');
+    scoreLabel.className = 'score-label';
+    scoreLabel.textContent = 'правильных ответов';
+
+    var msg = document.createElement('div');
+    msg.className = 'score-msg';
+    var pct = questions.length ? score / questions.length : 0;
+    if (pct >= 0.8) msg.textContent = 'Отлично! Вы хорошо знаете эту пару \u2764\uFE0F';
+    else if (pct >= 0.5) msg.textContent = 'Хороший результат!';
+    else msg.textContent = 'Есть куда расти \uD83D\uDE04';
+
+    card.appendChild(scoreBig);
+    card.appendChild(scoreLabel);
+    card.appendChild(msg);
+
+    app.appendChild(card);
+
+    // Load leaderboard
+    fetch('/api/quiz/scores')
+      .then(function(r) { return r.json(); })
+      .then(function(scores) {
+        if (!scores || !scores.length) return;
+        var lb = document.createElement('div');
+        lb.className = 'leaderboard';
+
+        var h3 = document.createElement('h3');
+        h3.textContent = 'Таблица лидеров';
+        lb.appendChild(h3);
+
+        scores.slice(0, 10).forEach(function(entry, i) {
+          var item = document.createElement('div');
+          item.className = 'lb-item';
+
+          var pos = document.createElement('div');
+          pos.className = 'lb-pos';
+          pos.textContent = i === 0 ? '\uD83E\uDD47' : i === 1 ? '\uD83E\uDD48' : i === 2 ? '\uD83E\uDD49' : (i + 1);
+
+          var name = document.createElement('div');
+          name.className = 'lb-name';
+          name.textContent = entry.name || 'Гость';
+
+          var sc = document.createElement('div');
+          sc.className = 'lb-score';
+          sc.textContent = entry.score + '/' + questions.length;
+
+          item.appendChild(pos);
+          item.appendChild(name);
+          item.appendChild(sc);
+          lb.appendChild(item);
+        });
+
+        card.appendChild(lb);
+      })
+      .catch(function() {});
+
+    var restartBtn = document.createElement('button');
+    restartBtn.className = 'btn-restart';
+    restartBtn.textContent = 'Пройти ещё раз';
+    restartBtn.addEventListener('click', loadQuiz);
+    card.appendChild(restartBtn);
+  }
+
+  function showError(msg) {
+    while (app.firstChild) { app.removeChild(app.firstChild); }
+    var err = document.createElement('div');
+    err.className = 'error-state';
+    err.textContent = msg;
+    app.appendChild(err);
+  }
+
+  loadQuiz();
+})();
+</script>
+</body>
+</html>

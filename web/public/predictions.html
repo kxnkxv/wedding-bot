@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Предсказания</title>
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #1A1A1A;
+  --card: rgba(255,255,255,0.05);
+  --border: rgba(255,255,255,0.1);
+  --text: #FAF7F1;
+  --text-secondary: #9E9E9E;
+  --accent: #C41E3A;
+  --accent-hover: #9B1B30;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Nunito Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 24px 16px 48px;
+}
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.page-header h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(28px, 7vw, 48px);
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.page-header p {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.divider {
+  width: 48px;
+  height: 1px;
+  background: var(--accent);
+  margin: 12px auto;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+/* Form section */
+.form-section {}
+
+.form-section h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: var(--text);
+  text-align: center;
+}
+
+.prediction-item {
+  margin-bottom: 20px;
+}
+
+.prediction-item:last-of-type {
+  margin-bottom: 0;
+}
+
+.prediction-question {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.prediction-question .q-num {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  line-height: 20px;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.prediction-input {
+  width: 100%;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 11px 14px;
+  color: var(--text);
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.prediction-input:focus {
+  border-color: rgba(196,30,58,0.5);
+}
+
+.prediction-input::placeholder {
+  color: var(--text-secondary);
+}
+
+.separator {
+  height: 1px;
+  background: var(--border);
+  margin: 20px 0;
+}
+
+.btn-submit {
+  width: 100%;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 14px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  letter-spacing: 0.05em;
+}
+
+.btn-submit:hover { background: var(--accent-hover); }
+.btn-submit:active { transform: scale(0.98); }
+.btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Success state */
+.success-banner {
+  text-align: center;
+  padding: 20px;
+  background: rgba(46,125,50,0.1);
+  border: 1px solid rgba(76,175,80,0.25);
+  border-radius: 12px;
+  margin-bottom: 24px;
+  font-size: 15px;
+  color: #81c784;
+  font-weight: 600;
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Others' predictions */
+.others-section {}
+
+.others-section h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--text);
+}
+
+.q-block {
+  margin-bottom: 20px;
+}
+
+.q-block h3 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: 10px;
+}
+
+.answer-pill {
+  display: inline-block;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 13px;
+  color: var(--text);
+  margin: 0 6px 6px 0;
+}
+
+.loading {
+  text-align: center;
+  padding: 32px;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: rgba(30,30,30,0.95);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 20px;
+  font-size: 14px;
+  color: var(--text);
+  transition: transform 0.3s ease;
+  z-index: 100;
+  white-space: nowrap;
+}
+
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="page-header">
+    <h1>Предсказания</h1>
+    <div class="divider"></div>
+    <p>Угадайте, что произойдёт на свадьбе</p>
+  </div>
+
+  <div id="app">
+    <div class="loading">Загружаем...</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function() {
+  var predictionQuestions = [
+    'Кто первый заплачет на церемонии?',
+    'Сколько раз скажут «горько»?',
+    'Кто поймает букет невесты?',
+    'Какая песня будет играть чаще всего?',
+    'Кто последний уйдёт с танцпола?',
+  ];
+
+  var guestId = new URLSearchParams(location.search).get('id') || localStorage.getItem('wedding_guest_id') || 'anon';
+  var submitted = localStorage.getItem('predictions_submitted_' + guestId) === '1';
+  var app = document.getElementById('app');
+
+  function showToast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(function() { t.classList.remove('show'); }, 2800);
+  }
+
+  function renderForm() {
+    while (app.firstChild) { app.removeChild(app.firstChild); }
+
+    var card = document.createElement('div');
+    card.className = 'card form-section';
+
+    var h2 = document.createElement('h2');
+    h2.textContent = 'Ваши предсказания';
+    card.appendChild(h2);
+
+    var inputs = [];
+
+    predictionQuestions.forEach(function(q, i) {
+      var item = document.createElement('div');
+      item.className = 'prediction-item';
+
+      var label = document.createElement('div');
+      label.className = 'prediction-question';
+
+      var num = document.createElement('span');
+      num.className = 'q-num';
+      num.textContent = i + 1;
+      label.appendChild(num);
+      label.appendChild(document.createTextNode(q));
+
+      var inp = document.createElement('input');
+      inp.type = 'text';
+      inp.className = 'prediction-input';
+      inp.placeholder = 'Ваш ответ...';
+      inp.maxLength = 150;
+      inputs.push(inp);
+
+      item.appendChild(label);
+      item.appendChild(inp);
+
+      if (i < predictionQuestions.length - 1) {
+        var sep = document.createElement('div');
+        sep.className = 'separator';
+        item.appendChild(sep);
+      }
+
+      card.appendChild(item);
+    });
+
+    var btn = document.createElement('button');
+    btn.className = 'btn-submit';
+    btn.style.marginTop = '20px';
+    btn.textContent = 'Отправить предсказания';
+    btn.addEventListener('click', function() { submitPredictions(inputs, btn); });
+    card.appendChild(btn);
+
+    app.appendChild(card);
+  }
+
+  function submitPredictions(inputs, btn) {
+    var answers = inputs.map(function(inp) { return inp.value.trim(); });
+    var filled = answers.filter(function(a) { return a.length > 0; }).length;
+    if (filled === 0) { showToast('Заполните хотя бы одно предсказание'); return; }
+
+    btn.disabled = true;
+    btn.textContent = 'Отправляем...';
+
+    var payload = {
+      guest_id: guestId,
+      answers: predictionQuestions.map(function(q, i) {
+        return { question: q, answer: answers[i] || '' };
+      })
+    };
+
+    fetch('/api/predictions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.error) throw new Error(data.error);
+        localStorage.setItem('predictions_submitted_' + guestId, '1');
+        submitted = true;
+        showAfterSubmit();
+      })
+      .catch(function(e) {
+        showToast(e.message || 'Ошибка. Попробуйте ещё раз');
+        btn.disabled = false;
+        btn.textContent = 'Отправить предсказания';
+      });
+  }
+
+  function showAfterSubmit() {
+    while (app.firstChild) { app.removeChild(app.firstChild); }
+
+    var banner = document.createElement('div');
+    banner.className = 'success-banner';
+    banner.textContent = '\u2728 Ваши предсказания отправлены! Проверим на свадьбе!';
+    app.appendChild(banner);
+
+    loadOthersPredictions();
+  }
+
+  function loadOthersPredictions() {
+    fetch('/api/predictions')
+      .then(function(r) { return r.json(); })
+      .then(function(data) { renderOthersPredictions(data); })
+      .catch(function() {});
+  }
+
+  function renderOthersPredictions(data) {
+    if (!data || !data.length) return;
+
+    var section = document.createElement('div');
+    section.className = 'card others-section';
+
+    var h2 = document.createElement('h2');
+    h2.textContent = 'Предсказания гостей';
+    section.appendChild(h2);
+
+    // Group by question
+    var grouped = {};
+    predictionQuestions.forEach(function(q) { grouped[q] = []; });
+
+    data.forEach(function(entry) {
+      if (!entry.answers) return;
+      entry.answers.forEach(function(a) {
+        if (grouped[a.question] && a.answer) {
+          grouped[a.question].push(a.answer);
+        }
+      });
+    });
+
+    predictionQuestions.forEach(function(q, i) {
+      var answers = grouped[q] || [];
+      if (!answers.length) return;
+
+      var block = document.createElement('div');
+      block.className = 'q-block';
+
+      var h3 = document.createElement('h3');
+      h3.textContent = (i + 1) + '. ' + q;
+      block.appendChild(h3);
+
+      answers.forEach(function(a) {
+        var pill = document.createElement('span');
+        pill.className = 'answer-pill';
+        pill.textContent = a;
+        block.appendChild(pill);
+      });
+
+      section.appendChild(block);
+    });
+
+    app.appendChild(section);
+  }
+
+  // Init
+  if (submitted) {
+    showAfterSubmit();
+  } else {
+    renderForm();
+  }
+})();
+</script>
+</body>
+</html>

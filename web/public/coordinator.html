@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Координатор — Артём × Полина</title>
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600&family=Nunito+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #0D0D0D;
+  --surface: #1A1A1A;
+  --surface2: #222222;
+  --border: #2e2e2e;
+  --text: #FAF7F1;
+  --text-muted: #888;
+  --red: #C41E3A;
+  --dark-red: #9B1B30;
+  --green: #2ecc71;
+  --yellow: #f39c12;
+  --blue: #3498db;
+  --orange: #e67e22;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+}
+
+/* ── Lock screen ── */
+#lock-overlay {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000;
+}
+.lock-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 48px 36px;
+  text-align: center;
+  max-width: 340px;
+  width: 92%;
+}
+.lock-box h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 400;
+  font-size: 1.9rem;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+.lock-box p {
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  margin-bottom: 30px;
+}
+.lock-box input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  color: var(--text);
+  font-size: 1.3rem;
+  text-align: center;
+  letter-spacing: 8px;
+  margin-bottom: 14px;
+  outline: none;
+  transition: border-color .2s;
+}
+.lock-box input:focus { border-color: var(--red); }
+.lock-box button {
+  width: 100%;
+  background: var(--red);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 14px;
+  font-size: 0.95rem;
+  font-family: 'Nunito Sans', sans-serif;
+  cursor: pointer;
+  transition: background .2s;
+}
+.lock-box button:hover { background: var(--dark-red); }
+.lock-error {
+  color: #e74c3c;
+  font-size: 0.85rem;
+  margin-top: 12px;
+  display: none;
+}
+
+/* ── App ── */
+#app { display: none; }
+
+/* ── Header ── */
+.top-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 20px 14px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header-couple {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 400;
+  font-size: 1.35rem;
+  color: var(--text);
+  line-height: 1.2;
+}
+.header-couple .x { color: var(--red); }
+.header-sub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-top: 2px;
+}
+.header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.header-time {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: var(--red);
+  line-height: 1;
+  text-align: right;
+}
+.header-date-small {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-align: right;
+  margin-top: 3px;
+}
+.header-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+.btn-sm {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  font-family: 'Nunito Sans', sans-serif;
+  transition: all .2s;
+}
+.btn-sm:hover { border-color: var(--red); color: var(--text); }
+.btn-sm.danger:hover { border-color: #e74c3c; color: #e74c3c; }
+
+/* ── Main ── */
+main { padding: 20px 16px 48px; max-width: 720px; margin: 0 auto; }
+
+/* ── Section title ── */
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 400;
+  font-size: 1.3rem;
+  color: var(--text);
+  margin: 32px 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.section-icon { font-size: 1rem; }
+
+/* ── Stats grid ── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 10px;
+  text-align: center;
+}
+.stat-card.accent { border-top: 3px solid var(--red); }
+.stat-card.green  { border-top: 3px solid var(--green); }
+.stat-card.blue   { border-top: 3px solid var(--blue); }
+.stat-card.gray   { border-top: 3px solid #555; }
+.stat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  font-weight: 300;
+  color: var(--text);
+  line-height: 1;
+}
+.stat-label {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  margin-top: 5px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  line-height: 1.3;
+}
+
+/* ── Timeline ── */
+.timeline {
+  position: relative;
+  padding-left: 24px;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: var(--border);
+}
+.tl-item {
+  position: relative;
+  margin-bottom: 0;
+  padding: 14px 14px 14px 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 8px;
+  transition: border-color .2s;
+}
+.tl-item.active {
+  border-color: var(--red);
+  background: rgba(196, 30, 58, 0.06);
+}
+.tl-item.past {
+  opacity: 0.5;
+}
+.tl-dot {
+  position: absolute;
+  left: -24px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--border);
+  border: 2px solid var(--bg);
+}
+.tl-item.active .tl-dot {
+  background: var(--red);
+  box-shadow: 0 0 0 3px rgba(196,30,58,.3);
+}
+.tl-item.past .tl-dot { background: #444; }
+.tl-time {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  font-weight: 300;
+}
+.tl-item.active .tl-time { color: var(--red); font-weight: 600; }
+.tl-title {
+  font-size: 0.95rem;
+  color: var(--text);
+  font-weight: 400;
+  margin-top: 2px;
+}
+.tl-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+.tl-now-badge {
+  display: inline-block;
+  background: var(--red);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+/* ── Vendor cards ── */
+.vendor-list { display: flex; flex-direction: column; gap: 10px; }
+.vendor-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.vendor-icon {
+  font-size: 1.6rem;
+  flex-shrink: 0;
+  width: 40px;
+  text-align: center;
+}
+.vendor-info { flex: 1; min-width: 0; }
+.vendor-role {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--text-muted);
+}
+.vendor-name {
+  font-size: 0.95rem;
+  color: var(--text);
+  font-weight: 400;
+  margin-top: 2px;
+}
+.vendor-phone {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 0.88rem;
+  color: var(--red);
+  text-decoration: none;
+  font-weight: 600;
+  letter-spacing: .02em;
+}
+.vendor-phone:hover { text-decoration: underline; }
+
+/* ── Seating ── */
+.seating-list { display: flex; flex-direction: column; gap: 10px; }
+.table-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.table-header {
+  background: var(--surface2);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.table-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem;
+  font-weight: 400;
+  color: var(--text);
+}
+.table-count {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  background: rgba(255,255,255,.06);
+  padding: 2px 9px;
+  border-radius: 20px;
+}
+.table-guests {
+  padding: 10px 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.guest-pill {
+  background: rgba(250,247,241,.06);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 0.82rem;
+  color: var(--text);
+}
+.guest-pill.dietary {
+  border-color: var(--yellow);
+  color: var(--yellow);
+}
+
+/* ── Guest list ── */
+.guest-search-wrap {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.guest-search {
+  flex: 1;
+  min-width: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: var(--text);
+  font-size: 0.9rem;
+  font-family: 'Nunito Sans', sans-serif;
+  outline: none;
+  transition: border-color .2s;
+}
+.guest-search:focus { border-color: var(--red); }
+.guest-search::placeholder { color: var(--text-muted); }
+.toggle-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  font-family: 'Nunito Sans', sans-serif;
+  white-space: nowrap;
+  transition: all .2s;
+}
+.toggle-btn.active { border-color: var(--red); color: var(--text); }
+.guest-compact-list { display: flex; flex-direction: column; gap: 6px; }
+.guest-row {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.guest-row-name { flex: 1; font-size: 0.9rem; color: var(--text); }
+.guest-row-status { font-size: 1rem; }
+.guest-row-diet {
+  font-size: 0.75rem;
+  color: var(--yellow);
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.guest-count-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+/* ── Emergency ── */
+.emergency-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.emerg-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+}
+.emerg-icon { font-size: 1.5rem; margin-bottom: 6px; }
+.emerg-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+.emerg-value {
+  font-size: 0.88rem;
+  color: var(--text);
+  font-weight: 400;
+  line-height: 1.4;
+}
+.emerg-link {
+  display: block;
+  color: var(--red);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+.emerg-link:hover { text-decoration: underline; }
+
+/* ── Checklist ── */
+.checklist-progress {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+}
+.progress-bar-wrap {
+  background: var(--border);
+  border-radius: 4px;
+  height: 6px;
+  margin-top: 10px;
+  overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: var(--red);
+  border-radius: 4px;
+  transition: width .4s ease;
+}
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+.checklist-groups { display: flex; flex-direction: column; gap: 10px; }
+.cl-group-title {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+.cl-items { display: flex; flex-direction: column; gap: 4px; }
+.cl-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: background .15s;
+}
+.cl-item:hover { background: var(--surface2); }
+.cl-item.done { opacity: 0.55; }
+.cl-check {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s;
+}
+.cl-item.done .cl-check {
+  background: var(--red);
+  border-color: var(--red);
+}
+.cl-check-mark { display: none; color: #fff; font-size: 0.65rem; font-weight: bold; }
+.cl-item.done .cl-check-mark { display: block; }
+.cl-text {
+  flex: 1;
+  font-size: 0.875rem;
+  color: var(--text);
+}
+.cl-item.done .cl-text { text-decoration: line-through; color: var(--text-muted); }
+
+/* ── Reactions ── */
+.reactions-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.reaction-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 20px;
+  text-align: center;
+  min-width: 80px;
+  flex: 1;
+}
+.reaction-emoji { font-size: 1.8rem; }
+.reaction-count {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem;
+  font-weight: 300;
+  color: var(--text);
+  margin-top: 4px;
+}
+.reactions-empty { color: var(--text-muted); font-size: 0.88rem; padding: 20px 0; }
+.refresh-indicator {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-align: right;
+  margin-top: 8px;
+}
+
+/* ── Spinner ── */
+.spinner {
+  width: 28px; height: 28px;
+  border: 3px solid var(--border);
+  border-top-color: var(--red);
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+  margin: 24px auto;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── No data ── */
+.no-data {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  padding: 24px 0;
+}
+
+/* ── Scrollable (mobile) ── */
+@media (max-width: 480px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .emergency-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Lock screen -->
+<div id="lock-overlay">
+  <div class="lock-box">
+    <h2>Координатор</h2>
+    <p>Артём <span style="color:var(--red)">×</span> Полина &nbsp;·&nbsp; 1 августа 2026</p>
+    <input type="password" id="pin-input" placeholder="PIN" maxlength="16" autocomplete="off" inputmode="numeric">
+    <button id="login-btn">Войти</button>
+    <div class="lock-error" id="lock-error">Неверный PIN</div>
+  </div>
+</div>
+
+<!-- App -->
+<div id="app">
+
+  <!-- Header -->
+  <div class="top-header">
+    <div class="header-row">
+      <div>
+        <div class="header-couple">Артём <span class="x">×</span> Полина — 1 августа 2026</div>
+        <div class="header-sub">Панель координатора</div>
+      </div>
+      <div>
+        <div class="header-time" id="live-time">--:--</div>
+        <div class="header-date-small" id="live-date"></div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-sm" id="refresh-btn">Обновить</button>
+      <button class="btn-sm danger" id="logout-btn">Выйти</button>
+    </div>
+  </div>
+
+  <main>
+
+    <!-- 1. Quick Stats -->
+    <div class="section-title"><span class="section-icon">📊</span>Статистика</div>
+    <div class="stats-grid" id="stats-grid">
+      <div class="spinner" style="grid-column:1/-1"></div>
+    </div>
+
+    <!-- 2. Day Timeline -->
+    <div class="section-title"><span class="section-icon">🕐</span>Программа дня</div>
+    <div class="timeline" id="timeline-wrap"></div>
+
+    <!-- 3. Vendor Contacts -->
+    <div class="section-title"><span class="section-icon">📞</span>Контакты подрядчиков</div>
+    <div class="vendor-list" id="vendor-list">
+      <div class="spinner"></div>
+    </div>
+
+    <!-- 4. Seating Plan -->
+    <div class="section-title"><span class="section-icon">🪑</span>Рассадка гостей</div>
+    <div class="seating-list" id="seating-list">
+      <div class="spinner"></div>
+    </div>
+
+    <!-- 5. Guest List -->
+    <div class="section-title"><span class="section-icon">👥</span>Список гостей</div>
+    <div class="guest-search-wrap">
+      <input type="search" class="guest-search" id="guest-search" placeholder="Поиск по имени...">
+      <button class="toggle-btn" id="show-all-toggle">Только подтвержденные</button>
+    </div>
+    <div class="guest-count-label" id="guest-count"></div>
+    <div class="guest-compact-list" id="guest-list">
+      <div class="spinner"></div>
+    </div>
+
+    <!-- 6. Emergency Info -->
+    <div class="section-title"><span class="section-icon">🚨</span>Экстренная информация</div>
+    <div class="emergency-grid">
+      <div class="emerg-card">
+        <div class="emerg-icon">👤</div>
+        <div class="emerg-label">Координатор</div>
+        <div class="emerg-value">Мария Иванова</div>
+        <a href="tel:+79001234567" class="emerg-link">+7 900 123-45-67</a>
+      </div>
+      <div class="emerg-card">
+        <div class="emerg-icon">🏥</div>
+        <div class="emerg-label">Ближайшая больница</div>
+        <div class="emerg-value">ГКБ №1 им. Пирогова</div>
+        <a href="tel:112" class="emerg-link">Скорая: 112</a>
+      </div>
+      <div class="emerg-card">
+        <div class="emerg-icon">🚕</div>
+        <div class="emerg-label">Такси</div>
+        <div class="emerg-value">Яндекс Такси</div>
+        <a href="tel:+74952888080" class="emerg-link">+7 495 288-80-80</a>
+      </div>
+      <div class="emerg-card">
+        <div class="emerg-icon">📶</div>
+        <div class="emerg-label">Wi-Fi на площадке</div>
+        <div class="emerg-value" style="font-family:monospace;font-size:.82rem;">SSID: Wedding_2026<br>Pass: artem_polina</div>
+      </div>
+    </div>
+
+    <!-- 7. Checklist -->
+    <div class="section-title"><span class="section-icon">✅</span>Чеклист дня свадьбы</div>
+    <div id="checklist-wrap">
+      <div class="spinner"></div>
+    </div>
+
+    <!-- 8. Live Reactions -->
+    <div class="section-title"><span class="section-icon">🎉</span>Реакции гостей</div>
+    <div class="reactions-grid" id="reactions-grid">
+      <div class="spinner"></div>
+    </div>
+    <div class="refresh-indicator" id="reactions-refresh-label"></div>
+
+  </main>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ── Config ──────────────────────────────────────────────────────────
+  var COORD_PIN = '0000';
+  var LS_KEY = 'coord_auth_v1';
+
+  // ── DOM refs ────────────────────────────────────────────────────────
+  var lockOverlay  = document.getElementById('lock-overlay');
+  var pinInput     = document.getElementById('pin-input');
+  var loginBtn     = document.getElementById('login-btn');
+  var lockError    = document.getElementById('lock-error');
+  var appEl        = document.getElementById('app');
+
+  // ── Auth ────────────────────────────────────────────────────────────
+  function checkPin() {
+    if (pinInput.value === COORD_PIN) {
+      localStorage.setItem(LS_KEY, btoa(COORD_PIN));
+      showApp();
+    } else {
+      lockError.style.display = 'block';
+      pinInput.value = '';
+      setTimeout(function () { lockError.style.display = 'none'; }, 2000);
+    }
+  }
+
+  function logout() {
+    localStorage.removeItem(LS_KEY);
+    location.reload();
+  }
+
+  function showApp() {
+    lockOverlay.style.display = 'none';
+    appEl.style.display = 'block';
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  }
+
+  loginBtn.addEventListener('click', checkPin);
+  pinInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') checkPin(); });
+  document.getElementById('logout-btn').addEventListener('click', logout);
+  document.getElementById('refresh-btn').addEventListener('click', function () { loadStats(); loadVendors(); loadSeating(); loadGuests(); loadChecklist(); loadReactions(); });
+
+  // Auto-login
+  var stored = localStorage.getItem(LS_KEY);
+  if (stored) {
+    try {
+      if (atob(stored) === COORD_PIN) showApp();
+    } catch (_) {}
+  }
+
+  // ── Live clock ───────────────────────────────────────────────────────
+  function updateClock() {
+    var now = new Date();
+    var h = String(now.getHours()).padStart(2, '0');
+    var m = String(now.getMinutes()).padStart(2, '0');
+    document.getElementById('live-time').textContent = h + ':' + m;
+    var days = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
+    var months = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+    document.getElementById('live-date').textContent = days[now.getDay()] + ', ' + now.getDate() + ' ' + months[now.getMonth()];
+    updateTimeline(now);
+  }
+
+  setInterval(updateClock, 10000);
+
+  // ── Timeline ─────────────────────────────────────────────────────────
+  var TIMELINE = [
+    { time: '15:00', h: 15, m: 0,  title: 'Фуршет',         desc: 'Welcome-зона, встреча гостей' },
+    { time: '16:00', h: 16, m: 0,  title: 'Церемония',       desc: 'Главный зал' },
+    { time: '17:00', h: 17, m: 0,  title: 'Банкет',          desc: 'Рассадка по столам, начало ужина' },
+    { time: '20:00', h: 20, m: 0,  title: 'Первый танец',    desc: 'Молодожёны открывают танцпол' },
+    { time: '23:00', h: 23, m: 0,  title: 'Финал вечера',    desc: 'Прощание с гостями' },
+  ];
+
+  function updateTimeline(now) {
+    var wrap = document.getElementById('timeline-wrap');
+    // Clear if first render, otherwise update classes in place
+    if (wrap.children.length !== TIMELINE.length) {
+      while (wrap.firstChild) wrap.removeChild(wrap.firstChild);
+      TIMELINE.forEach(function (ev, idx) {
+        var item = document.createElement('div');
+        item.className = 'tl-item';
+        item.id = 'tl-' + idx;
+
+        var dot = document.createElement('div');
+        dot.className = 'tl-dot';
+        item.appendChild(dot);
+
+        var timeEl = document.createElement('div');
+        timeEl.className = 'tl-time';
+        timeEl.textContent = ev.time;
+
+        var badge = document.createElement('span');
+        badge.className = 'tl-now-badge';
+        badge.textContent = 'сейчас';
+        badge.id = 'tl-badge-' + idx;
+        badge.style.display = 'none';
+        timeEl.appendChild(badge);
+
+        var titleEl = document.createElement('div');
+        titleEl.className = 'tl-title';
+        titleEl.textContent = ev.title;
+
+        var descEl = document.createElement('div');
+        descEl.className = 'tl-desc';
+        descEl.textContent = ev.desc;
+
+        item.appendChild(timeEl);
+        item.appendChild(titleEl);
+        item.appendChild(descEl);
+        wrap.appendChild(item);
+      });
+    }
+
+    var nowMins = now.getHours() * 60 + now.getMinutes();
+
+    TIMELINE.forEach(function (ev, idx) {
+      var item = document.getElementById('tl-' + idx);
+      var badge = document.getElementById('tl-badge-' + idx);
+      var evMins = ev.h * 60 + ev.m;
+      var nextMins = idx + 1 < TIMELINE.length ? (TIMELINE[idx + 1].h * 60 + TIMELINE[idx + 1].m) : evMins + 120;
+
+      item.classList.remove('active', 'past');
+      badge.style.display = 'none';
+
+      if (nowMins >= evMins && nowMins < nextMins) {
+        item.classList.add('active');
+        badge.style.display = 'inline-block';
+      } else if (nowMins >= nextMins) {
+        item.classList.add('past');
+      }
+    });
+  }
+
+  // ── Stats ─────────────────────────────────────────────────────────────
+  async function loadStats() {
+    var grid = document.getElementById('stats-grid');
+    try {
+      var res = await fetch('/api/admin/stats');
+      if (!res.ok) throw new Error('err');
+      var s = await res.json();
+
+      while (grid.firstChild) grid.removeChild(grid.firstChild);
+
+      var cards = [
+        { label: 'Всего гостей',       value: s.total,    cls: 'accent' },
+        { label: 'Подтвердили',        value: s.accepted, cls: 'green'  },
+        { label: 'Назначены столы',    value: '-',        cls: 'blue'   },
+        { label: 'Ожидают ответа',     value: s.pending,  cls: 'gray'   },
+      ];
+
+      // Try to fill table count from seating data later
+      window._statsAccepted = s.accepted;
+
+      cards.forEach(function (c) {
+        var card = document.createElement('div');
+        card.className = 'stat-card ' + c.cls;
+
+        var num = document.createElement('div');
+        num.className = 'stat-num';
+        num.textContent = String(c.value);
+        if (c.cls === 'blue') num.id = 'stat-tables-num';
+
+        var lbl = document.createElement('div');
+        lbl.className = 'stat-label';
+        lbl.textContent = c.label;
+
+        card.appendChild(num);
+        card.appendChild(lbl);
+        grid.appendChild(card);
+      });
+    } catch (e) {
+      var errEl = document.createElement('p');
+      errEl.style.cssText = 'color:var(--text-muted);font-size:.85rem;grid-column:1/-1;text-align:center;padding:20px 0';
+      errEl.textContent = 'Ошибка загрузки статистики';
+      while (grid.firstChild) grid.removeChild(grid.firstChild);
+      grid.appendChild(errEl);
+    }
+  }
+
+  // ── Vendors ──────────────────────────────────────────────────────────
+  var VENDOR_ICONS = {
+    'фотограф': '📷', 'видеограф': '🎥', 'тамада': '🎤', 'ведущий': '🎤',
+    'диджей': '🎧', 'dj': '🎧', 'флористы': '💐', 'флорист': '💐',
+    'кейтеринг': '🍽', 'повар': '👨‍🍳', 'торт': '🎂', 'кондитер': '🎂',
+    'транспорт': '🚗', 'шофёр': '🚗', 'музыканты': '🎻', 'музыкант': '🎻',
+  };
+
+  function getVendorIcon(role) {
+    if (!role) return '📋';
+    var r = role.toLowerCase();
+    for (var k in VENDOR_ICONS) {
+      if (r.includes(k)) return VENDOR_ICONS[k];
+    }
+    return '📋';
+  }
+
+  async function loadVendors() {
+    var wrap = document.getElementById('vendor-list');
+    try {
+      var res = await fetch('/api/admin/vendors');
+      if (!res.ok) throw new Error('no vendors api');
+      var vendors = await res.json();
+      renderVendors(wrap, vendors);
+    } catch (e) {
+      // Fallback: show placeholder cards with instruction
+      var fallback = [
+        { role: 'Фотограф',   name: 'Имя Фамилия', phone: '+7 900 000-00-00' },
+        { role: 'Видеограф',  name: 'Имя Фамилия', phone: '+7 900 000-00-00' },
+        { role: 'Ведущий',    name: 'Имя Фамилия', phone: '+7 900 000-00-00' },
+        { role: 'Флористы',   name: 'Имя Фамилия', phone: '+7 900 000-00-00' },
+        { role: 'Кейтеринг', name: 'Имя Фамилия', phone: '+7 900 000-00-00' },
+      ];
+      renderVendors(wrap, fallback);
+    }
+  }
+
+  function renderVendors(wrap, vendors) {
+    while (wrap.firstChild) wrap.removeChild(wrap.firstChild);
+
+    if (!vendors || vendors.length === 0) {
+      var nd = document.createElement('div');
+      nd.className = 'no-data';
+      nd.textContent = 'Контакты не добавлены';
+      wrap.appendChild(nd);
+      return;
+    }
+
+    vendors.forEach(function (v) {
+      var card = document.createElement('div');
+      card.className = 'vendor-card';
+
+      var icon = document.createElement('div');
+      icon.className = 'vendor-icon';
+      icon.textContent = getVendorIcon(v.role);
+
+      var info = document.createElement('div');
+      info.className = 'vendor-info';
+
+      var role = document.createElement('div');
+      role.className = 'vendor-role';
+      role.textContent = v.role || '';
+
+      var name = document.createElement('div');
+      name.className = 'vendor-name';
+      name.textContent = v.name || '';
+
+      info.appendChild(role);
+      info.appendChild(name);
+
+      if (v.phone) {
+        var phone = document.createElement('a');
+        phone.className = 'vendor-phone';
+        phone.href = 'tel:' + v.phone.replace(/\s/g, '');
+        phone.textContent = v.phone;
+        info.appendChild(phone);
+      }
+
+      card.appendChild(icon);
+      card.appendChild(info);
+      wrap.appendChild(card);
+    });
+  }
+
+  // ── Seating ──────────────────────────────────────────────────────────
+  async function loadSeating() {
+    var wrap = document.getElementById('seating-list');
+    try {
+      var res = await fetch('/api/admin/seating');
+      if (!res.ok) throw new Error('no seating api');
+      var data = await res.json();
+      renderSeating(wrap, data);
+    } catch (e) {
+      // Try loading guests and building from guest data if no seating API
+      try {
+        var gRes = await fetch('/api/admin/guests');
+        if (!gRes.ok) throw new Error('no guests');
+        var guests = await gRes.json();
+        // Build seating map from whatever data we have — guests won't have table info without API
+        var nd = document.createElement('div');
+        nd.className = 'no-data';
+        nd.textContent = 'Нет данных о рассадке';
+        while (wrap.firstChild) wrap.removeChild(wrap.firstChild);
+        wrap.appendChild(nd);
+      } catch (_) {
+        var nd2 = document.createElement('div');
+        nd2.className = 'no-data';
+        nd2.textContent = 'Нет данных о рассадке';
+        while (wrap.firstChild) wrap.removeChild(wrap.firstChild);
+        wrap.appendChild(nd2);
+      }
+    }
+  }
+
+  function renderSeating(wrap, data) {
+    while (wrap.firstChild) wrap.removeChild(wrap.firstChild);
+
+    // data expected: { tables: [ { name, guests: [ { name, dietary } ] } ] }
+    // or array of same
+    var tables = Array.isArray(data) ? data : (data.tables || []);
+
+    if (!tables || tables.length === 0) {
+      var nd = document.createElement('div');
+      nd.className = 'no-data';
+      nd.textContent = 'Нет данных о рассадке';
+      wrap.appendChild(nd);
+      return;
+    }
+
+    // Update table stat
+    var statTablesEl = document.getElementById('stat-tables-num');
+    if (statTablesEl) statTablesEl.textContent = String(tables.length);
+
+    tables.forEach(function (tbl) {
+      var card = document.createElement('div');
+      card.className = 'table-card';
+
+      var header = document.createElement('div');
+      header.className = 'table-header';
+
+      var tname = document.createElement('div');
+      tname.className = 'table-name';
+      tname.textContent = tbl.name || 'Стол';
+
+      var tcount = document.createElement('div');
+      tcount.className = 'table-count';
+      var gList = tbl.guests || [];
+      tcount.textContent = gList.length + ' гост' + (gList.length === 1 ? 'ь' : gList.length < 5 ? 'я' : 'ей');
+
+      header.appendChild(tname);
+      header.appendChild(tcount);
+      card.appendChild(header);
+
+      var guestWrap = document.createElement('div');
+      guestWrap.className = 'table-guests';
+
+      gList.forEach(function (g) {
+        var pill = document.createElement('span');
+        pill.className = 'guest-pill' + (g.dietary ? ' dietary' : '');
+        pill.textContent = g.name || g;
+        if (g.dietary) pill.title = g.dietary;
+        guestWrap.appendChild(pill);
+      });
+
+      card.appendChild(guestWrap);
+      wrap.appendChild(card);
+    });
+  }
+
+  // ── Guest list ────────────────────────────────────────────────────────
+  var allGuests = [];
+  var showAllGuests = false;
+
+  document.getElementById('guest-search').addEventListener('input', renderGuestList);
+  document.getElementById('show-all-toggle').addEventListener('click', function () {
+    showAllGuests = !showAllGuests;
+    this.textContent = showAllGuests ? 'Все гости' : 'Только подтвержденные';
+    this.classList.toggle('active', showAllGuests);
+    renderGuestList();
+  });
+
+  var STATUS_EMOJI = {
+    accepted: '✅',
+    declined: '❌',
+    maybe:    '🤔',
+    pending:  '⏳',
+  };
+
+  async function loadGuests() {
+    var wrap = document.getElementById('guest-list');
+    try {
+      var res = await fetch('/api/admin/guests');
+      if (!res.ok) throw new Error('err');
+      allGuests = await res.json();
+      renderGuestList();
+    } catch (e) {
+      while (wrap.firstChild) wrap.removeChild(wrap.firstChild);
+      var nd = document.createElement('div');
+      nd.className = 'no-data';
+      nd.textContent = 'Ошибка загрузки гостей';
+      wrap.appendChild(nd);
+    }
+  }
+
+  function renderGuestList() {
+    var wrap = document.getElementById('guest-list');
+    var q = document.getElementById('guest-search').value.toLowerCase().trim();
+
+    var filtered = allGuests.filter(function (g) {
+      if (!showAllGuests && g.status !== 'accepted') return false;
+      if (q && !g.name.toLowerCase().includes(q)) return false;
+      return true;
+    });
+
+    filtered.sort(function (a, b) {
+      return a.name.localeCompare(b.name, 'ru');
+    });
+
+    document.getElementById('guest-count').textContent = 'Показано: ' + filtered.length;
+
+    while (wrap.firstChild) wrap.removeChild(wrap.firstChild);
+
+    if (filtered.length === 0) {
+      var nd = document.createElement('div');
+      nd.className = 'no-data';
+      nd.textContent = q ? 'Не найдено' : 'Нет гостей';
+      wrap.appendChild(nd);
+      return;
+    }
+
+    filtered.forEach(function (g) {
+      var row = document.createElement('div');
+      row.className = 'guest-row';
+
+      var name = document.createElement('div');
+      name.className = 'guest-row-name';
+      name.textContent = g.name || '';
+
+      var status = document.createElement('div');
+      status.className = 'guest-row-status';
+      status.textContent = STATUS_EMOJI[g.status] || '⏳';
+
+      row.appendChild(name);
+      row.appendChild(status);
+
+      if (g.dietary) {
+        var diet = document.createElement('div');
+        diet.className = 'guest-row-diet';
+        diet.textContent = g.dietary;
+        diet.title = g.dietary;
+        row.appendChild(diet);
+      }
+
+      wrap.appendChild(row);
+    });
+  }
+
+  // ── Checklist ─────────────────────────────────────────────────────────
+  async function loadChecklist() {
+    var wrap = document.getElementById('checklist-wrap');
+    try {
+      var res = await fetch('/api/checklist/wedding');
+      if (!res.ok) throw new Error('err');
+      var data = await res.json();
+      renderChecklist(wrap, data);
+    } catch (e) {
+      while (wrap.firstChild) wrap.removeChild(wrap.firstChild);
+      var nd = document.createElement('div');
+      nd.className = 'no-data';
+      nd.textContent = 'Чеклист недоступен';
+      wrap.appendChild(nd);
+    }
+  }
+
+  function renderChecklist(wrap, data) {
+    while (wrap.firstChild) wrap.removeChild(wrap.firstChild);
+
+    var progress = data.progress || { done: 0, total: 0 };
+    var groups = data.groups || {};
+
+    // Progress bar
+    var progCard = document.createElement('div');
+    progCard.className = 'checklist-progress';
+
+    var pct = progress.total > 0 ? Math.round((progress.done / progress.total) * 100) : 0;
+
+    var pHeader = document.createElement('div');
+    pHeader.style.cssText = 'display:flex;justify-content:space-between;align-items:center';
+    var pTitle = document.createElement('span');
+    pTitle.style.cssText = 'font-size:.85rem;color:var(--text)';
+    pTitle.textContent = 'Прогресс';
+    var pNum = document.createElement('span');
+    pNum.style.cssText = 'font-size:.82rem;color:var(--text-muted)';
+    pNum.textContent = progress.done + ' / ' + progress.total;
+    pHeader.appendChild(pTitle);
+    pHeader.appendChild(pNum);
+
+    var barWrap = document.createElement('div');
+    barWrap.className = 'progress-bar-wrap';
+    var barFill = document.createElement('div');
+    barFill.className = 'progress-bar-fill';
+    barFill.style.width = pct + '%';
+    barWrap.appendChild(barFill);
+
+    var pLabel = document.createElement('div');
+    pLabel.className = 'progress-label';
+    var pLabelLeft = document.createElement('span');
+    pLabelLeft.textContent = pct + '%';
+    pLabel.appendChild(pLabelLeft);
+
+    progCard.appendChild(pHeader);
+    progCard.appendChild(barWrap);
+    progCard.appendChild(pLabel);
+    wrap.appendChild(progCard);
+
+    // Groups
+    var groupsWrap = document.createElement('div');
+    groupsWrap.className = 'checklist-groups';
+
+    Object.keys(groups).forEach(function (groupName) {
+      var items = groups[groupName] || [];
+
+      var groupEl = document.createElement('div');
+      var gtitle = document.createElement('div');
+      gtitle.className = 'cl-group-title';
+      gtitle.textContent = groupName;
+      groupEl.appendChild(gtitle);
+
+      var itemsWrap = document.createElement('div');
+      itemsWrap.className = 'cl-items';
+
+      items.forEach(function (item) {
+        var row = document.createElement('div');
+        row.className = 'cl-item' + (item.done ? ' done' : '');
+        row.dataset.id = item.id;
+
+        var check = document.createElement('div');
+        check.className = 'cl-check';
+        var checkMark = document.createElement('span');
+        checkMark.className = 'cl-check-mark';
+        checkMark.textContent = '✓';
+        check.appendChild(checkMark);
+
+        var text = document.createElement('div');
+        text.className = 'cl-text';
+        text.textContent = item.text || '';
+
+        row.appendChild(check);
+        row.appendChild(text);
+
+        row.addEventListener('click', function () {
+          var isDone = row.classList.contains('done');
+          var action = isDone ? 'uncheck' : 'check';
+          fetch('/api/checklist/' + item.id + '/' + action, { method: 'POST' })
+            .then(function () { row.classList.toggle('done'); })
+            .catch(function () {});
+        });
+
+        itemsWrap.appendChild(row);
+      });
+
+      groupEl.appendChild(itemsWrap);
+      groupsWrap.appendChild(groupEl);
+    });
+
+    wrap.appendChild(groupsWrap);
+  }
+
+  // ── Reactions ─────────────────────────────────────────────────────────
+  var reactionsInterval = null;
+
+  async function loadReactions() {
+    var grid = document.getElementById('reactions-grid');
+    try {
+      var res = await fetch('/api/reactions');
+      if (!res.ok) throw new Error('err');
+      var data = await res.json();
+      renderReactions(grid, data);
+      var label = document.getElementById('reactions-refresh-label');
+      var now = new Date();
+      label.textContent = 'Обновлено в ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0') + ':' + String(now.getSeconds()).padStart(2,'0');
+    } catch (e) {
+      while (grid.firstChild) grid.removeChild(grid.firstChild);
+      var nd = document.createElement('div');
+      nd.className = 'reactions-empty';
+      nd.textContent = 'Реакций пока нет';
+      grid.appendChild(nd);
+    }
+  }
+
+  function renderReactions(grid, data) {
+    while (grid.firstChild) grid.removeChild(grid.firstChild);
+
+    var keys = Object.keys(data);
+    if (keys.length === 0) {
+      var nd = document.createElement('div');
+      nd.className = 'reactions-empty';
+      nd.textContent = 'Реакций пока нет';
+      grid.appendChild(nd);
+      return;
+    }
+
+    keys.sort(function (a, b) { return (data[b] || 0) - (data[a] || 0); });
+
+    keys.forEach(function (emoji) {
+      var card = document.createElement('div');
+      card.className = 'reaction-card';
+
+      var em = document.createElement('div');
+      em.className = 'reaction-emoji';
+      em.textContent = emoji;
+
+      var cnt = document.createElement('div');
+      cnt.className = 'reaction-count';
+      cnt.textContent = String(data[emoji] || 0);
+
+      card.appendChild(em);
+      card.appendChild(cnt);
+      grid.appendChild(card);
+    });
+  }
+
+  // ── Auto-refresh ──────────────────────────────────────────────────────
+  function startAutoRefresh() {
+    // Stats + reactions every 30s
+    setInterval(function () {
+      loadStats();
+      loadReactions();
+    }, 30000);
+
+    // Reactions extra: every 10s
+    setInterval(function () {
+      loadReactions();
+    }, 10000);
+  }
+
+  // ── Init ──────────────────────────────────────────────────────────────
+  function init() {
+    updateClock();
+    updateTimeline(new Date());
+    loadStats();
+    loadVendors();
+    loadSeating();
+    loadGuests();
+    loadChecklist();
+    loadReactions();
+    startAutoRefresh();
+  }
+
+}());
+</script>
+</body>
+</html>

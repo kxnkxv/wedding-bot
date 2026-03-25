@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QR — Приглашение</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Nunito Sans', sans-serif; background: #1A1A1A; color: #FAF7F1; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+  h1 { font-family: 'Cormorant Garamond', serif; font-size: 28px; margin-bottom: 8px; letter-spacing: 2px; }
+  .subtitle { color: #9E9E9E; font-size: 14px; margin-bottom: 30px; }
+  #qr-canvas { background: #FAF7F1; padding: 20px; border-radius: 16px; }
+  .guest-name { font-family: 'Cormorant Garamond', serif; font-size: 20px; margin-top: 20px; }
+  .link { color: #9E9E9E; font-size: 12px; margin-top: 8px; word-break: break-all; max-width: 300px; text-align: center; }
+  .actions { margin-top: 24px; display: flex; gap: 12px; }
+  .btn { padding: 12px 24px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.3); background: transparent; color: #FAF7F1; cursor: pointer; font-family: 'Nunito Sans', sans-serif; font-size: 13px; letter-spacing: 1px; }
+  .btn:hover { background: rgba(255,255,255,0.1); }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Nunito+Sans:wght@400;600&display=swap" rel="stylesheet">
+<!-- QR Code library (tiny, MIT licensed) -->
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+</head>
+<body>
+  <h1>Артём × Полина</h1>
+  <p class="subtitle">QR-код приглашения</p>
+  <div id="qr-canvas"></div>
+  <div class="guest-name" id="guest-name"></div>
+  <div class="link" id="guest-link"></div>
+  <div class="actions">
+    <button class="btn" onclick="downloadQr()">📥 Скачать</button>
+    <button class="btn" onclick="printQr()">🖨 Печать</button>
+  </div>
+  <script>
+    var params = new URLSearchParams(window.location.search);
+    var guestId = params.get('id');
+
+    if (!guestId) {
+      document.body.innerHTML = '<p style="color:#9E9E9E;">Не указан ID гостя</p>';
+    } else {
+      var baseUrl = window.location.origin;
+      var inviteUrl = baseUrl + '/?id=' + guestId;
+
+      // Generate QR
+      var qr = qrcode(0, 'M');
+      qr.addData(inviteUrl);
+      qr.make();
+      document.getElementById('qr-canvas').innerHTML = qr.createSvgTag(6, 0);
+      document.getElementById('guest-link').textContent = inviteUrl;
+
+      // Load guest name
+      fetch('/api/guest/' + guestId).then(function(r) { return r.json(); }).then(function(g) {
+        if (g.name) document.getElementById('guest-name').textContent = g.name;
+      }).catch(function() {});
+    }
+
+    function downloadQr() {
+      var svg = document.querySelector('#qr-canvas svg');
+      if (!svg) return;
+      var data = new XMLSerializer().serializeToString(svg);
+      var blob = new Blob([data], { type: 'image/svg+xml' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'qr-' + (guestId || 'invite') + '.svg';
+      a.click();
+    }
+
+    function printQr() { window.print(); }
+  </script>
+</body></html>

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Факт дня</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Nunito+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #1A1A1A;
+      color: #FAF7F1;
+      font-family: 'Nunito Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px 48px;
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.2rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      margin-bottom: 6px;
+      text-align: center;
+    }
+
+    .subtitle {
+      font-size: 0.85rem;
+      color: #9a9080;
+      margin-bottom: 32px;
+      text-align: center;
+    }
+
+    /* Days countdown */
+    .countdown-wrap {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .days-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 5rem;
+      font-weight: 600;
+      color: #C41E3A;
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+
+    .days-label {
+      font-size: 0.8rem;
+      color: #9a9080;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-top: 6px;
+    }
+
+    .wedding-date {
+      font-size: 0.9rem;
+      color: #c8bfb0;
+      margin-top: 8px;
+    }
+
+    /* Fact card */
+    .fact-card {
+      width: 100%;
+      max-width: 480px;
+      background: #2a2520;
+      border: 1px solid #3a3530;
+      border-radius: 12px;
+      padding: 28px 24px;
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .quote-mark {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 5rem;
+      color: #C41E3A;
+      opacity: 0.25;
+      line-height: 1;
+      position: absolute;
+      top: 10px;
+      left: 18px;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .fact-number {
+      font-size: 0.72rem;
+      color: #9a9080;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .fact-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.45rem;
+      font-weight: 400;
+      font-style: italic;
+      line-height: 1.55;
+      color: #FAF7F1;
+      position: relative;
+      z-index: 1;
+      animation: fadeIn 0.4s ease both;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Navigation */
+    .nav {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      width: 100%;
+      max-width: 480px;
+      justify-content: center;
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: 1px solid #4a4540;
+      color: #FAF7F1;
+      font-family: 'Nunito Sans', sans-serif;
+      font-size: 0.85rem;
+      padding: 9px 22px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s, opacity 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .nav-btn:hover:not(:disabled) {
+      border-color: #C41E3A;
+      background: rgba(196, 30, 58, 0.1);
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+
+    .nav-counter {
+      font-size: 0.8rem;
+      color: #9a9080;
+      min-width: 60px;
+      text-align: center;
+    }
+
+    /* Wedding date label */
+    .section-label {
+      font-size: 0.72rem;
+      color: #9a9080;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-top: 32px;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    .couple-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      color: #C41E3A;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Факт дня 💕</h1>
+<p class="subtitle">Узнайте немного об Артёме и Полине</p>
+
+<div class="countdown-wrap">
+  <div class="days-number" id="days-number">—</div>
+  <div class="days-label">дней до свадьбы</div>
+  <div class="wedding-date" id="wedding-date-str"></div>
+</div>
+
+<div class="fact-card" id="fact-card">
+  <div class="quote-mark">"</div>
+  <div class="fact-number" id="fact-number"></div>
+  <div class="fact-text" id="fact-text"></div>
+</div>
+
+<div class="nav">
+  <button class="nav-btn" id="btn-prev">← Назад</button>
+  <div class="nav-counter" id="nav-counter"></div>
+  <button class="nav-btn" id="btn-next">Вперёд →</button>
+</div>
+
+<div class="section-label">свадьба</div>
+<div class="couple-name">Артём &amp; Полина</div>
+
+<script>
+var facts = [
+  'Артём и Полина познакомились совершенно случайно',
+  'Первое свидание длилось 6 часов — они забыли про время',
+  'Их первое совместное путешествие было в Грузию',
+  'Полина всегда мечтала о свадьбе летом',
+  'Артём готовил предложение целый месяц',
+  'Любимый фильм пары — Интерстеллар',
+  'Они обожают хинкали и не могут выбрать лучший ресторан',
+  'Первая песня, которую они слушали вместе — ...',
+  'Артём научился готовить ради Полины',
+  'Они мечтают о доме с большим садом',
+];
+
+// Wedding date: use a placeholder — update to actual date
+var WEDDING_DATE = new Date('2026-07-04T12:00:00');
+
+function getDaysUntil() {
+  var now = new Date();
+  now.setHours(0, 0, 0, 0);
+  var target = new Date(WEDDING_DATE);
+  target.setHours(0, 0, 0, 0);
+  var diff = Math.round((target - now) / (1000 * 60 * 60 * 24));
+  return diff;
+}
+
+function dayWord(n) {
+  var abs = Math.abs(n);
+  var mod10 = abs % 10;
+  var mod100 = abs % 100;
+  if (mod100 >= 11 && mod100 <= 14) return 'дней';
+  if (mod10 === 1) return 'день';
+  if (mod10 >= 2 && mod10 <= 4) return 'дня';
+  return 'дней';
+}
+
+// Current displayed index
+var currentIdx = 0;
+
+function getDefaultIdx() {
+  var days = getDaysUntil();
+  if (days <= 0) return 0;
+  return days % facts.length;
+}
+
+function render() {
+  var days = getDaysUntil();
+
+  // Days number
+  var daysEl = document.getElementById('days-number');
+  if (days > 0) {
+    daysEl.textContent = days;
+  } else if (days === 0) {
+    daysEl.textContent = '0';
+  } else {
+    daysEl.textContent = Math.abs(days);
+  }
+
+  // Wedding date string
+  var opts = { day: 'numeric', month: 'long', year: 'numeric' };
+  var dateStr = WEDDING_DATE.toLocaleDateString('ru-RU', opts);
+  document.getElementById('wedding-date-str').textContent = dateStr;
+
+  // Fact
+  var factEl = document.getElementById('fact-text');
+  // Reset animation
+  factEl.style.animation = 'none';
+  void factEl.offsetWidth;
+  factEl.style.animation = '';
+  factEl.textContent = facts[currentIdx];
+
+  document.getElementById('fact-number').textContent = 'Факт ' + (currentIdx + 1) + ' из ' + facts.length;
+  document.getElementById('nav-counter').textContent = (currentIdx + 1) + ' / ' + facts.length;
+
+  document.getElementById('btn-prev').disabled = currentIdx === 0;
+  document.getElementById('btn-next').disabled = currentIdx === facts.length - 1;
+}
+
+document.getElementById('btn-prev').addEventListener('click', function() {
+  if (currentIdx > 0) {
+    currentIdx--;
+    render();
+  }
+});
+
+document.getElementById('btn-next').addEventListener('click', function() {
+  if (currentIdx < facts.length - 1) {
+    currentIdx++;
+    render();
+  }
+});
+
+currentIdx = getDefaultIdx();
+render();
+</script>
+</body>
+</html>

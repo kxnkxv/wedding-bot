@@ -1,0 +1,21 @@
+{
+  "name": "wedding-bot",
+  "version": "2.0.0",
+  "description": "Telegram + VK wedding bot with Web App — Artem & Polina",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node --test tests/**/*.test.js"
+  },
+  "dependencies": {
+    "telegraf": "^4.16.3",
+    "vk-io": "^4.9.0",
+    "express": "^4.21.0",
+    "better-sqlite3": "^11.6.0",
+    "nanoid": "^3.3.8",
+    "express-rate-limit": "^7.4.1",
+    "dotenv": "^16.4.7",
+    "compression": "^1.7.5"
+  }
+}

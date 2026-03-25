@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Кто ты на свадьбе?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Nunito+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #1A1A1A;
+      color: #FAF7F1;
+      font-family: 'Nunito Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px 48px;
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.2rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      margin-bottom: 6px;
+      text-align: center;
+    }
+
+    .subtitle {
+      font-size: 0.85rem;
+      color: #9a9080;
+      margin-bottom: 28px;
+      text-align: center;
+    }
+
+    /* Step indicator */
+    .steps {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+
+    .step-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #3a3530;
+      transition: background 0.2s;
+    }
+
+    .step-dot.active {
+      background: #C41E3A;
+    }
+
+    .step-dot.done {
+      background: rgba(196, 30, 58, 0.45);
+    }
+
+    /* Question card */
+    .question-wrap {
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .question-card {
+      background: #2a2520;
+      border: 1px solid #3a3530;
+      border-radius: 12px;
+      padding: 24px 20px;
+      margin-bottom: 16px;
+      animation: slideIn 0.3s ease both;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .q-number {
+      font-size: 0.75rem;
+      color: #9a9080;
+      margin-bottom: 10px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .q-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      font-weight: 600;
+      line-height: 1.35;
+    }
+
+    /* Options */
+    .options {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .opt-btn {
+      background: #2a2520;
+      border: 1px solid #3a3530;
+      border-radius: 10px;
+      color: #FAF7F1;
+      font-family: 'Nunito Sans', sans-serif;
+      font-size: 0.92rem;
+      padding: 13px 16px;
+      text-align: left;
+      cursor: pointer;
+      transition: background 0.18s, border-color 0.18s, transform 0.1s;
+      -webkit-tap-highlight-color: transparent;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .opt-btn:active {
+      transform: scale(0.97);
+    }
+
+    .opt-btn:hover {
+      background: rgba(196, 30, 58, 0.1);
+      border-color: #C41E3A;
+    }
+
+    .opt-letter {
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #3a3530;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #9a9080;
+    }
+
+    /* Result screen */
+    .result-wrap {
+      display: none;
+      width: 100%;
+      max-width: 480px;
+      flex-direction: column;
+      align-items: center;
+      animation: popIn 0.5s cubic-bezier(.36,1.56,.64,1) both;
+    }
+
+    .result-wrap.show {
+      display: flex;
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.7); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    .result-icon {
+      font-size: 4rem;
+      margin-bottom: 16px;
+    }
+
+    .result-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      font-weight: 600;
+      color: #C41E3A;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .result-desc {
+      font-size: 1rem;
+      line-height: 1.6;
+      color: #c8bfb0;
+      text-align: center;
+      max-width: 340px;
+      margin-bottom: 28px;
+    }
+
+    .result-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    button {
+      background: transparent;
+      border: 1px solid #4a4540;
+      color: #FAF7F1;
+      font-family: 'Nunito Sans', sans-serif;
+      font-size: 0.85rem;
+      padding: 9px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    button:hover {
+      border-color: #C41E3A;
+      background: rgba(196, 30, 58, 0.1);
+    }
+
+    .btn-primary {
+      background: #C41E3A;
+      border-color: #C41E3A;
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: #a8192f;
+      border-color: #a8192f;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(60px);
+      background: #2a2520;
+      border: 1px solid #3a3530;
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-size: 0.85rem;
+      color: #FAF7F1;
+      transition: transform 0.3s ease;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+<h1>Кто ты на свадьбе? 🎭</h1>
+<p class="subtitle">5 вопросов — узнай свой тип</p>
+
+<div class="steps" id="steps"></div>
+
+<div class="question-wrap" id="question-wrap">
+  <div class="question-card" id="question-card">
+    <div class="q-number" id="q-number"></div>
+    <div class="q-text" id="q-text"></div>
+  </div>
+  <div class="options" id="options"></div>
+</div>
+
+<div class="result-wrap" id="result-wrap">
+  <div class="result-icon" id="result-icon"></div>
+  <div class="result-title" id="result-title"></div>
+  <div class="result-desc" id="result-desc"></div>
+  <div class="result-actions">
+    <button id="btn-share" class="btn-primary">Поделиться результатом</button>
+    <button id="btn-retry">Пройти снова</button>
+  </div>
+</div>
+
+<div class="toast" id="toast">Скопировано в буфер!</div>
+
+<script>
+var questions = [
+  {
+    q: 'Ваша стратегия на танцполе?',
+    opts: ['Первый выхожу танцевать', 'Жду медленный танец', 'Фотографирую других', 'Стою у бара']
+  },
+  {
+    q: 'Что вы делаете когда слышите «горько»?',
+    opts: ['Кричу громче всех', 'Считаю секунды', 'Снимаю на видео', 'Ем салат']
+  },
+  {
+    q: 'Ваш идеальный подарок молодожёнам?',
+    opts: ['Конверт потолще', 'Что-то от души', 'Песня или стих', 'Главное — моё присутствие']
+  },
+  {
+    q: 'Как вы готовитесь к свадьбе друзей?',
+    opts: ['Наряд за месяц', 'Накануне вечером', 'У меня всегда есть костюм', 'А что, надо готовиться?']
+  },
+  {
+    q: 'После свадьбы вы...',
+    opts: ['Еду на after-party', 'Уже сплю в такси', 'Выкладываю 100 фото', 'Планирую свою свадьбу']
+  },
+];
+
+var results = [
+  { icon: '🎉', title: 'Душа компании', desc: 'Вы зажигаете любую вечеринку! Танцпол — ваша стихия.' },
+  { icon: '💕', title: 'Романтик', desc: 'Вы верите в настоящую любовь и плачете на церемониях. И это прекрасно.' },
+  { icon: '📸', title: 'Хронист', desc: 'Благодаря вам останутся лучшие фотографии и видео этого дня.' },
+  { icon: '🍷', title: 'Философ', desc: 'Вы наслаждаетесь моментом и ведёте глубокие разговоры за бокалом вина.' },
+];
+
+var STORAGE_KEY = 'test_result_v1';
+var LETTERS = ['А', 'Б', 'В', 'Г'];
+
+var current = 0;       // current question index
+var answers = [];      // array of 0-3
+
+function init() {
+  // Check saved result
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      var r = JSON.parse(saved);
+      if (typeof r === 'number' && r >= 0 && r < results.length) {
+        showResult(r);
+        return;
+      }
+    }
+  } catch (e) {}
+  current = 0;
+  answers = [];
+  renderSteps();
+  renderQuestion();
+}
+
+function renderSteps() {
+  var el = document.getElementById('steps');
+  while (el.firstChild) el.removeChild(el.firstChild);
+  for (var i = 0; i < questions.length; i++) {
+    var dot = document.createElement('div');
+    dot.className = 'step-dot' + (i === current ? ' active' : (i < current ? ' done' : ''));
+    el.appendChild(dot);
+  }
+}
+
+function renderQuestion() {
+  var q = questions[current];
+
+  // Animate card
+  var card = document.getElementById('question-card');
+  card.style.animation = 'none';
+  // Force reflow
+  void card.offsetWidth;
+  card.style.animation = '';
+
+  document.getElementById('q-number').textContent = 'Вопрос ' + (current + 1) + ' из ' + questions.length;
+  document.getElementById('q-text').textContent = q.q;
+
+  var optsEl = document.getElementById('options');
+  while (optsEl.firstChild) optsEl.removeChild(optsEl.firstChild);
+
+  for (var i = 0; i < q.opts.length; i++) {
+    var btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.dataset.opt = i;
+
+    var letter = document.createElement('div');
+    letter.className = 'opt-letter';
+    letter.textContent = LETTERS[i];
+
+    var text = document.createElement('span');
+    text.textContent = q.opts[i];
+
+    btn.appendChild(letter);
+    btn.appendChild(text);
+    btn.addEventListener('click', onOptionClick);
+    optsEl.appendChild(btn);
+  }
+
+  renderSteps();
+}
+
+function onOptionClick(e) {
+  var opt = parseInt(e.currentTarget.dataset.opt, 10);
+  answers.push(opt);
+
+  if (current < questions.length - 1) {
+    current++;
+    renderQuestion();
+  } else {
+    var resultIdx = calcResult();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(resultIdx));
+    showResult(resultIdx);
+  }
+}
+
+function calcResult() {
+  var counts = [0, 0, 0, 0];
+  for (var i = 0; i < answers.length; i++) {
+    counts[answers[i]]++;
+  }
+  var max = 0;
+  var idx = 0;
+  for (var j = 0; j < counts.length; j++) {
+    if (counts[j] > max) {
+      max = counts[j];
+      idx = j;
+    }
+  }
+  return idx;
+}
+
+function showResult(idx) {
+  var r = results[idx];
+  document.getElementById('question-wrap').style.display = 'none';
+  document.getElementById('steps').style.display = 'none';
+  document.getElementById('result-icon').textContent = r.icon;
+  document.getElementById('result-title').textContent = r.title;
+  document.getElementById('result-desc').textContent = r.desc;
+  document.getElementById('result-wrap').classList.add('show');
+}
+
+document.getElementById('btn-share').addEventListener('click', function() {
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    var idx = saved ? JSON.parse(saved) : 0;
+    var r = results[idx];
+    var text = 'Я — ' + r.icon + ' ' + r.title + ' на свадьбе АртёмИПолина2026!\n' + r.desc;
+    navigator.clipboard.writeText(text).then(function() {
+      showToast('Скопировано в буфер!');
+    }).catch(function() {
+      showToast('Не удалось скопировать');
+    });
+  } catch (e) {
+    showToast('Не удалось скопировать');
+  }
+});
+
+document.getElementById('btn-retry').addEventListener('click', function() {
+  localStorage.removeItem(STORAGE_KEY);
+  document.getElementById('result-wrap').classList.remove('show');
+  document.getElementById('question-wrap').style.display = '';
+  document.getElementById('steps').style.display = '';
+  current = 0;
+  answers = [];
+  renderSteps();
+  renderQuestion();
+});
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2200);
+}
+
+init();
+</script>
+</body>
+</html>

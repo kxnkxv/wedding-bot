@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Артём × Полина — Чеклист подготовки</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Nunito+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #FAFAFA;
+  --card: #FFFFFF;
+  --border: #EAEAEA;
+  --red: #C41E3A;
+  --dark-red: #9B1B30;
+  --black: #1A1A1A;
+  --text: #1A1A1A;
+  --text-mid: #555;
+  --text-light: #888;
+  --accent-bg: rgba(196, 30, 58, 0.06);
+}
+
+body {
+  font-family: 'Nunito Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+.hero {
+  text-align: center;
+  padding: 56px 20px 36px;
+  background: var(--black);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--red);
+}
+
+.hero-ornament {
+  font-size: 14px;
+  letter-spacing: 12px;
+  color: var(--red);
+  margin-bottom: 14px;
+  opacity: 0;
+  animation: fadeDown .7s ease forwards .2s;
+}
+
+.hero h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(28px, 6vw, 46px);
+  font-weight: 300;
+  letter-spacing: 3px;
+  opacity: 0;
+  animation: fadeDown .7s ease forwards .35s;
+}
+
+.hero h1 em {
+  font-style: italic;
+  color: var(--red);
+  font-weight: 400;
+}
+
+.hero-sub {
+  font-size: 11px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.45);
+  margin-top: 8px;
+  opacity: 0;
+  animation: fadeDown .7s ease forwards .5s;
+}
+
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Progress */
+.progress-wrapper {
+  max-width: 500px;
+  margin: 28px auto 8px;
+  padding: 0 24px;
+  opacity: 0;
+  animation: fadeDown .7s ease forwards .65s;
+}
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-light);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.progress-label span:last-child { font-weight: 600; color: var(--red); }
+
+.progress-bar {
+  width: 100%;
+  height: 4px;
+  background: var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--black), var(--red));
+  border-radius: 10px;
+  transition: width .5s ease;
+  width: 0%;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  max-width: 520px;
+  margin: 24px auto 0;
+  padding: 0 20px;
+  opacity: 0;
+  animation: fadeDown .7s ease forwards .8s;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 14px 8px 12px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  border: none;
+  background: transparent;
+  color: var(--text-light);
+  cursor: pointer;
+  position: relative;
+  transition: color .3s;
+}
+
+.tab-btn .tab-date {
+  display: block;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  margin-top: 2px;
+  color: var(--text-light);
+}
+
+.tab-btn::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 15%; width: 70%; height: 2px;
+  background: var(--red);
+  transform: scaleX(0);
+  transition: transform .3s;
+}
+
+.tab-btn.active { color: var(--black); }
+.tab-btn.active .tab-date { color: var(--red); }
+.tab-btn.active::after { transform: scaleX(1); }
+
+/* Content */
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px 20px 100px;
+}
+
+.tab-content { display: none; }
+.tab-content.active { display: block; animation: fadeIn .35s ease; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Category */
+.category { margin-bottom: 24px; }
+
+.category-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  user-select: none;
+  transition: box-shadow .2s;
+}
+
+.category-header:hover { box-shadow: 0 2px 12px rgba(0,0,0,.04); }
+
+.category-icon {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; flex-shrink: 0;
+  background: var(--accent-bg);
+}
+
+.category-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 19px; font-weight: 500;
+  color: var(--black); flex-grow: 1;
+}
+
+.category-count {
+  font-size: 11px; font-weight: 600;
+  color: var(--text-light);
+  background: var(--bg);
+  padding: 2px 10px; border-radius: 20px;
+}
+
+.category-toggle {
+  font-size: 11px; color: var(--text-light);
+  transition: transform .3s;
+}
+
+.category.collapsed .category-toggle { transform: rotate(-90deg); }
+.category.collapsed .checklist { display: none; }
+
+/* Items */
+.checklist { list-style: none; padding: 0 4px; }
+
+.check-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 10px 8px;
+  border-bottom: 1px solid rgba(0,0,0,.03);
+  transition: opacity .3s;
+}
+
+.check-item:last-child { border-bottom: none; }
+.check-item.checked { opacity: .4; }
+.check-item.checked .check-text { text-decoration: line-through; color: var(--text-light); }
+
+.checkbox {
+  width: 22px; height: 22px;
+  border: 2px solid #ccc; border-radius: 50%;
+  cursor: pointer; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .25s; margin-top: 1px;
+}
+
+.checkbox:hover { border-color: var(--red); background: var(--accent-bg); }
+
+.check-item.checked .checkbox {
+  background: var(--red); border-color: var(--red);
+}
+
+.checkbox .checkmark { display: none; color: #fff; font-size: 12px; font-weight: bold; }
+.check-item.checked .checkbox .checkmark { display: block; }
+
+.check-text { font-size: 14.5px; line-height: 1.5; flex-grow: 1; }
+.check-note { display: block; font-size: 12px; color: var(--text-light); margin-top: 2px; font-style: italic; }
+
+.delete-btn {
+  background: none; border: none; cursor: pointer;
+  color: var(--text-light); font-size: 14px; flex-shrink: 0;
+  opacity: 0; transition: opacity .2s;
+  padding: 2px 4px; border-radius: 4px;
+  line-height: 1;
+}
+.check-item:hover .delete-btn { opacity: 1; }
+.delete-btn:hover { color: var(--red); background: var(--accent-bg); }
+
+/* Float actions */
+.float-actions {
+  position: fixed; bottom: 24px; right: 24px;
+  display: flex; gap: 10px; z-index: 100;
+}
+
+.float-btn {
+  width: 46px; height: 46px; border-radius: 50%;
+  border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.1);
+  transition: transform .2s;
+}
+
+.float-btn:hover { transform: translateY(-2px); }
+.btn-reset { background: #fff; color: var(--text-light); }
+.btn-refresh { background: var(--black); color: #fff; }
+.btn-add {
+  background: var(--red); color: #fff;
+  width: 46px; height: 46px;
+  font-size: 22px;
+}
+
+.toast {
+  position: fixed; bottom: 86px; left: 50%;
+  transform: translateX(-50%) translateY(16px);
+  background: var(--black); color: #fff;
+  padding: 8px 22px; border-radius: 30px;
+  font-size: 13px; opacity: 0;
+  transition: all .3s; z-index: 200; pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* Loading state */
+.loading-placeholder {
+  text-align: center; padding: 40px 20px;
+  color: var(--text-light); font-size: 14px; letter-spacing: 1px;
+}
+
+/* Add item modal */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.5);
+  z-index: 300;
+  display: none; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: #fff; border-radius: 16px;
+  padding: 28px 24px; width: 100%; max-width: 420px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.2);
+}
+
+.modal h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 500;
+  margin-bottom: 20px; color: var(--black);
+}
+
+.modal label {
+  display: block; font-size: 11px; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--text-light);
+  margin-bottom: 5px; margin-top: 14px;
+}
+.modal label:first-of-type { margin-top: 0; }
+
+.modal input, .modal select, .modal textarea {
+  width: 100%; padding: 10px 12px;
+  border: 1px solid var(--border); border-radius: 8px;
+  font-family: 'Nunito Sans', sans-serif; font-size: 14px;
+  color: var(--text); background: var(--bg);
+  outline: none; transition: border-color .2s;
+}
+.modal input:focus, .modal select:focus, .modal textarea:focus {
+  border-color: var(--red);
+}
+.modal textarea { resize: vertical; min-height: 60px; }
+
+.modal-actions {
+  display: flex; gap: 10px; margin-top: 20px;
+}
+
+.btn-primary {
+  flex: 1; padding: 12px;
+  background: var(--red); color: #fff;
+  border: none; border-radius: 8px; cursor: pointer;
+  font-family: 'Nunito Sans', sans-serif; font-size: 14px; font-weight: 600;
+  transition: background .2s;
+}
+.btn-primary:hover { background: var(--dark-red); }
+
+.btn-secondary {
+  padding: 12px 20px;
+  background: var(--bg); color: var(--text-mid);
+  border: 1px solid var(--border); border-radius: 8px; cursor: pointer;
+  font-family: 'Nunito Sans', sans-serif; font-size: 14px;
+  transition: background .2s;
+}
+.btn-secondary:hover { background: var(--border); }
+
+@media (max-width: 480px) {
+  .tab-btn { font-size: 15px; }
+  .category-title { font-size: 17px; }
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-ornament">◆ ◆ ◆</div>
+  <h1>Артём <em>×</em> Полина</h1>
+  <div class="hero-sub">чеклист подготовки к свадьбе</div>
+</div>
+
+<div class="progress-wrapper">
+  <div class="progress-label">
+    <span>Готовность</span>
+    <span id="progressText">0%</span>
+  </div>
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" data-tab="registration">День росписи<span class="tab-date">06.06.2026</span></button>
+  <button class="tab-btn" data-tab="wedding">День свадьбы<span class="tab-date">01.08.2026</span></button>
+</div>
+
+<div class="container">
+  <div class="tab-content active" id="tab-registration"></div>
+  <div class="tab-content" id="tab-wedding"></div>
+</div>
+
+<div class="float-actions">
+  <button class="float-btn btn-reset" id="btnReset" title="Сбросить вкладку">↺</button>
+  <button class="float-btn btn-refresh" id="btnRefresh" title="Обновить">🔄</button>
+  <button class="float-btn btn-add" id="btnAdd" title="Добавить пункт">+</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Add item modal -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal">
+    <h2>Добавить пункт</h2>
+    <label for="addCategory">Категория</label>
+    <select id="addCategory"></select>
+    <label for="addText">Текст</label>
+    <input type="text" id="addText" placeholder="Название пункта">
+    <label for="addNote">Примечание (необязательно)</label>
+    <textarea id="addNote" placeholder="Дополнительная информация"></textarea>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="btnCancelAdd">Отмена</button>
+      <button class="btn-primary" id="btnSubmitAdd">Добавить</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var currentTab = 'registration';
+  var cache = {};
+
+  var CATEGORY_ICONS = {
+    'Документы': '📋',
+    'Образ и стиль': '👗',
+    'Атрибуты': '💐',
+    'Фото и видео': '📸',
+    'Логистика': '🚗',
+    'Утро: сборы': '🌅',
+    'Утро сборы': '🌅',
+    'Площадка и декор': '🏛️',
+    'Церемония и банкет': '💍',
+    'Развлечения и подарки': '🎉',
+    'Не забыть': '✅',
+  };
+
+  function getCategoryIcon(name) {
+    if (CATEGORY_ICONS[name]) return CATEGORY_ICONS[name];
+    var keys = Object.keys(CATEGORY_ICONS);
+    for (var i = 0; i < keys.length; i++) {
+      if (name.indexOf(keys[i]) !== -1) return CATEGORY_ICONS[keys[i]];
+    }
+    return '📌';
+  }
+
+  // Tab switching
+  var tabBtns = document.querySelectorAll('.tab-btn');
+  tabBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      tabBtns.forEach(function (b) { b.classList.remove('active'); });
+      document.querySelectorAll('.tab-content').forEach(function (c) { c.classList.remove('active'); });
+      btn.classList.add('active');
+      currentTab = btn.dataset.tab;
+      document.getElementById('tab-' + currentTab).classList.add('active');
+      loadTab(currentTab);
+    });
+  });
+
+  function loadTab(tab, force) {
+    if (!force && cache[tab]) {
+      renderTab(tab, cache[tab]);
+      return Promise.resolve();
+    }
+    return fetch('/api/checklist/' + tab)
+      .then(function (res) {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return res.json();
+      })
+      .then(function (data) {
+        cache[tab] = data;
+        renderTab(tab, data);
+      })
+      .catch(function () {
+        var el = document.getElementById('tab-' + tab);
+        clearNode(el);
+        var p = document.createElement('div');
+        p.className = 'loading-placeholder';
+        p.textContent = 'Ошибка загрузки. Нажмите 🔄 для повтора.';
+        el.appendChild(p);
+      });
+  }
+
+  function clearNode(node) {
+    while (node.firstChild) node.removeChild(node.firstChild);
+  }
+
+  function renderTab(tab, data) {
+    var el = document.getElementById('tab-' + tab);
+    clearNode(el);
+
+    var groups = data.groups;
+    var progress = data.progress;
+
+    if (!groups || Object.keys(groups).length === 0) {
+      var p = document.createElement('div');
+      p.className = 'loading-placeholder';
+      p.textContent = 'Нет пунктов';
+      el.appendChild(p);
+      updateProgressBar(progress || { done: 0, total: 0 });
+      return;
+    }
+
+    Object.keys(groups).forEach(function (catName) {
+      var items = groups[catName];
+      el.appendChild(buildCategory(catName, items));
+    });
+
+    updateProgressBar(progress);
+  }
+
+  function buildCategory(catName, items) {
+    var catDiv = document.createElement('div');
+    catDiv.className = 'category';
+    catDiv.dataset.category = catName;
+
+    var header = document.createElement('div');
+    header.className = 'category-header';
+    header.addEventListener('click', function () {
+      catDiv.classList.toggle('collapsed');
+    });
+
+    var iconEl = document.createElement('div');
+    iconEl.className = 'category-icon';
+    iconEl.textContent = getCategoryIcon(catName);
+
+    var titleEl = document.createElement('div');
+    titleEl.className = 'category-title';
+    titleEl.textContent = catName;
+
+    var done = items.filter(function (i) { return i.checked; }).length;
+    var countEl = document.createElement('div');
+    countEl.className = 'category-count';
+    countEl.textContent = done + '/' + items.length;
+
+    var toggleEl = document.createElement('div');
+    toggleEl.className = 'category-toggle';
+    toggleEl.textContent = '▼';
+
+    header.appendChild(iconEl);
+    header.appendChild(titleEl);
+    header.appendChild(countEl);
+    header.appendChild(toggleEl);
+
+    var ul = document.createElement('ul');
+    ul.className = 'checklist';
+
+    items.forEach(function (item) {
+      ul.appendChild(buildItem(item));
+    });
+
+    catDiv.appendChild(header);
+    catDiv.appendChild(ul);
+    return catDiv;
+  }
+
+  function buildItem(item) {
+    var li = document.createElement('li');
+    li.className = 'check-item' + (item.checked ? ' checked' : '');
+    li.dataset.id = String(item.id);
+
+    var checkbox = document.createElement('div');
+    checkbox.className = 'checkbox';
+    checkbox.addEventListener('click', function () {
+      toggleItem(checkbox, item.id);
+    });
+
+    var checkmark = document.createElement('span');
+    checkmark.className = 'checkmark';
+    checkmark.textContent = '✓';
+    checkbox.appendChild(checkmark);
+
+    var textEl = document.createElement('div');
+    textEl.className = 'check-text';
+    textEl.textContent = item.text;
+
+    if (item.note) {
+      var noteEl = document.createElement('span');
+      noteEl.className = 'check-note';
+      noteEl.textContent = item.note;
+      textEl.appendChild(noteEl);
+    }
+
+    li.appendChild(checkbox);
+    li.appendChild(textEl);
+
+    if (item.is_custom) {
+      var delBtn = document.createElement('button');
+      delBtn.className = 'delete-btn';
+      delBtn.title = 'Удалить';
+      delBtn.textContent = '🗑';
+      delBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        deleteItem(item.id);
+      });
+      li.appendChild(delBtn);
+    }
+
+    return li;
+  }
+
+  function toggleItem(checkboxEl, id) {
+    var itemEl = checkboxEl.closest('.check-item');
+    var isChecked = itemEl.classList.contains('checked');
+    var endpoint = isChecked ? 'uncheck' : 'check';
+
+    // Optimistic UI
+    itemEl.classList.toggle('checked');
+    updateCategoryCounts(itemEl.closest('.category'));
+    updateProgressFromDOM();
+
+    fetch('/api/checklist/' + id + '/' + endpoint, { method: 'POST' })
+      .then(function (res) {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        delete cache[currentTab];
+      })
+      .catch(function () {
+        // Revert
+        itemEl.classList.toggle('checked');
+        updateCategoryCounts(itemEl.closest('.category'));
+        updateProgressFromDOM();
+        showToast('Ошибка сохранения');
+      });
+  }
+
+  function deleteItem(id) {
+    if (!confirm('Удалить этот пункт?')) return;
+    fetch('/api/checklist/' + id, { method: 'DELETE' })
+      .then(function (res) {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        delete cache[currentTab];
+        return loadTab(currentTab, true);
+      })
+      .then(function () {
+        showToast('Пункт удалён');
+      })
+      .catch(function () {
+        showToast('Ошибка удаления');
+      });
+  }
+
+  function updateCategoryCounts(catEl) {
+    if (!catEl) return;
+    var all = catEl.querySelectorAll('.check-item').length;
+    var done = catEl.querySelectorAll('.check-item.checked').length;
+    catEl.querySelector('.category-count').textContent = done + '/' + all;
+  }
+
+  function updateProgressFromDOM() {
+    var tab = document.querySelector('.tab-content.active');
+    var all = tab.querySelectorAll('.check-item').length;
+    var done = tab.querySelectorAll('.check-item.checked').length;
+    updateProgressBar({ done: done, total: all });
+  }
+
+  function updateProgressBar(progress) {
+    var done = (progress && (progress.done || progress.checked)) || 0;
+    var total = (progress && progress.total) || 0;
+    var pct = total ? Math.round((done / total) * 100) : 0;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressText').textContent = pct + '%';
+  }
+
+  // Float buttons
+  document.getElementById('btnReset').addEventListener('click', function () {
+    if (!confirm('Сбросить все отметки на этой вкладке?')) return;
+    var tab = document.getElementById('tab-' + currentTab);
+    var checked = Array.from(tab.querySelectorAll('.check-item.checked'));
+    Promise.all(checked.map(function (item) {
+      return fetch('/api/checklist/' + item.dataset.id + '/uncheck', { method: 'POST' });
+    }))
+      .then(function () {
+        delete cache[currentTab];
+        return loadTab(currentTab, true);
+      })
+      .then(function () { showToast('Прогресс сброшен'); })
+      .catch(function () { showToast('Ошибка сброса'); });
+  });
+
+  document.getElementById('btnRefresh').addEventListener('click', function () {
+    delete cache[currentTab];
+    loadTab(currentTab, true).then(function () { showToast('Обновлено'); });
+  });
+
+  document.getElementById('btnAdd').addEventListener('click', openAddModal);
+
+  // Add item modal
+  function openAddModal() {
+    var tab = document.getElementById('tab-' + currentTab);
+    var catEls = tab.querySelectorAll('.category');
+    var select = document.getElementById('addCategory');
+    clearNode(select);
+
+    catEls.forEach(function (catEl) {
+      var opt = document.createElement('option');
+      opt.value = catEl.dataset.category;
+      opt.textContent = catEl.dataset.category;
+      select.appendChild(opt);
+    });
+
+    var newOpt = document.createElement('option');
+    newOpt.value = '__new__';
+    newOpt.textContent = '— Новая категория —';
+    select.appendChild(newOpt);
+
+    document.getElementById('addText').value = '';
+    document.getElementById('addNote').value = '';
+    document.getElementById('addModal').classList.add('open');
+    document.getElementById('addText').focus();
+  }
+
+  function closeAddModal() {
+    document.getElementById('addModal').classList.remove('open');
+  }
+
+  document.getElementById('btnCancelAdd').addEventListener('click', closeAddModal);
+  document.getElementById('addModal').addEventListener('click', function (e) {
+    if (e.target === this) closeAddModal();
+  });
+
+  document.getElementById('btnSubmitAdd').addEventListener('click', function () {
+    var selectEl = document.getElementById('addCategory');
+    var category = selectEl.value;
+    if (category === '__new__') {
+      var newCat = prompt('Название новой категории:');
+      if (!newCat || !newCat.trim()) return;
+      category = newCat.trim();
+    }
+    var text = document.getElementById('addText').value.trim();
+    var note = document.getElementById('addNote').value.trim();
+    if (!text) { showToast('Введите текст пункта'); return; }
+
+    fetch('/api/checklist/add', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tab: currentTab, category: category, text: text, note: note || null }),
+    })
+      .then(function (res) {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return res.json();
+      })
+      .then(function () {
+        closeAddModal();
+        delete cache[currentTab];
+        return loadTab(currentTab, true);
+      })
+      .then(function () { showToast('Пункт добавлен'); })
+      .catch(function () { showToast('Ошибка добавления'); });
+  });
+
+  function showToast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(function () { t.classList.remove('show'); }, 2000);
+  }
+
+  // Initial load
+  loadTab('registration');
+}());
+</script>
+</body>
+</html>
